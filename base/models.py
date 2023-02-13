@@ -3,53 +3,79 @@ import uuid
 # Create your models here.
 
 '''
--- User model
+-- Author model
 Description: This is the model for each user within the social network
-PRIMARY KEY: id
-FOREIGN KEY:
+PRIMARY KEY: author_id
+FOREIGN KEYS:
 '''
-class User(models.Model):
-    userID = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
-    email = models.CharField(max_length=200)
-    name =  models.CharField(max_length=200)
+class Author(models.Model):
+    author_ID = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
+    display_name = models.CharField(max_length=200)
+    github = models.CharField(max_length=200)
+    profile_image = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
+    username = models.CharField(max_length=200)
+
+'''
+-- Posts
+Description: This is the post model that an Author can create
+PRIMARY KEY: post_id
+FOREIGN KEYS: author_id
+'''
+class Posts(models.Model):
+    #Choices for visibility
+    VISIBILITY_CHOICES = (('P','PUBLIC'),('F','FRIENDS'),('V','PRIVATE'))
+
+
+    post_id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
+    author_id = models.ForeignKey(Author,on_delete=models.CASCADE)
+    published = models.TimeField()
+    content_type = models.CharField(max_length=200)
+    title = models.CharField(max_length=200,editable=True)
+    content = models.TextField(max_length=300,editable=True)
+    unlisted = models.BooleanField(default=False)
+    visibility = models.CharField(max_length=50,choices=VISIBILITY_CHOICES) #Should it be editable?
 
 
 '''
--- Post model
-Description: Model for a post created by User
-PRIMARY KEY: postID
-FOREIGN KEY: userID
+-- Comments
+Description: This is the model for a comment created by Author within a Posts
+PRIMARY KEY: comment_id
+FOREIGN KEYS: author_id, post_id
 '''
-class Post(models.Model):
-    postID = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
-    userID = models.ForeignKey(User,on_delete=models.CASCADE)
-    public = models.BooleanField(default=True)
-    content = models.CharField(max_length=500)
-    likes = models.JSONField(userID)
+class Comments(models.Model):
+    comment_id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
+    author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
+    post_id = models.ForeignKey(Posts, on_delete=models.CASCADE)
+    parent_comment_id = models.IntegerField(default = (-1))
+    content_type = models.CharField(max_length=200)
+    published = models.TimeField()
+    content = models.TextField(max_length=300,editable=True)
 
 '''
--- Comment Section model
-Description: Acts as the parent comment within the post
-PRIMARY KEY: ---
-FOREIGN KEY: postID
+-- CommentLikes
+Description:
+PRIMARY KEY: indexes
+FOREIGN KEYS: comment_id, author_id
 '''
-class CommentSection(models.Model):
-    postID = models.ForeignKey(Post,on_delete=models.CASCADE)
+class CommentLikes(models.Model):
+    comment_id = models.ForeignKey(Comments,on_delete=models.CASCADE)
+    author_id = models.ForeignKey(Author,on_delete=models.CASCADE)
+    like = models.BooleanField(default=False)
+    indexes = [
+        models.Index(fields=['comment_id','author_id'])
+    ]
 
 '''
--- Comment model
-Description: The actual comment of a user in a post
-PRIMARY KEY: userID
-FOREIGN KEY: parentID, userID
+-- Followers
+Description: Followers of a user
+PRIMARY KEY: indexes
+FOREIGN KEYS: author_id
 '''
-class Comment(models.Model):
-    parentID = models.ForeignKey(CommentSection,on_delete=models.CASCADE)
-    content = models.TextField(editable=True)
-    userID = models.ForeignKey(User, primary_key=True, on_delete=models.CASCADE)
-    dateCreated = models.DateField()
-    
-
-
-
+class Followers(models.Model):
+    author_id = models.ForeignKey(Author,null=True, on_delete=models.CASCADE,related_name='author')
+    follower_id = models.ForeignKey(Author,null=True, on_delete=models.CASCADE,related_name='follower')
+    indexes = [
+        models.Index(fields=['author_id','follower_id'])
+    ]
 
