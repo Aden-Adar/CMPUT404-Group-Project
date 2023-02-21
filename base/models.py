@@ -1,7 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, PermissionsMixin
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 import uuid
 
+from rest_framework.authtoken.models import Token
 from .manager import CustomUserManager
 # Create your models here.
 
@@ -11,25 +15,22 @@ Description: This is the model for each user within the social network
 PRIMARY KEY: author_id
 FOREIGN KEYS:
 '''
-class CustomUser(AbstractUser):
-    username = models.CharField(max_length=200,unique=True) #This is the username
+class CustomUser(AbstractUser, PermissionsMixin):
+    username = models.CharField(max_length = 50, blank = True, null = True, unique = True)
     email = None
     password = models.CharField(max_length=200)
     github = models.CharField(max_length=200)
     #profile_image = models.CharField(max_length=200) https://www.geeksforgeeks.org/imagefield-django-models/
     password = models.CharField(max_length=200)
-    is_active = models.BooleanField(default=False)
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = [username,password]    
+    REQUIRED_FIELDS = ["password"]    
+    
+    #assign the custom manager to the objects attribute
     objects = CustomUserManager()
     
     def __str__(self):
         return self.username
-    
-    @property
-    def is_active(self):
-        return self.is_active
-    
+        
 '''
 -- Posts
 Description: This is the post model that an Author can create
@@ -93,4 +94,8 @@ class Followers(models.Model):
     indexes = [
         models.Index(fields=['author_id','follower_id'])
     ]
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
 '''

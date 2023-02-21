@@ -11,27 +11,15 @@ class CustomUserManager(BaseUserManager):
             raise ValueError(_('The Username needs to be set'))
         user = self.model(username=username, **extra_fields)
         user.set_password(password)
-        user.active = False
         user.save()
         return user
-    
-    def create_staffuser(self, username, password, **extra_fields):
-        """
-        Create and save a staff user with the given email and password.
-        """
-        staff_user = self.create_user(username, password, **extra_fields)
-        staff_user.is_staff = True
-        staff_user.save()
-        return staff_user
     
     def create_superuser(self, username, password, **extra_fields):
         """
         Create and save a superuser with the given email and password.
         """
-
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
         super_user = self.create_user(username, password, **extra_fields)
-        super_user.is_staff = True
-        super_user.is_superuser = True
-        super_user.save()
         return super_user
     

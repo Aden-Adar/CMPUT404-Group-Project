@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'base'
+    'base',
     'rest_framework',
     'rest_framework.authtoken', #https://www.django-rest-framework.org/api-guide/authentication/
 ]
@@ -87,6 +87,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'socialdistribution.wsgi.application'
 
+ACCOUNT_EMAIL_REQUIRED = False
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
