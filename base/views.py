@@ -44,8 +44,7 @@ class LoginView(APIView):
             token = Token.objects.get_or_create(user=user)[0].key
             return Response({"token": token}, status=status.HTTP_200_OK)
 
-class PostMixinView(
-                    mixins.ListModelMixin,
+class PostMixinView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
                     mixins.RetrieveModelMixin,
                     mixins.DestroyModelMixin,
@@ -64,7 +63,10 @@ class PostMixinView(
 
         # TODO: Update filter so that authors with access can also view private posts
         # Private posts will only be shown to the owner at the moment
-        filtered_qs = qs.filter(Q(post_visbility='P') | Q(user_id=request.user.id))
+        if request.user.is_authenticated:
+            filtered_qs = qs.filter(Q(post_visbility='P') | Q(user_id=request.user.id))
+        else:
+            filtered_qs = qs.filter(post_visbility='P')
 
         if request.method == "GET":
             pk =  self.kwargs.get('pk')
