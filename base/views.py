@@ -55,6 +55,18 @@ class PostMixinView(
     serializer_class = PostSerializer
     lookup_field = 'pk'
 
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        request = self.request
+
+        if request.method == "GET":
+            pk =  self.kwargs.get('pk')
+            if pk is not None:
+                return qs
+            return qs.filter(unlisted=False)
+
+        return qs
+
     def get(self, request, *args, **kwargs):
         # print(args, kwargs)
         pk = kwargs.get('pk')
