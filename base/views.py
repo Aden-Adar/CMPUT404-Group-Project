@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from .models import *
 from .serializers import *
 from .forms import *
-
+from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout
 
 # only for testing purposes
@@ -59,13 +59,22 @@ class PostMixinView(
         qs = super().get_queryset(*args, **kwargs)
         request = self.request
 
+        if request.user.is_staff:
+            return qs
+
+        # TODO: Update filter so that authors with access can also view private posts
+        # Private posts will only be shown to the owner at the moment
+        filtered_qs = qs.filter(Q(post_visbility='P') | Q(user_id=request.user.id))
+
         if request.method == "GET":
             pk =  self.kwargs.get('pk')
             if pk is not None:
-                return qs
-            return qs.filter(unlisted=False)
+                return filtered_qs
+            return filtered_qs.filter(unlisted=False)
+        return filtered_qs
 
-        return qs
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.request.user)
 
     def get(self, request, *args, **kwargs):
         # print(args, kwargs)

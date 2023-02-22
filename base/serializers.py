@@ -28,7 +28,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = [
             'pk',
             'post_visbility',
-            'user_id',
+            # 'user_id',
             'published',
             'content_type',
             "title",
