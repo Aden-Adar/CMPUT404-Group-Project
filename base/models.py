@@ -31,28 +31,35 @@ class CustomUser(AbstractUser, PermissionsMixin):
     def __str__(self):
         return self.username
         
-'''
--- Posts
-Description: This is the post model that an Author can create
-PRIMARY KEY: post_id
-FOREIGN KEYS: author_id
+
+# -- Posts
+# Description: This is the post model that an Author can create
+# PRIMARY KEY: post_id
+# FOREIGN KEYS: author_id
 
 class Posts(models.Model):
     class Visbility(models.TextChoices):
         PUBLIC = 'P'
         FRIENDS = 'F'
         PRIVATE = 'V'
-        
-    #Choices for visibility
+    
+    class ContentType(models.TextChoices):
+        PLAIN = 'text/plain'
+        MARKDOWN = 'text/markdown'
+        BASE64 = 'application/base64'
+        PNG = 'image/png;base64'
+        JPEG = 'image/jpeg;base64'
+    
+    # Choices for visibility
     post_visbility = models.CharField(max_length=1,choices=Visbility.choices,default=Visbility.PRIVATE)
-    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    post_id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
-    published = models.TimeField()
-    content_type = models.CharField(max_length=200)
+    user_id = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL) #on_delete=models.CASCADE
+    # post_id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
+    published = models.TimeField(auto_now_add=True)
+    content_type = models.CharField(max_length=200, choices=ContentType.choices, default=ContentType.PLAIN)
     title = models.CharField(max_length=200,editable=True)
     content = models.TextField(max_length=300,editable=True)
     unlisted = models.BooleanField(default=False)
-
+'''
 
 -- Comments
 Description: This is the model for a comment created by Author within a Posts

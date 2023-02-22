@@ -21,3 +21,17 @@ class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['username','password']
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Posts
+        fields = [
+            'pk',
+            'post_visbility',
+            'user_id',
+            'published',
+            'content_type',
+            "title",
+            "content",
+            "unlisted"
+        ]

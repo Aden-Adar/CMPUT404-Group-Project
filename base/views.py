@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from rest_framework import status
+from rest_framework import status, generics, mixins
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -43,3 +43,30 @@ class LoginView(APIView):
             login(request, user)
             token = Token.objects.get_or_create(user=user)[0].key
             return Response({"token": token}, status=status.HTTP_200_OK)
+
+class PostMixinView(
+                    mixins.ListModelMixin,
+                    mixins.CreateModelMixin,
+                    mixins.RetrieveModelMixin,
+                    mixins.DestroyModelMixin,
+                    mixins.UpdateModelMixin,
+                    generics.GenericAPIView):
+    queryset = Posts.objects.all()
+    serializer_class = PostSerializer
+    lookup_field = 'pk'
+
+    def get(self, request, *args, **kwargs):
+        # print(args, kwargs)
+        pk = kwargs.get('pk')
+        if pk is not None:
+            return self.retrieve(request, *args, **kwargs)
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+    
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
