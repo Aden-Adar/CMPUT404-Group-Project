@@ -38,7 +38,7 @@ class CustomUser(AbstractUser, PermissionsMixin):
 # FOREIGN KEYS: author_id
 
 class Posts(models.Model):
-    class Visbility(models.TextChoices):
+    class Visibility(models.TextChoices):
         PUBLIC = 'P'
         FRIENDS = 'F'
         PRIVATE = 'V'
@@ -51,7 +51,7 @@ class Posts(models.Model):
         JPEG = 'image/jpeg;base64'
     
     # Choices for visibility
-    post_visbility = models.CharField(max_length=1,choices=Visbility.choices,default=Visbility.PRIVATE)
+    post_visibility = models.CharField(max_length=1,choices=Visibility.choices,default=Visibility.PRIVATE)
     user_id = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL) #on_delete=models.CASCADE
     # post_id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
     published = models.TimeField(auto_now_add=True)
@@ -60,6 +60,9 @@ class Posts(models.Model):
     content = models.TextField(max_length=300,editable=True)
     unlisted = models.BooleanField(default=False)
 
+class PrivatePostViewer(models.Model):
+    post_id = models.ForeignKey(Posts, null=True, on_delete=models.SET_NULL, unique=True)
+    viewer_id = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL)
 
 '''
 

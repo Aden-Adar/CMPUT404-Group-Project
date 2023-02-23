@@ -44,8 +44,7 @@ class LoginView(APIView):
             token = Token.objects.get_or_create(user=user)[0].key
             return Response({"token": token}, status=status.HTTP_200_OK)
 
-class PostMixinView(
-                    mixins.ListModelMixin,
+class PostMixinView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
                     mixins.RetrieveModelMixin,
                     mixins.DestroyModelMixin,
@@ -59,25 +58,30 @@ class PostMixinView(
         qs = super().get_queryset(*args, **kwargs)
         request = self.request
 
+        # Staff users can view all posts
         if request.user.is_staff:
             return qs
 
-        # TODO: Update filter so that authors with access can also view private posts
-        # Private posts will only be shown to the owner at the moment
-        filtered_qs = qs.filter(Q(post_visbility='P') | Q(user_id=request.user.id))
-
+        # Unauthenticated user can only view public posts  
+        if not request.user.is_authenticated:
+            return qs.filter(post_visibility='P') 
+        
+        filtered_qs = qs.filter(Q(post_visibility='P') | Q(user_id=request.user.id))
+        viewable_post_ids = list(PrivatePostViewer.objects.all().filter(viewer_id=request.user.id).values_list('post_id', flat=True))
+        
         if request.method == "GET":
+            filtered_qs = filtered_qs | qs.filter(pk__in=viewable_post_ids)
             pk =  self.kwargs.get('pk')
-            if pk is not None:
-                return filtered_qs
-            return filtered_qs.filter(unlisted=False)
+            if pk is not None: 
+                return filtered_qs # Detail post query
+            return filtered_qs.filter(unlisted=False) # List of posts query
+
         return filtered_qs
 
     def perform_create(self, serializer):
         serializer.save(user_id=self.request.user)
 
     def get(self, request, *args, **kwargs):
-        # print(args, kwargs)
         pk = kwargs.get('pk')
         if pk is not None:
             return self.retrieve(request, *args, **kwargs)
