@@ -11,4 +11,4 @@ urlpatterns = [
     path("posts/", views.PostMixinView.as_view()),
     path("posts/<int:pk>/", views.PostMixinView.as_view()),
     path("imgupload/",views.ImageView.as_view())
-] + static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT_IMAGE)
