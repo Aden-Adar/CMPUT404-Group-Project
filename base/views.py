@@ -58,28 +58,30 @@ class PostMixinView(mixins.ListModelMixin,
         qs = super().get_queryset(*args, **kwargs)
         request = self.request
 
+        # Staff users can view all posts
         if request.user.is_staff:
             return qs
 
-        # TODO: Update filter so that authors with access can also view private posts
-        # Private posts will only be shown to the owner at the moment
-        if request.user.is_authenticated:
-            filtered_qs = qs.filter(Q(post_visbility='P') | Q(user_id=request.user.id))
-        else:
-            filtered_qs = qs.filter(post_visbility='P')
-
+        # Unauthenticated user can only view public posts  
+        if not request.user.is_authenticated:
+            return qs.filter(post_visibility='P') 
+        
+        filtered_qs = qs.filter(Q(post_visibility='P') | Q(user_id=request.user.id))
+        viewable_post_ids = list(PrivatePostViewer.objects.all().filter(viewer_id=request.user.id).values_list('post_id', flat=True))
+        
         if request.method == "GET":
+            filtered_qs = filtered_qs | qs.filter(pk__in=viewable_post_ids)
             pk =  self.kwargs.get('pk')
-            if pk is not None:
-                return filtered_qs
-            return filtered_qs.filter(unlisted=False)
+            if pk is not None: 
+                return filtered_qs # Detail post query
+            return filtered_qs.filter(unlisted=False) # List of posts query
+
         return filtered_qs
 
     def perform_create(self, serializer):
         serializer.save(user_id=self.request.user)
 
     def get(self, request, *args, **kwargs):
-        # print(args, kwargs)
         pk = kwargs.get('pk')
         if pk is not None:
             return self.retrieve(request, *args, **kwargs)
