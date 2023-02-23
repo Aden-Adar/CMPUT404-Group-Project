@@ -91,3 +91,8 @@ class PostMixinView(
     
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+
+
+class ImageView(generics.ListCreateAPIView):
+    queryset = Images.objects.all()
+    serializer_class = ImageSerializer

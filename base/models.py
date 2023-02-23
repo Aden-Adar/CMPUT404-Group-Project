@@ -59,6 +59,8 @@ class Posts(models.Model):
     title = models.CharField(max_length=200,editable=True)
     content = models.TextField(max_length=300,editable=True)
     unlisted = models.BooleanField(default=False)
+
+
 '''
 
 -- Comments
@@ -106,3 +108,8 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
 '''
+
+class Images(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='images')

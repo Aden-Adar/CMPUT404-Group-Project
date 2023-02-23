@@ -18,3 +18,4 @@ tzdata==2022.7
 urllib3==1.26.14
 whitenoise==6.3.0
 yarg==0.1.9
+Pillow==9.4.0

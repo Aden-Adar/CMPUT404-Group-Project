@@ -35,3 +35,12 @@ class PostSerializer(serializers.ModelSerializer):
             "content",
             "unlisted"
         ]
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Images
+        fields = [
+            'title',
+            'description',
+            'image'
+        ]
