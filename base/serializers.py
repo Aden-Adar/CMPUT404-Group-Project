@@ -53,6 +53,7 @@ class PostSerializer(serializers.ModelSerializer):
             "unlisted"
         ]
 
+
     def create(self, validated_data):
 
         private_post_viewer = validated_data.pop("private_post_viewer")
@@ -77,3 +78,12 @@ class PostSerializer(serializers.ModelSerializer):
 
 
         return obj
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Images
+        fields = [
+            'title',
+            'description',
+            'image'
+        ]
