@@ -30,12 +30,12 @@ class PrivatePostViewerSerializer(serializers.ModelSerializer):
             'viewer_id'
         ]
 
-    def create(self, validated_data):
-        print("Validated Data (last): ", validated_data)
-        print(validated_data)
-        PrivatePostViewer.objects.create(post_id=validated_data['post_id'], viewer_id=validated_data['viewer_id'] )
+    # def create(self, validated_data):
+    #     print("Validated Data (last): ", validated_data)
+    #     print(validated_data)
+    #     PrivatePostViewer.objects.create(post_id=validated_data['post_id'], viewer_id=validated_data['viewer_id'] )
 
-        return validated_data
+    #     return validated_data
 
 class PostSerializer(serializers.ModelSerializer):
     private_post_viewer = serializers.IntegerField(write_only=True)

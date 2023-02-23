@@ -58,19 +58,21 @@ class PostMixinView(mixins.ListModelMixin,
         qs = super().get_queryset(*args, **kwargs)
         request = self.request
 
-        # Staff users can view all posts
+        # Staff users can access all posts
         if request.user.is_staff:
             return qs
 
-        # Unauthenticated user can only view public posts  
-        if not request.user.is_authenticated:
-            return qs.filter(post_visibility='P') 
-        
-        filtered_qs = qs.filter(Q(post_visibility='P') | Q(user_id=request.user.id))
-        viewable_post_ids = list(PrivatePostViewer.objects.all().filter(viewer_id=request.user.id).values_list('post_id', flat=True))
-        
+        # TODO: Make sure other author's public posts cannot be modified
+        filtered_qs = qs.filter(user_id=request.user.id)
+
+        viewable_private_post_ids = list(PrivatePostViewer.objects.all().filter(viewer_id=request.user.id).values_list('post_id', flat=True))
+
         if request.method == "GET":
-            filtered_qs = filtered_qs | qs.filter(pk__in=viewable_post_ids)
+            # Unauthenticated user can only view public posts
+            if not request.user.is_authenticated:
+                return qs.filter(post_visibility='P')
+
+            filtered_qs = filtered_qs | qs.filter(post_visibility='P') | qs.filter(pk__in=viewable_private_post_ids)
             pk =  self.kwargs.get('pk')
             if pk is not None: 
                 return filtered_qs # Detail post query
