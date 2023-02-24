@@ -9,8 +9,10 @@ class TokenAuthSupportCookie(BaseTokenAuth):
     def authenticate(self, request):
         # Check if 'auth_token' is in the request cookies.
         # Give precedence to 'Authorization' header.
-        if 'auth_token' in request.COOKIES:
-            return self.authenticate_credentials(
-                urllib.parse.unquote_plus(request.COOKIES.get('auth_token'))
-            )
-        return super().authenticate(request)
+
+        try: # Will authenticate a valid token stored in cookie
+            if 'auth_token' in request.COOKIES:
+                return self.authenticate_credentials(
+                urllib.parse.unquote_plus(request.COOKIES.get('auth_token')))
+        except:
+            return super().authenticate(request) # Will authenticate via Authorization header (or return None when no authentication is provided)
