@@ -64,23 +64,31 @@ class PrivatePostViewer(models.Model):
     post_id = models.ForeignKey(Posts, null=True, on_delete=models.SET_NULL, unique=True)
     viewer_id = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL)
 
-'''
 
--- Comments
+
+""" -- Comments
 Description: This is the model for a comment created by Author within a Posts
 PRIMARY KEY: comment_id
-FOREIGN KEYS: user, post
+FOREIGN KEYS: user, post """
 
 class Comments(models.Model):
-    comment_id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
+    class ContentType(models.TextChoices):
+        PLAIN = 'text/plain'
+        MARKDOWN = 'text/markdown'
+        BASE64 = 'application/base64'
+        PNG = 'image/png;base64'
+        JPEG = 'image/jpeg;base64'
+    #Use django auto-generated id
+    #comment_id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     post = models.ForeignKey(Posts, on_delete=models.CASCADE)
     parent_comment_id = models.IntegerField(default = (-1))
-    content_type = models.CharField(max_length=200)
-    published = models.TimeField()
-    content = models.TextField(max_length=300,editable=True)
+    content_type = models.CharField(max_length=200, choices=ContentType.choices, default=ContentType.PLAIN)
+    published = models.TimeField(auto_now_add=True)
+    content = models.TextField(max_length=301,editable=True)
 
-
+    
+'''
 -- CommentLikes
 Description:
 PRIMARY KEY: indexes

@@ -102,3 +102,25 @@ class PostMixinView(mixins.ListModelMixin,
 class ImageView(generics.ListCreateAPIView):
     queryset = Images.objects.all()
     serializer_class = ImageSerializer
+
+class CommentView(mixins.ListModelMixin,
+                    mixins.CreateModelMixin,
+                    mixins.RetrieveModelMixin,
+                    mixins.DestroyModelMixin,
+                    mixins.UpdateModelMixin,
+                    generics.GenericAPIView):
+    queryset = Comments.objects.all()
+    serializer_class = CommentSerializer
+    lookup_field = 'pk'
+
+    def get (self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post (self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def delete (self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+    def put (self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)

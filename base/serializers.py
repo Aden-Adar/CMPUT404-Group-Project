@@ -87,3 +87,22 @@ class ImageSerializer(serializers.ModelSerializer):
             'description',
             'image'
         ]
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta: 
+        model = Comments
+        fields = [
+            'user',
+            'post',
+            'parent_comment_id',
+            'content_type',
+            'published',
+            'content'
+        ]
+
+    """   user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    post = models.ForeignKey(Posts, on_delete=models.CASCADE)
+    parent_comment_id = models.IntegerField(default = (-1))
+    content_type = models.CharField(max_length=200, choices=ContentType.choices, default=ContentType.PLAIN)
+    published = models.TimeField(auto_now_add=True)
+    content = models.TextField(max_length=301,editable=True) """
