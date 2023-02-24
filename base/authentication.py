@@ -6,6 +6,8 @@ class TokenAuthSupportCookie(BaseTokenAuth):
     """
     Extend the TokenAuthentication class to support cookie based authentication
     """
+    keyword = "Basic"
+
     def authenticate(self, request):
         # Check if 'auth_token' is in the request cookies.
         # Give precedence to 'Authorization' header.
