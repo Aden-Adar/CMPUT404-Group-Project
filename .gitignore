@@ -19,9 +19,11 @@
 .env.development.local
 .env.test.local
 .env.production.local
+db.sqlite3
 
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 __pycache__/
 *.py[cod]
+venv/
