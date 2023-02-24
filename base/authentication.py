@@ -15,4 +15,6 @@ class TokenAuthSupportCookie(BaseTokenAuth):
                 return self.authenticate_credentials(
                 urllib.parse.unquote_plus(request.COOKIES.get('auth_token')))
         except:
-            return super().authenticate(request) # Will authenticate via Authorization header (or return None when no authentication is provided)
+            pass
+
+        return super().authenticate(request)# Will authenticate via Authorization header (or return None when no authentication is provided)
