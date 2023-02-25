@@ -39,9 +39,9 @@ class CustomUser(AbstractUser, PermissionsMixin):
 
 class Posts(models.Model):
     class Visibility(models.TextChoices):
-        PUBLIC = 'P'
-        FRIENDS = 'F'
-        PRIVATE = 'V'
+        PUBLIC = 'PUBLIC'
+        FRIENDS = 'FRIENDS'
+        PRIVATE = 'PRIVATE'
     
     class ContentType(models.TextChoices):
         PLAIN = 'text/plain'
@@ -51,18 +51,19 @@ class Posts(models.Model):
         JPEG = 'image/jpeg;base64'
     
     # Choices for visibility
-    post_visibility = models.CharField(max_length=1,choices=Visibility.choices,default=Visibility.PRIVATE)
-    user_id = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL) #on_delete=models.CASCADE
-    # post_id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
-    published = models.TimeField(auto_now_add=True)
+    post_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    post_visibility = models.CharField(max_length=7,choices=Visibility.choices,default=Visibility.PRIVATE)
+    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    published = models.DateTimeField(auto_now_add=True)
     content_type = models.CharField(max_length=200, choices=ContentType.choices, default=ContentType.PLAIN)
     title = models.CharField(max_length=200,editable=True)
+    description = models.CharField(max_length=200,editable=True)
     content = models.TextField(max_length=300,editable=True)
     unlisted = models.BooleanField(default=False)
 
 class PrivatePostViewer(models.Model):
-    post_id = models.ForeignKey(Posts, null=True, on_delete=models.SET_NULL, unique=True)
-    viewer_id = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL)
+    post_id = models.OneToOneField(Posts, on_delete = models.CASCADE, unique=True)
+    viewer_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
 
 
@@ -79,15 +80,14 @@ class Comments(models.Model):
         PNG = 'image/png;base64'
         JPEG = 'image/jpeg;base64'
     #Use django auto-generated id
-    #comment_id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
+    comment_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     post = models.ForeignKey(Posts, on_delete=models.CASCADE)
     parent_comment_id = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
     content_type = models.CharField(max_length=200, choices=ContentType.choices, default=ContentType.PLAIN)
-    published = models.TimeField(auto_now_add=True)
-    content = models.TextField(max_length=301,editable=True)
+    published = models.DateTimeField(auto_now_add=True)
+    comment = models.TextField(max_length=301,editable=True)
 
-    
 '''
 -- CommentLikes
 Description:
