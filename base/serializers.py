@@ -30,14 +30,6 @@ class PrivatePostViewerSerializer(serializers.ModelSerializer):
             'viewer_id'
         ]
 
-    # def create(self, validated_data):
-    #     print("Validated Data (last): ", validated_data)
-    #     print(validated_data)
-    #     PrivatePostViewer.objects.create(post_id=validated_data['post_id'], viewer_id=validated_data['viewer_id'] )
-
-    #     return validated_data
-
-
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Images
@@ -50,9 +42,11 @@ class ImageSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     parent_comment_id = serializers.IntegerField(write_only=True, required=False)
     user = serializers.SerializerMethodField(read_only=True)
+    type = serializers.SerializerMethodField(read_only=True)
     class Meta: 
         model = Comments
         fields = [
+            'type',
             'id',
             'user',
             'post',
@@ -64,6 +58,9 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_user(self, obj):
         return obj.user.id
+
+    def get_type(self, obj):
+        return "comment"
 
     def create(self, validated_data):
         try:
@@ -88,14 +85,8 @@ class CommentSerializer(serializers.ModelSerializer):
     published = models.TimeField(auto_now_add=True)
     content = models.TextField(max_length=301,editable=True) """
 
-class CommentInLineSerializer(serializers.Serializer):
-    id = serializers.CharField(read_only=True)
-    content = serializers.CharField(read_only=True)
-    content_type = serializers.CharField(read_only=True)
-    published = serializers.CharField(read_only=True)
-
 class PostSerializer(serializers.ModelSerializer):
-    comments_list = CommentSerializer(many=True, read_only=True)
+    comments_set = CommentSerializer(many=True, read_only=True) # https://docs.djangoproject.com/en/dev/topics/db/queries/#following-relationships-backward
 
     private_post_viewer = serializers.IntegerField(write_only=True, required=False)
     class Meta:
@@ -110,7 +101,7 @@ class PostSerializer(serializers.ModelSerializer):
             "title",
             "content",
             "unlisted",
-            "comments_list"
+            "comments_set"
         ]
 
 
