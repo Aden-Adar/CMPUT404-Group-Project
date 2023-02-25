@@ -74,9 +74,9 @@ class PostView(mixins.ListModelMixin,
         if request.method == "GET":
             # Unauthenticated user can only view public posts
             if not request.user.is_authenticated:
-                return qs.filter(post_visibility='PUBLIC')
+                return qs.filter(visibility='PUBLIC')
 
-            filtered_qs = filtered_qs | qs.filter(post_visibility='PUBLIC') | qs.filter(post_id__in=viewable_private_post_ids)
+            filtered_qs = filtered_qs | qs.filter(visibility='PUBLIC') | qs.filter(post_id__in=viewable_private_post_ids)
             post_id =  self.kwargs.get('post_id')
             if post_id is not None: 
                 return filtered_qs # Detail post query

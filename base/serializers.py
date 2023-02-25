@@ -122,7 +122,7 @@ class PostSerializer(serializers.ModelSerializer):
             'comments',
             "comments_list", # needs to be inside comment_src eventually
             'published',
-            'post_visibility',
+            'visibility',
             'private_post_viewer',
             "unlisted",
             "post_id"
@@ -158,11 +158,11 @@ class PostSerializer(serializers.ModelSerializer):
         try:
             private_post_viewer = validated_data.pop("private_post_viewer")
         except KeyError: # viewer_id was not passed
-            if validated_data.get('post_visibility') == 'PRIVATE':
+            if validated_data.get('visibility') == 'PRIVATE':
                 raise NotAcceptable(detail="Post cannot be set to private without providing the private post viewer id")
             obj = super().create(validated_data)
         else:
-            if validated_data.get('post_visibility') != 'PRIVATE':
+            if validated_data.get('visibility') != 'PRIVATE':
                 raise NotAcceptable(detail="Private post viewer id should only be included for private posts")
             if CustomUser.objects.filter(id=private_post_viewer).exists():
                 obj = super().create(validated_data)
