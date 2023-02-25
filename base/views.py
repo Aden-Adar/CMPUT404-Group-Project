@@ -3,6 +3,7 @@ from rest_framework import status, generics, mixins
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+import urllib.parse
 from .models import *
 from .serializers import *
 from .forms import *
@@ -42,7 +43,11 @@ class LoginView(APIView):
         if user is not None:
             login(request, user)
             token = Token.objects.get_or_create(user=user)[0].key
-            return Response({"token": token}, status=status.HTTP_200_OK)
+            response = Response()
+            response.set_cookie(key="auth_token", value=token, httponly=True, samesite='Strict')
+            response.data = {"Success" : "Login successful"}
+            response.status_code = status.HTTP_200_OK
+            return response
 
 class PostMixinView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,

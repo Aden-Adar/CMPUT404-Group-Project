@@ -38,7 +38,7 @@ class PrivatePostViewerSerializer(serializers.ModelSerializer):
     #     return validated_data
 
 class PostSerializer(serializers.ModelSerializer):
-    private_post_viewer = serializers.IntegerField(write_only=True)
+    private_post_viewer = serializers.IntegerField(write_only=True, required=False)
     class Meta:
         model = Posts
         fields = [
@@ -55,27 +55,43 @@ class PostSerializer(serializers.ModelSerializer):
 
 
     def create(self, validated_data):
-
-        private_post_viewer = validated_data.pop("private_post_viewer")
-        obj = super().create(validated_data)
-
-        private_post_viewer_serializer = PrivatePostViewerSerializer(data=[{
-                "post_id": obj.id,
-                "viewer_id" : private_post_viewer
-            }]
-            , many=True)
-
-        if validated_data.get('post_visibility') == 'V':
+        try:
+            private_post_viewer = validated_data.pop("private_post_viewer")
+        except KeyError: # viewer_id was not passed
+            if validated_data.get('post_visibility') == 'V':
+                raise NotAcceptable(detail="Post cannot be set to private without providing the private post viewer id")
+            obj = super().create(validated_data)
+        else:
+            if validated_data.get('post_visibility') != 'V':
+                raise NotAcceptable(detail="Private post viewer id should only be included for private posts")
             if CustomUser.objects.filter(id=private_post_viewer).exists():
+                obj = super().create(validated_data)
+                private_post_viewer_serializer = PrivatePostViewerSerializer(data=[{
+                        "post_id": obj.id,
+                        "viewer_id" : private_post_viewer
+                    }]
+                    , many=True)
                 if private_post_viewer_serializer.is_valid():
                     private_post_viewer_serializer.save()
                 else:
+                    obj.delete()
                     raise ValidationError()
             else:
                 raise NotAcceptable(detail="User does not exist")
-        else:
-            NotAcceptable(detail="Visibility must be set to private when including viewer id")
 
+        return obj
+
+        # print("private post viewer: ",private_post_viewer, "\nWith type: ", type(private_post_viewer))
+        # if validated_data.get('post_visibility') == 'V' and private_post_viewer:
+        #     if CustomUser.objects.filter(id=private_post_viewer).exists():
+        #         if private_post_viewer_serializer.is_valid():
+        #             private_post_viewer_serializer.save()
+        #         else:
+        #             raise ValidationError()
+        #     else:
+        #         raise NotAcceptable(detail="User does not exist")
+        # else:
+        #     raise NotAcceptable(detail="Visibility must be set to private when including viewer id")
 
         return obj
 
