@@ -82,7 +82,7 @@ class Comments(models.Model):
     #comment_id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     post = models.ForeignKey(Posts, on_delete=models.CASCADE)
-    parent_comment_id = models.IntegerField(default = (-1))
+    parent_comment_id = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
     content_type = models.CharField(max_length=200, choices=ContentType.choices, default=ContentType.PLAIN)
     published = models.TimeField(auto_now_add=True)
     content = models.TextField(max_length=301,editable=True)

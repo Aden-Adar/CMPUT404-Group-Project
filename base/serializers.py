@@ -37,7 +37,66 @@ class PrivatePostViewerSerializer(serializers.ModelSerializer):
 
     #     return validated_data
 
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Images
+        fields = [
+            'title',
+            'description',
+            'image'
+        ]
+
+class CommentSerializer(serializers.ModelSerializer):
+    parent_comment_id = serializers.IntegerField(write_only=True, required=False)
+    user = serializers.SerializerMethodField(read_only=True)
+    class Meta: 
+        model = Comments
+        fields = [
+            'id',
+            'user',
+            'post',
+            'parent_comment_id',
+            'content_type',
+            'published',
+            'content'
+        ]
+
+    def get_user(self, obj):
+        return obj.user.id
+
+    def create(self, validated_data):
+        try:
+            parent_comment_id = validated_data.pop("parent_comment_id")
+        except KeyError: # private_post_viewer was not passed
+            obj = super().create(validated_data)
+            return obj
+        else:
+            parent_comment = Comments.objects.all().filter(pk=parent_comment_id).first()
+            if parent_comment:
+                validated_data["parent_comment_id"] = parent_comment
+                obj = super().create(validated_data)
+                return obj
+            else:
+                raise NotAcceptable(detail="Parent comment id does not exist")
+
+
+    """   user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    post = models.ForeignKey(Posts, on_delete=models.CASCADE)
+    parent_comment_id = models.IntegerField(default = (-1))
+    content_type = models.CharField(max_length=200, choices=ContentType.choices, default=ContentType.PLAIN)
+    published = models.TimeField(auto_now_add=True)
+    content = models.TextField(max_length=301,editable=True) """
+
+class CommentInLineSerializer(serializers.Serializer):
+    id = serializers.CharField(read_only=True)
+    content = serializers.CharField(read_only=True)
+    content_type = serializers.CharField(read_only=True)
+    published = serializers.CharField(read_only=True)
+
 class PostSerializer(serializers.ModelSerializer):
+    comments_list = CommentSerializer(many=True, read_only=True)
+
     private_post_viewer = serializers.IntegerField(write_only=True, required=False)
     class Meta:
         model = Posts
@@ -50,7 +109,8 @@ class PostSerializer(serializers.ModelSerializer):
             'content_type',
             "title",
             "content",
-            "unlisted"
+            "unlisted",
+            "comments_list"
         ]
 
 
@@ -80,45 +140,3 @@ class PostSerializer(serializers.ModelSerializer):
                 raise NotAcceptable(detail="User does not exist")
 
         return obj
-
-        # print("private post viewer: ",private_post_viewer, "\nWith type: ", type(private_post_viewer))
-        # if validated_data.get('post_visibility') == 'V' and private_post_viewer:
-        #     if CustomUser.objects.filter(id=private_post_viewer).exists():
-        #         if private_post_viewer_serializer.is_valid():
-        #             private_post_viewer_serializer.save()
-        #         else:
-        #             raise ValidationError()
-        #     else:
-        #         raise NotAcceptable(detail="User does not exist")
-        # else:
-        #     raise NotAcceptable(detail="Visibility must be set to private when including viewer id")
-
-        return obj
-
-class ImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Images
-        fields = [
-            'title',
-            'description',
-            'image'
-        ]
-
-class CommentSerializer(serializers.ModelSerializer):
-    class Meta: 
-        model = Comments
-        fields = [
-            'user',
-            'post',
-            'parent_comment_id',
-            'content_type',
-            'published',
-            'content'
-        ]
-
-    """   user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    post = models.ForeignKey(Posts, on_delete=models.CASCADE)
-    parent_comment_id = models.IntegerField(default = (-1))
-    content_type = models.CharField(max_length=200, choices=ContentType.choices, default=ContentType.PLAIN)
-    published = models.TimeField(auto_now_add=True)
-    content = models.TextField(max_length=301,editable=True) """

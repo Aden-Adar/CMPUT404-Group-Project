@@ -45,7 +45,7 @@ class LoginView(APIView):
             token = Token.objects.get_or_create(user=user)[0].key
             response = Response()
             response.set_cookie(key="auth_token", value=token, httponly=True, samesite='Strict')
-            response.data = {"Success" : "Login successful"}
+            response.data = {"Success" : "Login successful", "token" : token}
             response.status_code = status.HTTP_200_OK
             return response
 
@@ -116,12 +116,35 @@ class CommentView(mixins.ListModelMixin,
                     generics.GenericAPIView):
     queryset = Comments.objects.all()
     serializer_class = CommentSerializer
-    lookup_field = 'pk'
+    lookup_field = 'id'
 
-    def get (self, request, *args, **kwargs):
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        request = self.request
+
+        # Staff users can access all posts
+        if request.user.is_staff:
+            return qs
+
+        if request.method == "GET":
+            # Unauthenticated user can only view public posts
+            filtered_qs = qs.filter(post=self.kwargs["pk"])
+            return filtered_qs        
+        else:
+            filtered_qs = qs.filter(user=request.user.id)
+
+        return filtered_qs
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('id')
+        if pk is not None:
+            return self.retrieve(request, *args, **kwargs)
         return self.list(request, *args, **kwargs)
 
-    def post (self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
     def delete (self, request, *args, **kwargs):
