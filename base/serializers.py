@@ -207,10 +207,6 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
     def get_type(self, obj):
         return "author"
 
-    """ def get_host(self,obj):
-        request = self.context.get('request')
-        return reverse("post-detail", kwargs = {"post_id": obj.post_id}, request=request)
- """
         
 class ListAllAuthorSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField(read_only=True)
@@ -223,19 +219,9 @@ class ListAllAuthorSerializer(serializers.ModelSerializer):
             'items'
         ]
 
-    def get_type(self, obj):
-        return "author"
+
 
     
-    """ def get_items(self,obj):
-        temp = []
-        data = CustomUser.objects.all()
-        
-        print (data)
-        for t in data:
-            temp.append(t.username)
-
-        return temp
-        #return SingleAuthorSerializer(many=True, read_only=True).data """
+    
 
  
