@@ -8,7 +8,9 @@ urlpatterns = [
     path("login/", views.LoginView.as_view(), name="login"),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
     path("useless/", views.UselessView.as_view(), name="useless"),
-    path("posts/", views.PostMixinView.as_view()),
-    path("posts/<int:pk>/", views.PostMixinView.as_view()),
+    path("posts/", views.PostView.as_view(), name="posts-list"),
+    path("posts/<uuid:post_id>/", views.PostView.as_view(), name="post-detail"),
+    path("posts/<uuid:post_id>/comments/",views.CommentView.as_view(), name="comments-list"),
+    path("posts/<uuid:post_id>/comments/<uuid:comment_id>/",views.CommentView.as_view(), name="comment-detail"),
     path("imgupload/",views.ImageView.as_view())
 ] + static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT_IMAGE)
