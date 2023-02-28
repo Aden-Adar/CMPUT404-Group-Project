@@ -2,6 +2,8 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 from .models import *
 from rest_framework.exceptions import NotAcceptable, ValidationError
+import socket
+
 
 class CreateAccountSerializer(serializers.ModelSerializer):
     
@@ -180,3 +182,46 @@ class PostSerializer(serializers.ModelSerializer):
                 raise NotAcceptable(detail="User does not exist")
 
         return obj
+
+class ListAllAuthorSerializer(serializers.ModelSerializer):
+    type = serializers.SerializerMethodField(read_only=True)
+    items = serializers.SerializerMethodField(read_only=True)
+    class Meta:
+        model = CustomUser
+        fields = [
+            'type',
+            'items'
+        ]
+
+    def get_type(self, obj):
+        return "author"
+
+    def get_items(self,obj):
+
+        temp_list = ["user1", "user2", "user3"]
+
+        return temp_list
+
+class SingleAuthorSerializer(serializers.ModelSerializer):
+    type = serializers.SerializerMethodField(read_only=True)
+    #id = serializers.SerializerMethodField(read_only=True)
+    host = serializers.SerializerMethodField(read_only=True)
+    #url = serializers.SerializerMethodField(read_only=True)
+    class Meta:
+        model = CustomUser
+        fields = [
+            'type',
+            #'id',
+            #'url',
+            'host',
+            'username',
+            'github'
+            #'profileImage' *** to be added later
+        ]
+
+    def get_type(self, obj):
+        return "author"
+
+    def get_host(self,obj):
+        return socket.gethostbyaddr("127.0.0.1")
+        

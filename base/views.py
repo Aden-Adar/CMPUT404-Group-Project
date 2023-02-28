@@ -9,6 +9,7 @@ from .serializers import *
 from .forms import *
 from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout
+import socket
 
 # only for testing purposes
 class UselessView(APIView):
@@ -149,3 +150,35 @@ class CommentView(mixins.ListModelMixin,
 
     def put (self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+
+class AllAuthorView(mixins.ListModelMixin,
+                    mixins.CreateModelMixin,
+                    mixins.RetrieveModelMixin,
+                    mixins.DestroyModelMixin,
+                    mixins.UpdateModelMixin,
+                    generics.GenericAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = ListAllAuthorSerializer
+    #slookup_field = 'author_id'
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+class SingleAuthorView(mixins.ListModelMixin,
+                    mixins.CreateModelMixin,
+                    mixins.RetrieveModelMixin,
+                    mixins.DestroyModelMixin,
+                    mixins.UpdateModelMixin,
+                    generics.GenericAPIView):
+
+    queryset = CustomUser.objects.all()
+    serializer_class = SingleAuthorSerializer
+    lookup_field = 'id'
+
+    def get(self, request, *args, **kwargs):
+        author_id = kwargs.get('id')
+        if author_id is not None:
+            return self.retrieve(request, *args, **kwargs)
+        return self.list(request, *args, **kwargs)
+
+        
