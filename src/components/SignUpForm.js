@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import {useNavigate} from 'react-router-dom';
+import React from 'react';
 export default function Form() {
 
 // States for registration
@@ -39,6 +41,15 @@ setError(false);
 }
 };
 
+const navigate = useNavigate();
+
+const navigateToSignIn = () => {
+    navigate('/');
+  };
+
+const navigateToSignUp = () => {
+    navigate('/signup');
+  };
 // Showing success message
 const successMessage = () => {
 return (

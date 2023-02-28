@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Link } from "react-router-dom";
+import React from 'react';
 export default function Form() {
 
 // States for registration
@@ -94,6 +96,9 @@ value={password} type="password" />
 <button onClick={handleSubmit} className="btn" type="submit">
 Sign in
 </button>
+<Link to="/signup"> <button  className="btn" type="button">
+New here? Sign up
+</button></Link> 
 </form>
 </div>
 );
