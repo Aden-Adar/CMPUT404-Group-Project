@@ -3,6 +3,8 @@ from rest_framework.reverse import reverse
 from .models import *
 from rest_framework.exceptions import NotAcceptable, ValidationError
 import socket
+from django.http import JsonResponse
+from django.forms.models import model_to_dict
 
 
 class CreateAccountSerializer(serializers.ModelSerializer):
@@ -183,9 +185,37 @@ class PostSerializer(serializers.ModelSerializer):
 
         return obj
 
+
+
+class SingleAuthorSerializer(serializers.ModelSerializer):
+    type = serializers.SerializerMethodField(read_only=True)
+    #id = serializers.SerializerMethodField(read_only=True)
+    #host = serializers.SerializerMethodField(read_only=True)
+    #url = serializers.SerializerMethodField(read_only=True)
+    class Meta:
+        model = CustomUser
+        fields = [
+            'type',
+            #'id',
+            #'url',
+            #'host',
+            'username',
+            'github'
+            #'profileImage' *** to be added later
+        ]
+
+    def get_type(self, obj):
+        return "author"
+
+    """ def get_host(self,obj):
+        request = self.context.get('request')
+        return reverse("post-detail", kwargs = {"post_id": obj.post_id}, request=request)
+ """
+        
 class ListAllAuthorSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField(read_only=True)
-    items = serializers.SerializerMethodField(read_only=True)
+    #items = serializers.SerializerMethodField(read_only=True)
+    items = SingleAuthorSerializer(many=True, read_only=True)
     class Meta:
         model = CustomUser
         fields = [
@@ -196,32 +226,16 @@ class ListAllAuthorSerializer(serializers.ModelSerializer):
     def get_type(self, obj):
         return "author"
 
-    def get_items(self,obj):
-
-        temp_list = ["user1", "user2", "user3"]
-
-        return temp_list
-
-class SingleAuthorSerializer(serializers.ModelSerializer):
-    type = serializers.SerializerMethodField(read_only=True)
-    #id = serializers.SerializerMethodField(read_only=True)
-    host = serializers.SerializerMethodField(read_only=True)
-    #url = serializers.SerializerMethodField(read_only=True)
-    class Meta:
-        model = CustomUser
-        fields = [
-            'type',
-            #'id',
-            #'url',
-            'host',
-            'username',
-            'github'
-            #'profileImage' *** to be added later
-        ]
-
-    def get_type(self, obj):
-        return "author"
-
-    def get_host(self,obj):
-        return socket.gethostbyaddr("127.0.0.1")
+    
+    """ def get_items(self,obj):
+        temp = []
+        data = CustomUser.objects.all()
         
+        print (data)
+        for t in data:
+            temp.append(t.username)
+
+        return temp
+        #return SingleAuthorSerializer(many=True, read_only=True).data """
+
+ 

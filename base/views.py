@@ -151,18 +151,7 @@ class CommentView(mixins.ListModelMixin,
     def put (self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 
-class AllAuthorView(mixins.ListModelMixin,
-                    mixins.CreateModelMixin,
-                    mixins.RetrieveModelMixin,
-                    mixins.DestroyModelMixin,
-                    mixins.UpdateModelMixin,
-                    generics.GenericAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = ListAllAuthorSerializer
-    #slookup_field = 'author_id'
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
 
 class SingleAuthorView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
@@ -181,4 +170,34 @@ class SingleAuthorView(mixins.ListModelMixin,
             return self.retrieve(request, *args, **kwargs)
         return self.list(request, *args, **kwargs)
 
-        
+""" class AllAuthorView(mixins.ListModelMixin,
+                    mixins.CreateModelMixin,
+                    mixins.RetrieveModelMixin,
+                    mixins.DestroyModelMixin,
+                    mixins.UpdateModelMixin,
+                    generics.GenericAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = ListAllAuthorSerializer
+    lookup_field = 'pk'
+
+    def get_queryset(self):
+        user = self.request.user
+        req_s = 
+
+    def get(self, request, *args, **kwargs):
+        #""" #users = CustomUser.objects.all()
+        #request = ListAllAuthorSerializer(instance=users)
+        #data = request.save
+        #print("lol:",users) """
+        #return self.list(request, *args, **kwargs)
+        #return data  """
+
+#https://stackoverflow.com/questions/73522898/how-i-can-use-nested-serializer-in-django-rest-framework
+class AllAuthorView(generics.RetrieveAPIView):
+    def get(self,request,*args,**kwargs):
+        qs = CustomUser.objects.all()
+        data = {
+            "type":"authors",
+            "items": SingleAuthorSerializer(qs,many=True,context={"request":request}).data,
+        }
+        return Response(data=data)
