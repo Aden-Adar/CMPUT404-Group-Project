@@ -95,9 +95,10 @@ value={email} type="email" /> */}
 <input onChange={handlePassword} className="input"
 value={password} type="password" />
 
-<button onClick={handleSubmit} className="btn" type="submit">
-Sign in
-</button>
+<Link to="/main"> <button className="btn" type="button">
+Sign in 
+</button> </Link>
+{successMessage}
 <Link to="/signup"> <button  className="btn" type="button">
 New here? Sign up
 </button></Link> 

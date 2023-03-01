@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import {useNavigate} from 'react-router-dom';
+import { Link } from "react-router-dom";
 import React from 'react';
 export default function Form() {
 
@@ -107,6 +108,9 @@ value={password} type="password" />
 <button onClick={handleSubmit} className="btn" type="submit">
 Sign up
 </button>
+<Link to="/"> <button  className="btn" type="button">
+Already signed up? Sign in now!
+</button></Link> 
 </form>
 </div>
 );
