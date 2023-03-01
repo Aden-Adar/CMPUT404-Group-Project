@@ -15,4 +15,4 @@ urlpatterns = [
     path("imgupload/",views.ImageView.as_view()),
     path("authors/<int:id>/",views.SingleAuthorView.as_view()),
     path("authors/",views.AllAuthorView.as_view())
-] + static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT_IMAGE)
+] + static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
