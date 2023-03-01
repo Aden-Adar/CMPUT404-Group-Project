@@ -17,6 +17,6 @@ urlpatterns = [
     path('posts/<uuid:post_id>/comments/<uuid:comment_id>/likes/', views.CommentLikesView.as_view(), name="comment-likes-list"),
 
     path("imgupload/",views.ImageView.as_view()),
-    path("authors/<int:id>/",views.SingleAuthorView.as_view()),
-    path("authors/",views.AllAuthorView.as_view())
+    path("authors/<uuid:id>/",views.SingleAuthorView.as_view(), name="author-detail"),
+    path("authors/",views.AllAuthorView.as_view(), name="author-list")
 ] + static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
