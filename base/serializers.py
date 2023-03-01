@@ -2,6 +2,10 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 from .models import *
 from rest_framework.exceptions import NotAcceptable, ValidationError
+import socket
+from django.http import JsonResponse
+from django.forms.models import model_to_dict
+
 
 class CreateAccountSerializer(serializers.ModelSerializer):
     
@@ -103,7 +107,7 @@ class PostSerializer(serializers.ModelSerializer):
     origin = serializers.SerializerMethodField(read_only=True)
     author = serializers.SerializerMethodField(read_only=True)
     comments = serializers.SerializerMethodField(read_only=True)
-    comments_list = serializers.SerializerMethodField(read_only=True)
+    comments_set = CommentSerializer(many=True, read_only=True) # add '_set' after the child model name
     id = serializers.SerializerMethodField(read_only=True)
     published = serializers.SerializerMethodField(read_only=True)
 
@@ -120,7 +124,7 @@ class PostSerializer(serializers.ModelSerializer):
             "content",
             'author', # need a serializer for author
             'comments',
-            "comments_list", # needs to be inside comment_src eventually
+            "comments_set", # needs to be inside comment_src eventually
             'published',
             'visibility',
             'private_post_viewer',
@@ -167,7 +171,7 @@ class PostSerializer(serializers.ModelSerializer):
             if CustomUser.objects.filter(id=private_post_viewer).exists():
                 obj = super().create(validated_data)
                 private_post_viewer_serializer = PrivatePostViewerSerializer(data=[{
-                        "post_id": obj.id,
+                        "post_id": obj.post_id,
                         "viewer_id" : private_post_viewer
                     }]
                     , many=True)
@@ -180,3 +184,89 @@ class PostSerializer(serializers.ModelSerializer):
                 raise NotAcceptable(detail="User does not exist")
 
         return obj
+
+
+
+class SingleAuthorSerializer(serializers.ModelSerializer):
+    type = serializers.SerializerMethodField(read_only=True)
+    id = serializers.SerializerMethodField(read_only=True)
+    host = serializers.SerializerMethodField(read_only=True)
+    url = serializers.SerializerMethodField(read_only=True)
+    class Meta:
+        model = CustomUser
+        fields = [
+            'type',
+            'id',
+            'url',
+            'host', # Need to look at this again
+            'username',
+            'github'
+            #'profileImage' *** to be added later
+        ]
+
+    def get_type(self, obj):
+        return "author"
+    def get_id(self, obj):
+        return obj.id
+    def get_url(self, obj):
+        request = self.context.get('request')
+        return reverse("author-detail", kwargs = {"id": obj.id}, request=request)
+    def get_host(self, obj):
+        request = self.context.get('request')
+        origin = request.META.get("HTTP_HOST")
+        return origin
+
+class ListAllAuthorSerializer(serializers.ModelSerializer):
+    type = serializers.SerializerMethodField(read_only=True)
+    #items = serializers.SerializerMethodField(read_only=True)
+    items = SingleAuthorSerializer(many=True, read_only=True)
+    class Meta:
+        model = CustomUser
+        fields = [
+            'type',
+            'items'
+        ]
+
+class LikesSerializer(serializers.ModelSerializer):
+    context = serializers.SerializerMethodField(read_only=True)
+    summary =  serializers.SerializerMethodField(read_only=True)
+    type =  serializers.SerializerMethodField(read_only=True)
+    author =  SingleAuthorSerializer(source="author_id", read_only=True)
+    object =  serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Likes
+        fields = [
+            'context',
+            'summary',
+            'type',
+            'author',
+            'object'
+        ]
+
+    def create(self, validated_data):
+        # print(validated_data)
+        # print("Condition is: ", Likes.objects.all().filter(post_id=validated_data.get("post_id"), author_id=validated_data.get("author_id")).values("comment_id"))
+        if Likes.objects.all().filter(comment_id=validated_data.get("comment_id"), author_id=validated_data.get("author_id"), post_id=validated_data.get("post_id")).exists():
+            raise NotAcceptable(detail="Cannot like more than once")
+
+        obj = super().create(validated_data)
+        return obj
+
+    def get_context(self, obj):
+        return None
+
+    def get_summary(self, obj):
+        author_username = obj.author_id.username
+        return f"{author_username} Likes your post"
+    
+    def get_type(self, obj):
+        return "Like"
+
+    def get_object(self, obj):
+        request = self.context.get('request')
+        if obj.post_id:
+            return reverse("post-detail", kwargs = {"post_id": obj.post_id.post_id}, request=request)
+        else:
+            return reverse("comment-detail", kwargs = {"post_id": obj.comment_id.post.post_id,
+                                                        "comment_id": obj.comment_id.comment_id }, request=request)
