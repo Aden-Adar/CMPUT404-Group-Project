@@ -13,8 +13,8 @@ urlpatterns = [
     path("posts/<uuid:post_id>/comments/",views.CommentView.as_view(), name="comments-list"),
     path("posts/<uuid:post_id>/comments/<uuid:comment_id>/",views.CommentView.as_view(), name="comment-detail"),
 
-    path('posts/<uuid:post_id>/likes/', views.LikesView.as_view(), name="likes-list"),
-
+    path('posts/<uuid:post_id>/likes/', views.PostLikesView.as_view(), name="post-likes-list"),
+    path('posts/<uuid:post_id>/comments/<uuid:comment_id>/likes/', views.CommentLikesView.as_view(), name="comment-likes-list"),
 
     path("imgupload/",views.ImageView.as_view()),
     path("authors/<int:id>/",views.SingleAuthorView.as_view()),
