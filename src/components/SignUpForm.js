@@ -82,7 +82,7 @@ display: error ? '' : 'none',
 return (
 <div className="form">
 <div>
-<h1>User Registration</h1>
+<h1>Create an Account</h1>
 </div>
 
 {/* Calling to the methods */}
