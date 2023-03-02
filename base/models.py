@@ -16,11 +16,12 @@ PRIMARY KEY: author_id
 FOREIGN KEYS:
 '''
 class CustomUser(AbstractUser, PermissionsMixin):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length = 50, blank = True, null = True, unique = True)
     email = None
     password = models.CharField(max_length=200)
     github = models.CharField(max_length=200)
-    #profile_image = models.CharField(max_length=200) https://www.geeksforgeeks.org/imagefield-django-models/
+    # profile_image = models.CharField(max_length=200) https://www.geeksforgeeks.org/imagefield-django-models/
     password = models.CharField(max_length=200)
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ["password"]    
@@ -88,21 +89,18 @@ class Comments(models.Model):
     published = models.DateTimeField(auto_now_add=True)
     comment = models.TextField(max_length=301,editable=True)
 
-'''
--- CommentLikes
+
+"""-- Likes
 Description:
 PRIMARY KEY: indexes
-FOREIGN KEYS: comment_id, author_id
+FOREIGN KEYS: comment_id, author_id"""
 
-class CommentLikes(models.Model):
-    comment_id = models.ForeignKey(Comments,on_delete=models.CASCADE)
-    #author_id = models.ForeignKey(Author,on_delete=models.CASCADE) # what is this refering to?
-    like = models.BooleanField(default=False)
-    indexes = [
-        models.Index(fields=['comment_id','author_id'])
-    ]
+class Likes(models.Model):
+    comment_id = models.ForeignKey(Comments,on_delete=models.CASCADE, null=True, blank=True)
+    author_id = models.ForeignKey(CustomUser,on_delete=models.CASCADE) # Author who liked the post
+    post_id = models.ForeignKey(Posts, on_delete=models.CASCADE, null=True, blank=True)
 
-
+'''
 -- Followers
 Description: Followers of a user
 PRIMARY KEY: indexes
@@ -118,6 +116,7 @@ class Followers(models.Model):
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+
 '''
 
 class Images(models.Model):
