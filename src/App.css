@@ -1,8 +1,20 @@
+/*
 .App {
   text-align: center;
-  background-color: rgb(91, 174, 202);
-  }
+  background-color: rgb(91, 174, 202); 
+  background-image: url('https://png.pngtree.com/thumb_back/fh260/background/20201026/pngtree-futuristic-shape-abstract-background-chemistry-technology-concept-for-website-image_438818.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  } */
+
+  body {
+    text-align: center;
+    background-image: url('./bg-image.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
   
+  }
+
   .label{
   display: block;
   font-size: larger;
@@ -52,6 +64,8 @@
   height: 40vmin;
   pointer-events: none;
 }
+
+
 
 /* @media (prefers-reduced-motion: no-preference) {
   .App-logo {

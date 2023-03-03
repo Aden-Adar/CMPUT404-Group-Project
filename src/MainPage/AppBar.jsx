@@ -1,5 +1,7 @@
 import * as React from 'react';
 import AppBar from '@material-ui/core/AppBar';
+import { makeStyles } from '@material-ui/core/styles';
+import { Link } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -13,10 +15,21 @@ import Tooltip from '@material-ui/core/Tooltip';
 import MenuItem from '@material-ui/core/MenuItem';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 // import AdbIcon from '@material-ui/icons/AdbIcon';
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Dashboard','Profile', 'Friends', 'Logout'];
+
+const useStyles = makeStyles((theme) => ({
+  appBar: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+  },
+}));
 
 function ResponsiveAppBar() {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const classes = useStyles();
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -27,7 +40,7 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" className={classes.appBar}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} /> */}
@@ -70,11 +83,19 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+               <MenuItem onClick={handleCloseUserMenu} component={Link} to="/main">
+                <Typography textAlign="center">Dashboard</Typography>
+              </MenuItem>
+                <MenuItem onClick={handleCloseUserMenu} component={Link} to="/profile">
+                <Typography textAlign="center">Profile</Typography>
+              </MenuItem>
+              <MenuItem onClick={handleCloseUserMenu} component={Link} to="/friends">
+                <Typography textAlign="center">Friends</Typography>
+              </MenuItem>
+             
+              <MenuItem onClick={handleCloseUserMenu} component={Link} to="/">
+                <Typography textAlign="center">Logout</Typography>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
