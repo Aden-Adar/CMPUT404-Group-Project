@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import *
 from django.contrib.auth.admin import UserAdmin
+
+from authors.models import CustomUser
 from .forms import UserChangeForm, UserCreationForm
 
 

@@ -39,12 +39,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'base.apps.BaseConfig',
     'rest_framework',
     'rest_framework.authtoken', #https://www.django-rest-framework.org/api-guide/authentication/
+    'authors',
+    'base',
+    'comments',
+    'images',
+    'likes',
+    'posts',
 ]
 
-AUTH_USER_MODEL = "base.CustomUser"
+AUTH_USER_MODEL = "authors.CustomUser"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

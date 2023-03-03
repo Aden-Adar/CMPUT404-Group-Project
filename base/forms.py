@@ -1,9 +1,8 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError  
-from .models import CustomUser
-# https://www.codingforentrepreneurs.com/blog/how-to-create-a-custom-django-user-model/
 
+from authors.models import CustomUser
+# https://www.codingforentrepreneurs.com/blog/how-to-create-a-custom-django-user-model/
 
 
 class UserCreationForm(forms.ModelForm):
@@ -30,8 +29,6 @@ class UserCreationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
-    
-
 
 class UserChangeForm(forms.ModelForm):
     class Meta:
@@ -41,4 +38,3 @@ class UserChangeForm(forms.ModelForm):
     def clean_password(self):
         return self.initial['password']
 
-    
