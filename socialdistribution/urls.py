@@ -16,14 +16,24 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.shortcuts import render
+from django.conf.urls.static import static
+from django.conf import settings
 
 def render_react(request):
     return render(request, "index.html")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include("base.urls")),
+
     path('', include("django.contrib.auth.urls")),
+
+    path('service/', include("base.urls")),
+    path('service/authors/', include("authors.urls")),
+    path('service/posts/', include("posts.urls")),
+    path('service/posts/<uuid:post_id>/', include("comments.urls")),
+    path('service/posts/<uuid:post_id>/', include("likes.urls")),
+    path('service/imgupload/', include("images.urls")),
+
     re_path(r"^$", render_react),
     re_path(r"^(?:.*)/?$", render_react),
-]
+] + static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
