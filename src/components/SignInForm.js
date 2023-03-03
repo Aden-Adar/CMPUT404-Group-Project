@@ -95,7 +95,7 @@ value={email} type="email" /> */}
 <input onChange={handlePassword} className="input"
 value={password} type="password" />
 
-<Link to="/profile"> <button className="btn" type="button">
+<Link to="/main"> <button className="btn" type="button">
 Sign in 
 </button> </Link>
 {successMessage}
