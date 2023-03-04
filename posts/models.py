@@ -35,4 +35,4 @@ class Posts(models.Model):
 
 class PrivatePostViewer(models.Model):
     post_id = models.OneToOneField(Posts, on_delete = models.CASCADE, unique=True)
-    viewer_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    private_viewers_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

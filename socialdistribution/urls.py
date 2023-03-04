@@ -44,10 +44,10 @@ urlpatterns = [
     path('', include("django.contrib.auth.urls")),
 
     path('service/', include("base.urls")),
-    path('service/authors/', include("authors.urls")),
-    path('service/posts/', include("posts.urls")),
-    path('service/posts/<uuid:post_id>/', include("comments.urls")),
-    path('service/posts/<uuid:post_id>/', include("likes.urls")),
+    path('service/', include("authors.urls"), name='authors'),
+    path('service/authors/<uuid:author_id>/posts/', include("posts.urls"), name='posts'),
+    path('service/posts/<uuid:post_id>/', include("comments.urls"), name='comments'),
+    path('service/posts/<uuid:post_id>/', include("likes.urls"), name='likes'),
     path('service/imgupload/', include("images.urls")),
     re_path('service/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
