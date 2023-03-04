@@ -33,8 +33,8 @@ class PostListView(mixins.ListModelMixin,
 
 
 class PostDetailView(mixins.RetrieveModelMixin,
-                    mixins.CreateModelMixin,
-                    # mixins.UpdateModelMixin,
+                    # mixins.CreateModelMixin,
+                    mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin,
                     generics.GenericAPIView):
     queryset = Posts.objects.all()
@@ -53,22 +53,26 @@ class PostDetailView(mixins.RetrieveModelMixin,
         if request.method == "GET":
             return obj
         else:
-            if self.user.id == self.kwargs.get('author_id'):
+            if self.request.user.id == obj.user_id.id:
                 return obj
             else:
-                raise NotAuthenticated()
+                raise NotAcceptable(code=403)
 
-    def perform_create(self, serializer):
-        serializer.save(user_id=self.request.user)
+    # def perform_create(self, serializer):
+    #     serializer.save(user_id=self.request.user)
 
     def get(self, request, *args, **kwargs):
             return self.retrieve(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        return self.post(request, *args, **kwargs)
+    # def post(self, request, *args, **kwargs):
+    #     return self.post(request, *args, **kwargs)
     
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
     
-    # def put(self, request, *args, **kwargs):
-    #     return self.update(request, *args, **kwargs)
+    # def perform_update(self, serializer):
+    #     # serializer.update(user_id=self.request.user)
+    #     return super().perform_update(serializer)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)

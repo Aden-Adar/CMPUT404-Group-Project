@@ -56,8 +56,8 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_comments(self, obj):
         request = self.context.get('request')
-        return reverse("comments-list", kwargs = {"post_id": obj.post_id}, request=request)
-    
+        return reverse("comments-list", kwargs = {"author_id": obj.user_id.id, "post_id": obj.post_id}, request=request)
+
     def get_comments_list(self, obj, **kwargs):
         return CommentSerializer(many=True, read_only=True).data # https://docs.djangoproject.com/en/dev/topics/db/queries/#following-relationships-backward
 

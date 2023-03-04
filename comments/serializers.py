@@ -1,14 +1,15 @@
 from rest_framework import serializers
 from .models import *
-from rest_framework.exceptions import NotAcceptable
+from rest_framework.exceptions import NotAcceptable, NotFound
 
 
 class CommentSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField(read_only=True)
-    parent_comment_id = serializers.IntegerField(write_only=True, required=False)
+    # parent_comment_id = serializers.IntegerField(write_only=True, required=False)
     author = serializers.SerializerMethodField(read_only=True)
     published = serializers.SerializerMethodField(read_only=True)
     id = serializers.SerializerMethodField(read_only=True)
+    post = serializers.SerializerMethodField(read_only=True)
 
     class Meta: 
         model = Comments
@@ -21,7 +22,7 @@ class CommentSerializer(serializers.ModelSerializer):
             'id', # come back to this once author is finished
             'comment_id',
             'post',
-            'parent_comment_id'
+            # 'parent_comment_id'
         ]
 
     def get_author(self, obj):
@@ -36,20 +37,27 @@ class CommentSerializer(serializers.ModelSerializer):
     def get_id(self, obj):
         return "URL WILL BE HERE SOON"
 
+    def get_post(self, obj):
+        return obj.post.post_id
+
     def create(self, validated_data):
-        try:
-            parent_comment_id = validated_data.pop("parent_comment_id")
-        except KeyError: # private_post_viewer was not passed
-            obj = super().create(validated_data)
-            return obj
-        else:
-            parent_comment = Comments.objects.all().filter(comment_id=parent_comment_id).first()
-            if parent_comment:
-                validated_data["parent_comment_id"] = parent_comment
-                obj = super().create(validated_data)
-                return obj
-            else:
-                raise NotAcceptable(detail="Parent comment id does not exist")
+        obj = super().create(validated_data)
+        print(obj.post)
+        return obj
+        # try:
+        #     parent_comment_id = validated_data.pop("parent_comment_id")
+        # except KeyError: # private_post_viewer was not passed
+        #     print(validated_data)
+        #     obj = super().create(validated_data)
+        #     return obj
+        # else:
+        #     parent_comment = Comments.objects.all().filter(comment_id=parent_comment_id).first()
+        #     if parent_comment:
+        #         validated_data["parent_comment_id"] = parent_comment
+        #         obj = super().create(validated_data)
+        #         return obj
+        #     else:
+        #         raise NotAcceptable(detail="Parent comment id does not exist")
 
 
     """   user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
