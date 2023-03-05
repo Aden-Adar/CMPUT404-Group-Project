@@ -2,7 +2,7 @@ from rest_framework import generics, mixins
 
 from .models import *
 from .serializers import *
-from posts.views import PrivatePostViewer
+# from posts.views import PrivatePostViewer
 
 
 class PostLikesView(mixins.ListModelMixin,
