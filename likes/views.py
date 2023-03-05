@@ -1,4 +1,5 @@
 from rest_framework import generics, mixins
+from rest_framework.response import Response
 
 from .models import *
 from .serializers import *
@@ -50,3 +51,22 @@ class CommentLikesView(mixins.ListModelMixin,
 
     def delete (self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+
+class AuthorLikedView(mixins.RetrieveModelMixin,
+                    generics.GenericAPIView):
+    queryset = Likes.objects.all()
+    serializer_class = LikedSerializer
+    lookup_field = 'author_id'
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+
+        return qs.filter(author_id=self.kwargs["author_id"])
+
+
+    def get(self, request, *args, **kwargs):
+        like = Likes.objects.all().filter(author_id=self.kwargs['author_id'])
+        if not like:
+            return Response({})
+        return Response(LikedSerializer(instance=like, context={"request":request, "author_id": kwargs['author_id']}).data)

@@ -69,3 +69,27 @@ class CommentLikeSerializer(serializers.ModelSerializer):
             'author_id',
             'comment_id'
         ]
+
+class LikedSerializer(serializers.ModelSerializer):
+    type = serializers.SerializerMethodField(read_only=True)
+    items = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Likes
+        fields = [
+            'type',
+            'items'
+        ]
+    
+    def get_type(self, obj):
+        return "liked"
+
+    def get_items(self, obj):
+        request = self.context.get('request')
+        result = []
+        author_likes = Likes.objects.all().filter(author_id=self.context.get('author_id'))
+        
+        for likes in author_likes:
+            result.append(LikesSerializer(likes,context={"request":request}).data)
+
+        return result

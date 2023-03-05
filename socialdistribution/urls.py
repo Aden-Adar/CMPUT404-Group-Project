@@ -51,7 +51,7 @@ urlpatterns = [
 
     path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/comments/', include("comments.urls"), name='comments'),
 
-    path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/', include("likes.urls"), name='likes'),
+    path('service/authors/<uuid:author_id>/', include("likes.urls"), name='likes'),
 
     path('service/authors/<uuid:author_id>/inbox/', include('inbox.urls')),
 
