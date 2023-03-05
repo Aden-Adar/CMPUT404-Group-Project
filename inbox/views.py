@@ -1,10 +1,13 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework import generics, mixins
 from rest_framework.exceptions import NotAuthenticated, NotFound, NotAcceptable, ValidationError
+from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
+from rest_framework import status
+
 from .models import *
 from .serializers import *
 
@@ -31,34 +34,21 @@ def InboxView(request, pk=None, *args, **kwarg):
         Inbox.objects.filter(author = request.user.id).delete()
         return Response("Inbox Cleared", status=200)
 
-# class InboxView(mixins.ListModelMixin,
-#                 mixins.CreateModelMixin,
-#                 mixins.DestroyModelMixin,
-#                 generics.GenericAPIView):
+# class InboxView(ViewSet):
 #     queryset = Inbox.objects.all()
 #     serializer_class = InboxSerializer
-#     lookup_field = 'author_id'
-
-#     def get_queryset(self, *args, **kwargs):
-#         qs = super().get_queryset(*args, **kwargs)
-
-#         print(self.request.user)
-#         if self.request.method == "GET":
-#             return 
-        
-#         filtered_qs = qs.filter(author=self.request.user.id)
-
-#         # if filtered_qs
-#         return qs
-
-#     def perform_create(self, serializer):
-#         serializer.save()
 
 #     def get(self, request, *args, **kwargs):
-#         return self.list(request, *args, **kwargs)
-    
+#         inbox = Inbox.objects.all().filter(author_id=request.user.id).first()
+#         if not inbox:
+#             return Response({})
+#         return Response(InboxSerializer(instance=inbox, context={"request":request}).data)
+
 #     def post(self, request, *args, **kwargs):
 #         return self.create(request, *args, **kwargs)
 
-#     def destroy(self, request, *args, **kwargs):
-#         return super().destroy(request, *args, **kwargs)
+#     def destroy(self, request, author_id = None):
+#         inbox = Inbox.objects.filter(author = self.request.user.id).delete()
+#         for instance in inbox:
+#             super().perform_destroy(instance)
+#         return Response(status=status.HTTP_204_NO_CONTENT)
