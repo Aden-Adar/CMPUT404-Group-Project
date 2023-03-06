@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import NotAcceptable
-
 from .models import *
 from authors.serializers import SingleAuthorSerializer
 
@@ -26,8 +25,11 @@ class LikesSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # print(validated_data)
         # print("Condition is: ", Likes.objects.all().filter(post_id=validated_data.get("post_id"), author_id=validated_data.get("author_id")).values("comment_id"))
-        if Likes.objects.all().filter(comment_id=validated_data.get("comment_id"), author_id=validated_data.get("author_id"), post_id=validated_data.get("post_id")).exists():
-            raise NotAcceptable(detail="Cannot like more than once")
+        if Likes.objects.all().filter(comment_id=validated_data.get("comment_id"), author_id=validated_data.get("author_id")).exists():
+            raise NotAcceptable(detail="Cannot like comment more than once")
+
+        elif Likes.objects.all().filter(post_id=validated_data.get("post_id"), author_id=validated_data.get("author_id")).exists():
+            raise NotAcceptable(detail="Cannot like post more than once")
 
         obj = super().create(validated_data)
         return obj

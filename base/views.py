@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login
-
+from rest_framework.exceptions import *
 from .serializers import *
 from .forms import *
 
@@ -43,3 +43,5 @@ class LoginView(APIView):
             response.data = {"Success" : "Login successful", "token" : token, "user_id": request.user.id}
             response.status_code = status.HTTP_200_OK
             return response
+        else:
+            return Response(status=404)

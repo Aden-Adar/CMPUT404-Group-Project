@@ -15,7 +15,7 @@ class InboxSerializer(serializers.ModelSerializer):
     author_id = serializers.UUIDField(write_only=True)
     post_id = serializers.UUIDField(required=False, write_only=True)
     comment_id = serializers.UUIDField(required=False, write_only=True)
-    like_id = serializers.JSONField(required=False, write_only=True)
+    like = serializers.JSONField(required=False, write_only=True)
 
     type = serializers.SerializerMethodField(read_only=True)
     author = serializers.SerializerMethodField(read_only=True)
@@ -27,7 +27,7 @@ class InboxSerializer(serializers.ModelSerializer):
             'author_id',
             'post_id',
             'comment_id',
-            'like_id',
+            'like',
             'type',
             'author',
             'item'
@@ -51,22 +51,28 @@ class InboxSerializer(serializers.ModelSerializer):
             elif key == 'comment_id' and flag == 'comment_id':
                 if not Comments.objects.all().filter(comment_id=validated_data[key]).exists():
                     raise NotAcceptable(detail="Comment does not exist")
-            elif key == 'like_id' and flag == 'like_id':
+            elif key == 'like' and flag == 'like':
                 if validated_data[key].get("comment_id"):
+                    comment = Comments.objects.all().filter(comment_id=validated_data[key].get("comment_id")).first()
+                    if not comment:
+                        raise NotAcceptable(detail="Comment does not exist")
                     like_serializer = CommentLikeSerializer(data={
                         "author_id": self.context.get('request').user.id,
-                        "comment_id": Comments.objects.all().filter(comment_id=validated_data[key].get("comment_id")).first().comment_id
+                        "comment_id": comment.comment_id
                     })
                 elif validated_data[key].get("post_id"):
+                    post = Posts.objects.all().filter(post_id=validated_data[key].get("post_id")).first()
+                    if not post:
+                        raise NotAcceptable(detail="Post does not exist")
                     like_serializer = PostLikeSerializer(data={
                         "author_id": self.context.get('request').user.id,
-                        "post_id": Posts.objects.all().filter(post_id=validated_data[key].get("post_id")).first().post_id
+                        "post_id": post.post_id
                     })
                 else:
-                    raise NotAcceptable(detail="Cannot like comment/post that does not exist")
+                    raise NotAcceptable(detail="Must provide a valid json containing either post_id or comment_id within the 'like' key")
                 if like_serializer.is_valid(raise_exception=True):
                     like_obj = like_serializer.save()
-                    validated_data['like_id'] = like_obj.id
+                    validated_data['like'] = like_obj
                     print(validated_data)
                 else:
                     raise ValidationError()
@@ -95,7 +101,7 @@ class InboxSerializer(serializers.ModelSerializer):
                 comment = Comments.objects.all().filter(comment_id=item.comment_id).first()
                 data = CommentSerializer(comment, context={"request":request}).data
                 result_list.append(data)
-            elif item.like_id is not None:
+            elif item.like is not None:
                 like = Likes.objects.all().filter(id=item.like_id).first()
                 data = LikesSerializer(like, context={"request":request}).data
                 result_list.append(data)
