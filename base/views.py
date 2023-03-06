@@ -40,6 +40,6 @@ class LoginView(APIView):
             token = Token.objects.get_or_create(user=user)[0].key
             response = Response()
             response.set_cookie(key="auth_token", value=token, httponly=True, samesite='Strict')
-            response.data = {"Success" : "Login successful", "token" : token}
+            response.data = {"Success" : "Login successful", "token" : token, "user_id": request.user.id}
             response.status_code = status.HTTP_200_OK
             return response
