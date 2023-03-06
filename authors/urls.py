@@ -3,6 +3,6 @@ from . import views
 
 
 urlpatterns = [
-    path("<uuid:id>/",views.SingleAuthorView.as_view(), name="author-detail"),
-    path("",views.AllAuthorView.as_view(), name="author-list")
+    path("authors/<uuid:id>/",views.SingleAuthorView.as_view(), name="author-detail"),
+    path("authors/",views.AllAuthorView.as_view(), name="author-list")
 ]

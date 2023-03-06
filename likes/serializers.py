@@ -33,11 +33,14 @@ class LikesSerializer(serializers.ModelSerializer):
         return obj
 
     def get_context(self, obj):
-        return None
+        return "https://www.w3.org/ns/activitystreams"
 
     def get_summary(self, obj):
         author_username = obj.author_id.username
-        return f"{author_username} Likes your post"
+        if obj.post_id is not None:
+            return f"{author_username} Likes your post"
+        else:
+            return f"{author_username} Likes your comment"
     
     def get_type(self, obj):
         return "Like"
@@ -45,7 +48,48 @@ class LikesSerializer(serializers.ModelSerializer):
     def get_object(self, obj):
         request = self.context.get('request')
         if obj.post_id:
-            return reverse("post-detail", kwargs = {"post_id": obj.post_id.post_id}, request=request)
+            return reverse("post-detail", kwargs = {"author_id": obj.post_id.user_id.id, "post_id": obj.post_id.post_id}, request=request)
         else:
-            return reverse("comment-detail", kwargs = {"post_id": obj.comment_id.post.post_id,
+            return reverse("comment-detail", kwargs = {"author_id": obj.comment_id.user.id, "post_id": obj.comment_id.post.post_id,
                                                         "comment_id": obj.comment_id.comment_id }, request=request)
+
+
+class PostLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Likes
+        fields = [
+            'author_id',
+            'post_id'
+        ]
+
+class CommentLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Likes
+        fields = [
+            'author_id',
+            'comment_id'
+        ]
+
+class LikedSerializer(serializers.ModelSerializer):
+    type = serializers.SerializerMethodField(read_only=True)
+    items = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Likes
+        fields = [
+            'type',
+            'items'
+        ]
+    
+    def get_type(self, obj):
+        return "liked"
+
+    def get_items(self, obj):
+        request = self.context.get('request')
+        result = []
+        author_likes = Likes.objects.all().filter(author_id=self.context.get('author_id'))
+        
+        for likes in author_likes:
+            result.append(LikesSerializer(likes,context={"request":request}).data)
+
+        return result

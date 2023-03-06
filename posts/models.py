@@ -33,6 +33,6 @@ class Posts(models.Model):
     unlisted = models.BooleanField(default=False)
 
 
-class PrivatePostViewer(models.Model):
-    post_id = models.OneToOneField(Posts, on_delete = models.CASCADE, unique=True)
-    viewer_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+# class PrivatePostViewer(models.Model):
+#     post_id = models.OneToOneField(Posts, on_delete = models.CASCADE, unique=True)
+#     private_viewers_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

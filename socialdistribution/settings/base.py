@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'images',
     'likes',
     'posts',
+    'inbox'
 ]
 
 AUTH_USER_MODEL = "authors.CustomUser"
