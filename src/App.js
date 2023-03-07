@@ -4,11 +4,11 @@
 import './App.css';
 import React, {useState, useEffect} from 'react';
 import {Routes, Route, useNavigate} from 'react-router-dom';
-import SignInForm from "./components/SignInForm";
+import LoginForm from "./components/LoginForm"
 import SignUpForm from "./components/SignUpForm";
 import { Main } from './MainPage/Main';
 import Profile from './components/Profile';
-
+import CreatePost from './components/CreatePost'
 function App() {
 
   const navigate = useNavigate();
@@ -56,10 +56,11 @@ function App() {
   return (
     <div className="App">
       <Routes>
-          <Route path="/" element={<SignInForm />} />
-          <Route path="/createaccount" element={<SignUpForm />} />
+          <Route path="/" element={<LoginForm />} />
+          <Route path="/signup" element={<SignUpForm />} />
           <Route path="/main" element={<Main />} />
           <Route path="/profile" element={<Profile user={user} onSave={handleSaveProfile} />} />
+          <Route path="/create" element={<CreatePost />} />
         </Routes>
     
     </div>

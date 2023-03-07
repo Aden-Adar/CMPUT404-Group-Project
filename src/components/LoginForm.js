@@ -36,9 +36,6 @@ function ModeToggle() {
 }
 
 function LoginForm() {
-
-  
-
   return (
     <CssVarsProvider>
       <main>
@@ -62,7 +59,7 @@ function LoginForm() {
             <Typography level="h4" component="h1">
               <b>Welcome!</b>
             </Typography>
-            <Typography level="body2">Sign up to continue.</Typography>
+            <Typography level="body2">Sign in to continue.</Typography>
           </div>
           <FormControl>
             <FormLabel>Username</FormLabel>
@@ -82,13 +79,13 @@ function LoginForm() {
             />
           </FormControl>
 
-          <Button sx={{ mt: 1 /* margin top */ }}>Sign up</Button>
+          <Link href="/main"><Button sx={{ mt: 1 /* margin top */ }}>Sign in</Button></Link>
           <Typography
-            endDecorator={<Link href="/">Sign in now! </Link>}
+            endDecorator={<Link href="/signup">Sign up</Link>}
             fontSize="sm"
             sx={{ alignSelf: 'center' }}
           >
-            Already have an account?
+            Don't have an account?
           </Typography>
         </Sheet>
       </main>
