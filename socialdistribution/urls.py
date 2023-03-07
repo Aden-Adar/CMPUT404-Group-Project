@@ -61,6 +61,6 @@ urlpatterns = [
 
     re_path('service/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
-   # re_path(r"^$", render_react),
-   # re_path(r"^(?:.*)/?$", render_react),
+    #re_path(r"^$", render_react),
+    #re_path(r"^(?:.*)/?$", render_react),
 ] + static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
