@@ -21,7 +21,7 @@ def InboxView(request, pk=None, *args, **kwargs):
         inbox = Inbox.objects.all().filter(author_id=request.user.id).first()
         if not inbox:
             author_url = reverse("author-detail", kwargs = {"id": kwargs['author_id']}, request=request)
-            return Response({"type" : "inbox", "author": author_url, "inbox": []})
+            return Response({"type" : "inbox", "author": author_url, "items": []})
         data = InboxSerializer(instance=inbox, context={"request":request}).data
         return Response(data)
 
