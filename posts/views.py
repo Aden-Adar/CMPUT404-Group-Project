@@ -18,7 +18,7 @@ class PostListView(mixins.ListModelMixin,
         filtered_qs = qs.filter(user_id=self.kwargs.get('author_id'))
 
         if request.method == "GET":
-            return filtered_qs.filter(unlisted=False, visibility="PUBLIC")
+            return filtered_qs.filter(unlisted=False)
 
         return filtered_qs
 
