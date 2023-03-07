@@ -17,10 +17,11 @@ def InboxView(request, pk=None, *args, **kwargs):
 
     if method == "GET":
         if request.user.id != kwargs['author_id']:
-            raise PermissionDenied(detail="You cannot view another users inbox")
+            raise PermissionDenied(detail="Invalid URL")
         inbox = Inbox.objects.all().filter(author_id=request.user.id).first()
         if not inbox:
-            return Response({})
+            author_url = reverse("author-detail", kwargs = {"id": kwargs['author_id']}, request=request)
+            return Response({"type" : "inbox", "author": author_url, "inbox": []})
         data = InboxSerializer(instance=inbox, context={"request":request}).data
         return Response(data)
 
