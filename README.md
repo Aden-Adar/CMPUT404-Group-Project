@@ -1,2 +1,2 @@
-# CMPUT404-Group-Project
+# Social.ly
 *test..
