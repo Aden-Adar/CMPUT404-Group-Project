@@ -8,6 +8,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+
 
 const useStyles = makeStyles((theme) => ({
 
@@ -38,6 +40,13 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(5), 
     marginLeft: 'auto', 
     marginBottom: theme.spacing(5),
+  },
+  header: {
+    marginTop: theme.spacing(5),
+    marginBottom: theme.spacing(5),
+    fontWeight: 'bold',
+    fontSize: '32pt',
+    textAlign: 'center',
   }
 }));
 
@@ -57,6 +66,9 @@ function CreatePost()  {
 
   return (
     <form onSubmit={handleSubmit}>
+      <Typography variant="h1" className={classes.header}>
+        Create Your Post
+      </Typography>
       <TextField
         required
         fullWidth
