@@ -29,8 +29,9 @@ class Posts(models.Model):
     content_type = models.CharField(max_length=200, choices=ContentType.choices, default=ContentType.PLAIN)
     title = models.CharField(max_length=200,editable=True)
     description = models.CharField(max_length=200,editable=True)
-    content = models.TextField(max_length=300,editable=True)
+    content = models.TextField(max_length=300,editable=True,null=True,blank=True)
     unlisted = models.BooleanField(default=False)
+    image = models.ImageField(upload_to='images',null=True,blank=True)
 
 
 # class PrivatePostViewer(models.Model):

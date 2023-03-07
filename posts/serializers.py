@@ -35,7 +35,8 @@ class PostSerializer(serializers.ModelSerializer):
             'visibility',
             # 'private_post_viewers',
             "unlisted",
-            "post_id"
+            "post_id",
+            "image"
         ]
 
     def get_type(self, obj):
