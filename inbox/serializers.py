@@ -19,7 +19,7 @@ class InboxSerializer(serializers.ModelSerializer):
 
     type = serializers.SerializerMethodField(read_only=True)
     author = serializers.SerializerMethodField(read_only=True)
-    item = serializers.SerializerMethodField(read_only=True)
+    items = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Inbox
@@ -30,7 +30,7 @@ class InboxSerializer(serializers.ModelSerializer):
             'like_id',
             'type',
             'author',
-            'item'
+            'items'
         ]
 
     def create(self, validated_data):
@@ -82,7 +82,7 @@ class InboxSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         return reverse("author-detail", kwargs = {"id": obj.author_id}, request=request)
 
-    def get_item(self, obj):
+    def get_items(self, obj):
         request = self.context.get('request')
         result_list = []
         items = Inbox.objects.all().filter(author=request.user.id)
