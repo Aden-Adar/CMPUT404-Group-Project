@@ -25,6 +25,7 @@ class SingleAuthorView(mixins.ListModelMixin,
         return self.list(request, *args, **kwargs)
 
 #https://stackoverflow.com/questions/73522898/how-i-can-use-nested-serializer-in-django-rest-framework
+#Question by Mohsin and answered by Mohsin
 class AllAuthorView(generics.RetrieveAPIView):
     def get(self,request,*args,**kwargs):
         qs = CustomUser.objects.all()
