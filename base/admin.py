@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from authors.models import *
+from authors.models import CustomUser
 from .forms import UserChangeForm, UserCreationForm
 
 
@@ -13,17 +13,15 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         ('Personal info', {'fields': ('github',)}),
-        ('Permissions', {'fields': ('is_staff', 'is_active')}),
+        ('Permissions', {'fields': ('is_staff',)}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'password')}
+            'fields': ('username', 'password1', 'password2')}
         ),
     )
     search_fields = ('username', )
     
 
 admin.site.register(CustomUser, CustomUserAdmin)
-
-admin.site.register(Following)
