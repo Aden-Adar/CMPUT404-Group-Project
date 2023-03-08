@@ -11,7 +11,6 @@ from rest_framework import status
 from .models import *
 from .serializers import *
 
-
 @api_view(['GET', 'POST', 'DELETE'])
 def InboxView(request, pk=None, *args, **kwargs):
     method = request.method
@@ -24,10 +23,6 @@ def InboxView(request, pk=None, *args, **kwargs):
             author_url = reverse("author-detail", kwargs = {"id": kwargs['author_id']}, request=request)
             return Response({"type" : "inbox", "author": author_url, "items": []})
         data = InboxSerializer(instance=inbox, context={"request":request}).data
-        
-        # follow_requests = FollowingRequest.objects.filter(follow_request_user=request.user.id)
-        # for items in follow_requests:
-        #     request_from = items.user_request.id
         return Response(data)
 
     if method == "POST":
