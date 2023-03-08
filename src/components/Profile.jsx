@@ -96,7 +96,6 @@ function Profile({ user, onSave }) {
         </div>
       ) : (
         <Card className={classes.card}>
-        
           <CardMedia className={classes.media} image={user.image} title="Profile Image" />
           <CardContent>
             <Typography variant="h5" component="h2">

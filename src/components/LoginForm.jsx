@@ -9,6 +9,8 @@ import FormLabel from '@mui/joy/FormLabel';
 import Input from '@mui/joy/Input';
 import Button from '@mui/joy/Button';
 import Link from '@mui/joy/Link';
+import { setUserId } from './userID';
+import { getUserId } from './userID';
 
 function ModeToggle() {
   const { mode, setMode } = useColorScheme();
@@ -58,14 +60,11 @@ function LoginForm() {
     })
       .then(response => response.json())
       .then(data => {
-        window.location.href = '/main'; 
-        //if (data.success) {
-        // const userId = response.headers.get("user_id");
-        // console.log(userId);
-        // window.location.href = '/main'; 
-        /*} else {
-          alert('Invalid username or password');
-        }*/
+        window.location.href = '/main';
+        console.log(data);
+        setUserId(data.user_id);
+        const userid = getUserId();
+        console.log(userid);
       })
       .catch(error => {
         console.error('Error:', error);
@@ -130,3 +129,4 @@ function LoginForm() {
   );
 }
 export default LoginForm;
+

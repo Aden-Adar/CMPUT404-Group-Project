@@ -72,6 +72,7 @@ function CreatePost()  {
       visibility: visibility,
       unlisted: unlisted,
     };
+    
     fetch('/service/authors/<author_id>/posts', {
       method: 'POST',
       headers: {

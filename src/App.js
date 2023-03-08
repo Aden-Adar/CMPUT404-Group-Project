@@ -1,5 +1,5 @@
 // https://bobbyhadz.com/blog/react-onclick-redirect
-// 'https://via.placeholder.com/200x200?text=Profile+Image'
+// https://i.stack.imgur.com/l60Hf.png
 
 import './App.css';
 import React, {useState, useEffect} from 'react';
@@ -8,8 +8,32 @@ import LoginForm from "./components/LoginForm"
 import SignUpForm from "./components/SignUpForm";
 import { Main } from './MainPage/Main';
 import Profile from './components/Profile';
-import CreatePost from './components/CreatePost'
+import CreatePost from './components/CreatePost';
+import { setUserId, getUserId } from './components/userID';
+
+
 function App() {
+
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const data = {"username": username,"password": password};
+  fetch('/service/login/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+    .then(response => response.json())
+    .then(data => {
+      window.location.href = '/main';
+      console.log(data);
+      const userid = getUserId();
+      console.log(userid);
+    });
+
+  const userid = getUserId();
+  console.log(userid)
 
   const navigate = useNavigate();
 
@@ -22,35 +46,14 @@ function App() {
   };
 
   const [user, setUser] = useState({
-    name: localStorage.getItem('name'), 
-    bio: localStorage.getItem('bio'),
-    image: localStorage.getItem('image') || 'https://i.stack.imgur.com/l60Hf.png',
+    name: 'Social.ly',
+    bio: 'I am a social media app',
+    image: 'https://i.stack.imgur.com/l60Hf.png',
   });
 
-  useEffect(() => {
-    const storedName = localStorage.getItem('name');
-    const storedBio = localStorage.getItem('bio');
-    const storedImage = localStorage.getItem('image');
-
-    if (storedName || storedBio || storedImage) {
-      setUser({
-        name: storedName || '',
-        bio: storedBio || '',
-        image: storedImage || '',
-      });
-    }
-  }, []);
 
   const handleSaveProfile = ({name, bio, image}) => {
-    localStorage.setItem('name', name);
-    localStorage.setItem('bio', bio);
-    localStorage.setItem('image', image);
-
-    setUser({
-      name,
-      bio,
-      image,
-    });
+    setUser({...user, name, bio, image});
   };
 
   const handleLogin = (user) => {
@@ -75,5 +78,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

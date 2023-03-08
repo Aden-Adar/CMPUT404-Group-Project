@@ -8,7 +8,7 @@
 
   body {
     text-align: center;
-    background-image: url('./bg-image.jpg');
+    background-color: white;
     background-size: cover;
     background-repeat: no-repeat;
   }
