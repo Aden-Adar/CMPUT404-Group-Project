@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import *
 from rest_framework.exceptions import NotAcceptable, NotFound
+from rest_framework.reverse import reverse
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -35,7 +36,8 @@ class CommentSerializer(serializers.ModelSerializer):
         return obj.published.isoformat()
 
     def get_id(self, obj):
-        return "URL WILL BE HERE SOON"
+        request = self.context.get('request')
+        return reverse("comment-detail", kwargs={"author_id" : obj.user_id, "post_id" : obj.post.post_id, "comment_id" : obj.comment_id}, request=request)
 
     def get_post(self, obj):
         return obj.post.post_id
