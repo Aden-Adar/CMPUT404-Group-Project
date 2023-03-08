@@ -14,8 +14,6 @@ function ModeToggle() {
   const { mode, setMode } = useColorScheme();
   const [mounted, setMounted] = React.useState(false);
 
-  // necessary for server-side rendering
-  // because mode is undefined on the server
   React.useEffect(() => {
     setMounted(true);
   }, []);
@@ -37,8 +35,43 @@ function ModeToggle() {
 
 function LoginForm() {
 
-  
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
+  const handleUsernameChange = (event) => {
+    setUsername(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = {"username": username,"password": password};
+    fetch('/service/login/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+      .then(response => response.json())
+      .then(data => {
+        window.location.href = '/main'; 
+        //if (data.success) {
+        // const userId = response.headers.get("user_id");
+        // console.log(userId);
+        // window.location.href = '/main'; 
+        /*} else {
+          alert('Invalid username or password');
+        }*/
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Invalid username or password');
+      });
+  };
   return (
     <CssVarsProvider>
       <main>
@@ -62,15 +95,15 @@ function LoginForm() {
             <Typography level="h4" component="h1">
               <b>Welcome!</b>
             </Typography>
-            <Typography level="body2">Sign up to continue.</Typography>
+            <Typography level="body2">Sign in to continue.</Typography>
           </div>
           <FormControl>
             <FormLabel>Username</FormLabel>
             <Input
-              // html input attribute
               name="username"
               type="username"
               placeholder="social.ly"
+              onChange={handleUsernameChange}
             />
           </FormControl>
           <FormControl>
@@ -79,16 +112,17 @@ function LoginForm() {
               name="password"
               type="password"
               placeholder="password"
+              onChange={handlePasswordChange}
             />
           </FormControl>
 
-          <Button sx={{ mt: 1 /* margin top */ }}>Sign up</Button>
+          <Button type="submit" onClick={handleSubmit} sx={{ mt: 1 /* margin top */ }}>Sign in</Button>
           <Typography
-            endDecorator={<Link href="/">Sign in now! </Link>}
+            endDecorator={<Link href="/signup">Sign up</Link>}
             fontSize="sm"
             sx={{ alignSelf: 'center' }}
           >
-            Already have an account?
+            Don't have an account?
           </Typography>
         </Sheet>
       </main>

@@ -53,10 +53,19 @@ function App() {
     });
   };
 
+  const handleLogin = (user) => {
+    setUser(user);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+  };
+
   return (
     <div className="App">
       <Routes>
           <Route path="/" element={<LoginForm />} />
+          <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignUpForm />} />
           <Route path="/main" element={<Main />} />
           <Route path="/profile" element={<Profile user={user} onSave={handleSaveProfile} />} />

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import * as React from 'react';
+import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Card, CardActions, CardContent, CardMedia, TextField, Typography } from '@material-ui/core';
-import { Link } from 'react-router-dom';
-import { Main } from '../MainPage/Main';
+//import { Link } from 'react-router-dom';
 import AppBar from '../MainPage/AppBar';
 
 const useStyles = makeStyles((theme) => ({

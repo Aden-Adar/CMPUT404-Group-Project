@@ -60,8 +60,28 @@ function CreatePost()  {
   const [visibility, setVisibility] = useState('');
   const [unlisted, setUnlisted] = useState(false);
 
+  
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    const postData = {
+      title: title,
+      description: description,
+      contentType: contentType,
+      content: content,
+      visibility: visibility,
+      unlisted: unlisted,
+    };
+    fetch('/service/authors/<author_id>/posts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(postData)
+    })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error(error));
   };
 
   return (
