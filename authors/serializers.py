@@ -43,3 +43,25 @@ class ListAllAuthorSerializer(serializers.ModelSerializer):
             'type',
             'items'
         ]
+
+class FollowingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Following
+        fields = ("user", "following_user", "started_following")
+    
+    
+    
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'username')
+
+    def create(self, validated_data):
+        user = CustomUser.objects.create_user(validated_data['username'], validated_data['email'], validated_data['password'])
+        return user
+    
+class FollowingRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FollowingRequest
+        fields = ("user_request", "follow_request_user")

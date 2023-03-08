@@ -5,7 +5,7 @@ from authors.models import CustomUser
 class CreateAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username','password']
+        fields = ['username','password', 'is_active']
         
     def save(self):
         user = CustomUser(
@@ -13,6 +13,7 @@ class CreateAccountSerializer(serializers.ModelSerializer):
             password=self.validated_data['password'],
         )
         user.set_password(self.validated_data['password'])
+        user.is_active = False
         user.save()
         return user
 

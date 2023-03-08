@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 from .serializers import *
 from .forms import *
@@ -43,3 +43,14 @@ class LoginView(APIView):
             response.data = {"Success" : "Login successful", "token" : token, "user_id": request.user.id}
             response.status_code = status.HTTP_200_OK
             return response
+        else:
+            return Response({"error": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+class LogoutView(APIView):
+    def post(self, request, format=None):
+        logout(request)
+        response = Response()
+        response.delete_cookie("auth_token")
+        response.data = {"Success" : "Logout successful"}
+        response.status_code = status.HTTP_200_OK
+        return response
