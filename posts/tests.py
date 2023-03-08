@@ -5,6 +5,8 @@ from base.urls import *
 
 from django.urls import reverse,resolve
 from rest_framework import status
+import ast
+import json
 # Create your tests here.
 
 class PostsTest(TestCase):
@@ -42,3 +44,107 @@ class PostsTest(TestCase):
 
         post = self.client.post(url,content,'application/json')
         self.assertEquals(post.status_code,status.HTTP_201_CREATED)
+
+    def test_post_edit(self):
+        #Creating post
+        url_signup = reverse("signup")
+        url_login = reverse("login")
+        user = {
+            "username": "User1",
+            "password": "password123"
+        }
+
+        signup = self.client.post(url_signup,user,'application/json')
+        login = self.client.post(url_login,user,'application/json')
+        
+        
+        content = {
+            "title": "Title 1",
+            "description": "Some content",
+            "content_type": "text/plain",
+            "content": "This is a test",
+            "visibility": "PUBLIC",
+            "unlisted": "false",
+            
+        }
+
+        user_data = login.content.decode("utf-8") 
+        userData = json.loads(user_data)
+        
+        url = reverse("posts-list",args=[str(userData["user_id"])])
+
+        post = self.client.post(url,content,'application/json')
+        l = post.content.decode("utf-8")        
+        mydata = json.loads(l)
+        post_id = mydata["post_id"]
+        
+
+        
+        new_content = {
+            
+            "type": "posts",
+            "title": "new posts",
+            "id": "URL WILL BE HERE SOON",
+            "source": str(mydata["source"]),
+            "origin": str(mydata["origin"]),
+            "description": "qweqwe",
+            "content_type": "text/plain",
+            "content": "qweqwe",
+            "author": {
+                "type": "author",
+                "id": str(userData["user_id"]),
+                #"url": str(userData["url"]),
+                #"host": str(userData["host"]),
+                "username": "User1",
+                "github": ""
+            },
+            "comments": str(mydata["comments"]),
+            "comments_set": [],
+            "published": str(mydata["published"]),
+            "visibility": "PUBLIC",
+            "unlisted": "false",
+            "post_id": str(post_id)
+
+        }
+
+        new_url = reverse("post-detail",args=[str(userData["user_id"]),str(post_id)])
+        edit = self.client.put(new_url,new_content,'application/json')
+        self.assertEquals(edit.status_code,status.HTTP_200_OK)
+
+    def test_post_delete(self):
+        #Creating post
+        url_signup = reverse("signup")
+        url_login = reverse("login")
+        user = {
+            "username": "User1",
+            "password": "password123"
+        }
+
+        signup = self.client.post(url_signup,user,'application/json')
+        login = self.client.post(url_login,user,'application/json')
+        
+        
+        content = {
+            "title": "Title 1",
+            "description": "Some content",
+            "content_type": "text/plain",
+            "content": "This is a test",
+            "visibility": "PUBLIC",
+            "unlisted": "false",
+            
+        }
+
+        user_data = login.content.decode("utf-8") 
+        userData = json.loads(user_data)
+        
+        url = reverse("posts-list",args=[str(userData["user_id"])])
+
+        post = self.client.post(url,content,'application/json')
+        l = post.content.decode("utf-8")        
+        mydata = json.loads(l)
+        post_id = mydata["post_id"]
+        
+
+        new_url = reverse("post-detail",args=[str(userData["user_id"]),str(post_id)])
+        delete = self.client.delete(new_url,content,'application/json')
+        self.assertEquals(delete.status_code,status.HTTP_204_NO_CONTENT)

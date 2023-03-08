@@ -7,6 +7,7 @@ from base.urls import *
 
 from django.urls import reverse,resolve
 from rest_framework import status
+import json
 
 # Create your tests here.
 class CommentsTest(TestCase):
@@ -51,8 +52,10 @@ class CommentsTest(TestCase):
         url_post = reverse("posts-list",args=["21197f66-d233-4b96-8ce9-fe548ac700f2"])
         post = self.client.post(url_post,post_content,'application/json')
         
-        list = post.content.decode("utf-8")
-        post_id = list[-38:-2]
+        l = post.content.decode("utf-8")        
+        mydata = json.loads(l)
+
+        post_id = mydata["post_id"]
         
 
         url = reverse("comments-list",args=["21197f66-d233-4b96-8ce9-fe548ac700f2",str(post_id)])        
