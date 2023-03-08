@@ -4,12 +4,12 @@
 ![Heroku](https://img.shields.io/badge/heroku-%23430098.svg?style=for-the-badge&logo=heroku&logoColor=white)
 ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 
-# About
+## About
 Social.ly is the social media app for authors! Start creating today. 
 
 
 
-# Run
+## Run
 To run the project:  
 
 >create virtual environment in the Terminal by 'venv virtualenv'. 
