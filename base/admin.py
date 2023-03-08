@@ -8,7 +8,7 @@ from .forms import UserChangeForm, UserCreationForm
 class CustomUserAdmin(UserAdmin):
     form = UserCreationForm
     add_form = UserChangeForm
-    list_display = ('username', 'github')
+    list_display = ('username', 'github', "id")
     list_filter = ('github',)
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
