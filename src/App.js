@@ -17,20 +17,20 @@ function App() {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const data = {"username": username,"password": password};
-  fetch('/service/login/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  })
-    .then(response => response.json())
-    .then(data => {
-      window.location.href = '/main';
-      console.log(data);
-      const userid = getUserId();
-      console.log(userid);
-    });
+//   fetch('/service/login/', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     body: JSON.stringify(data)
+//   })
+//     .then(response => response.json())
+//     .then(data => {
+//       window.location.href = '/main';
+//       console.log(data);
+//       const userid = getUserId();
+//       console.log(userid);
+//     });
 
   const userid = getUserId();
   console.log(userid)
