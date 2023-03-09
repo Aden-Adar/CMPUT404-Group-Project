@@ -26,7 +26,7 @@ class CommentListView(mixins.ListModelMixin,
 
     def perform_create(self, serializer):
         post = Posts.objects.all().filter(post_id=self.kwargs["post_id"]).first()
-        print("post is:", post.post_id)
+        #print("post is:", post.post_id)
         if not post:
             raise NotFound()
 

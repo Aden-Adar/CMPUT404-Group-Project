@@ -10,7 +10,7 @@ class PostSerializer(serializers.ModelSerializer):
     # private_post_viewers = ListAllAuthorSerializer(write_only=True, required=False)
     type = serializers.SerializerMethodField(read_only=True)
     source = serializers.SerializerMethodField(read_only=True)
-    origin = serializers.SerializerMethodField(read_only=True)
+    # origin = serializers.SerializerMethodField(read_only=True)
     author = SingleAuthorSerializer(source='user_id', read_only=True)
     comments = serializers.SerializerMethodField(read_only=True)
     comments_set = CommentSerializer(many=True, read_only=True) # add '_set' after the child model name
@@ -24,7 +24,7 @@ class PostSerializer(serializers.ModelSerializer):
             "title",
             'id', # come back to this once author is finished
             'source',
-            'origin',
+            # 'origin',
             'description',
             'content_type',
             "content",
@@ -40,16 +40,18 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_type(self, obj):
         return "post"
-    
+
     def get_id(self, obj):
-        return "URL WILL BE HERE SOON"
+        request = self.context.get('request')
+        return reverse("post-detail", kwargs = {"author_id": obj.user_id.id, "post_id": obj.post_id}, request=request)
     
     def get_source(self, obj):
         return self.context.get('request').META.get('HTTP_REFERER')
     
-    def get_origin(self, obj):
-        request = self.context.get('request')
-        return reverse("post-detail", kwargs = {"author_id": obj.user_id.id, "post_id": obj.post_id}, request=request)
+    def get_origin(self, obj): # Not sure what origin means
+        # request = self.context.get('request')
+        # return reverse("post-detail", kwargs = {"author_id": obj.user_id.id, "post_id": obj.post_id}, request=request)
+        return "NEED TO FIGURE OUT WHAT THIS IS"
 
     # def get_author(self, obj):
     #     return obj.user_id.id
