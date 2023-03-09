@@ -17,19 +17,8 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 // import AdbIcon from '@material-ui/icons/AdbIcon';
 const settings = ['Dashboard','Profile', 'Friends', 'Logout'];
 
-const useStyles = makeStyles((theme) => ({
-  appBar: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-  },
-}));
-
-function ResponsiveAppBar() {
+export default function TopAppBar() {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-
-  const classes = useStyles();
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -40,36 +29,25 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static" className={classes.appBar}>
+    // *MUI DOCUMENTATION REFERENCED, https://mui.com/material-ui/react-app-bar/#MenuAppBar.js
+    <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} /> */}
           <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
+            edge="start"
+            variant="h5"
+            style={{marginLeft:'2%'}}
           >
             Social.ly
           </Typography>
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <AccountCircle></AccountCircle>
-              </IconButton>
-            </Tooltip>
+          <Box>
+            <IconButton onClick={handleOpenUserMenu}>
+              <AccountCircle fontSize='medium' style={{ color: 'white' }}></AccountCircle>
+            </IconButton>
             <Menu
               sx={{ mt: '45px' }}
-              id="menu-appbar"
+              id="user_menu"
               anchorEl={anchorElUser}
               anchorOrigin={{
                 vertical: 'top',
@@ -92,7 +70,6 @@ function ResponsiveAppBar() {
               <MenuItem onClick={handleCloseUserMenu} component={Link} to="/friends">
                 <Typography textAlign="center">Friends</Typography>
               </MenuItem>
-             
               <MenuItem onClick={handleCloseUserMenu} component={Link} to="/">
                 <Typography textAlign="center">Logout</Typography>
               </MenuItem>
@@ -103,4 +80,3 @@ function ResponsiveAppBar() {
     </AppBar>
   );
 }
-export default ResponsiveAppBar;
