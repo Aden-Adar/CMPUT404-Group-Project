@@ -3,11 +3,13 @@ from .models import *
 from rest_framework.exceptions import NotAcceptable, NotFound
 from rest_framework.reverse import reverse
 
+from authors.serializers import SingleAuthorSerializer
 
 class CommentSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField(read_only=True)
     # parent_comment_id = serializers.IntegerField(write_only=True, required=False)
-    author = serializers.SerializerMethodField(read_only=True)
+    # author = serializers.SerializerMethodField(read_only=True)
+    author = SingleAuthorSerializer(source='user', read_only=True)
     published = serializers.SerializerMethodField(read_only=True)
     id = serializers.SerializerMethodField(read_only=True)
     post = serializers.SerializerMethodField(read_only=True)
