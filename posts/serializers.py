@@ -6,6 +6,14 @@ from .models import *
 from comments.serializers import CommentSerializer
 from authors.serializers import SingleAuthorSerializer, ListAllAuthorSerializer
 
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Posts
+        fields = [
+            "image"
+        ]
+
+
 class PostSerializer(serializers.ModelSerializer):
     # private_post_viewers = ListAllAuthorSerializer(write_only=True, required=False)
     type = serializers.SerializerMethodField(read_only=True)
