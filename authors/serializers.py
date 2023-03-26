@@ -43,3 +43,16 @@ class ListAllAuthorSerializer(serializers.ModelSerializer):
             'type',
             'items'
         ]
+
+class FollowingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Following
+        fields = [
+            "user",
+            "following_user",
+        ]
+
+class FollowingRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FollowingRequest
+        fields = ("user_request", "follow_request_user")
