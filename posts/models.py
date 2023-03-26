@@ -32,7 +32,8 @@ class Posts(models.Model):
     content = models.TextField(max_length=300,editable=True)
     unlisted = models.BooleanField(default=False)
 
-
-# class PrivatePostViewer(models.Model):
-#     post_id = models.OneToOneField(Posts, on_delete = models.CASCADE, unique=True)
-#     private_viewers_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    type = models.CharField(max_length=4,editable=True)
+    source = models.CharField(max_length=250,editable=True)
+    comments_id = models.CharField(max_length=250,editable=True)
+    id = models.CharField(max_length=250,editable=True)
+    origin = models.CharField(max_length=250,editable=True)

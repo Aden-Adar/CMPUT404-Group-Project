@@ -21,10 +21,14 @@ class CustomUser(AbstractUser, PermissionsMixin):
     password = models.CharField(max_length=200)
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ["password"]    
-    
+
     #assign the custom manager to the objects attribute
     objects = CustomUserManager()
-    
+
+    type = models.CharField(max_length=6,editable=True)
+    host = models.CharField(max_length=250,editable=True)
+    url = models.CharField(max_length=250,editable=True)
+
     def __str__(self):
         return self.username
 

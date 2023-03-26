@@ -22,16 +22,34 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
         ]
 
     def get_type(self, obj):
-        return "author"
+        return obj.type
+        # return "author"
+
     def get_id(self, obj):
-        return obj.id
+        return obj.url
+
     def get_url(self, obj):
-        request = self.context.get('request')
+        return obj.url
+        # request = self.context.get('request')
+
         return reverse("author-detail", kwargs = {"id": obj.id}, request=request)
     def get_host(self, obj):
-        request = self.context.get('request')
-        origin = request.META.get("HTTP_HOST")
-        return origin
+        return obj.host
+        # request = self.context.get('request')
+        # origin = request.META.get("HTTP_HOST")
+        # return origin
+
+    # def create(self, validated_data):
+    #     print("BEFORE: ", validated_data)
+    #     request = self.context.get('request')
+        # validated_data["id"] = str(uuid.uuid4())
+    #     validated_data["type"] = "author"
+    #     validated_data["host"] = request.META.get("HTTP_HOST")
+    #     validated_data["url"] = reverse("author-detail", kwargs = {"id": validated_data["id"]}, request=request)
+
+    #     print("AFTER: ", validated_data)
+    #     obj = super().create(validated_data)
+    #     return obj
 
 class ListAllAuthorSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField(read_only=True)

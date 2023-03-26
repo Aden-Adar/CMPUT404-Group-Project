@@ -24,3 +24,6 @@ class Comments(models.Model):
     content_type = models.CharField(max_length=200, choices=ContentType.choices, default=ContentType.PLAIN)
     published = models.DateTimeField(auto_now_add=True)
     comment = models.TextField(max_length=301,editable=True)
+
+    type = models.CharField(max_length=8,editable=True)
+    id = models.CharField(max_length=250,editable=True)

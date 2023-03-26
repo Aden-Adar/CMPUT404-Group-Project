@@ -26,11 +26,11 @@ def InboxView(request, pk=None, *args, **kwargs):
         return Response(data)
 
     if method == "POST":
-        if request.user.id != kwargs['author_id']:
-            raise PermissionDenied(detail="Invalid inbox url for current user")
+        if not CustomUser.objects.get(id=kwargs['author_id']):
+            raise PermissionDenied(detail="Author does not exist")
         serializer = InboxSerializer(data=request.data, context={"request":request})
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            serializer.save(**kwargs)
             return Response(serializer.data)
         return Response({"invalid": "not good data"}, status=400)
 
