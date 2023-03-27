@@ -39,6 +39,8 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
         # origin = request.META.get("HTTP_HOST")
         # return origin
 
+
+
 class AuthorInboxSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser

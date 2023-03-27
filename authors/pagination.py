@@ -9,7 +9,7 @@ class CustomPageNumberPagination(pagination.PageNumberPagination):
     page_query_param = 'page'
     
 
-    def get_paginated_response(self, data):
+"""     def get_paginated_response(self, data):
         
         return Response({
             
@@ -17,4 +17,4 @@ class CustomPageNumberPagination(pagination.PageNumberPagination):
             #'previous': self.get_previous_link(),#delete this
             'count': self.page.paginator.count,
             'comments': data
-        })
+        }) """
