@@ -28,7 +28,7 @@ def InboxView(request, pk=None, *args, **kwargs):
     if method == "POST":
         if not CustomUser.objects.get(id=kwargs['author_id']):
             raise PermissionDenied(detail="Author does not exist")
-        serializer = InboxSerializer(data=request.data, context={"request":request})
+        serializer = InboxSerializer(data=request.data, context={"request":request, "author_id": kwargs['author_id']})
         if serializer.is_valid(raise_exception=True):
             serializer.save(**kwargs)
             return Response(serializer.data)

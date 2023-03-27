@@ -54,3 +54,19 @@ class CommentSerializer(serializers.ModelSerializer):
 
         obj = super().create(validated_data)
         return obj
+
+class CommentInboxSerializer(serializers.ModelSerializer):
+    author = SingleAuthorSerializer(source="user", read_only=True)
+    class Meta: 
+        model = Comments
+        fields = [
+            'type',
+            'author',
+            'comment',
+            'content_type',
+            'published',
+            'id',
+            'comment_id',
+            # 'post',
+            # 'parent_comment_id'
+        ]

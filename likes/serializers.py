@@ -33,26 +33,38 @@ class LikesSerializer(serializers.ModelSerializer):
         return obj
 
     def get_context(self, obj):
-        return "https://www.w3.org/ns/activitystreams"
+        return obj.context
 
     def get_summary(self, obj):
-        author_username = obj.author_id.username
-        if obj.post_id is not None:
-            return f"{author_username} Likes your post"
-        else:
-            return f"{author_username} Likes your comment"
+        return obj.summary
+    #     author_username = obj.author_id.username
+    #     if obj.post_id is not None:
+    #         return f"{author_username} Likes your post"
+    #     else:
+    #         return f"{author_username} Likes your comment"
     
-    def get_type(self, obj):
-        return "Like"
+    # def get_type(self, obj):
+    #     return "Like"
 
     def get_object(self, obj):
-        request = self.context.get('request')
-        if obj.post_id:
-            return reverse("post-detail", kwargs = {"author_id": obj.post_id.user_id.id, "post_id": obj.post_id.post_id}, request=request)
-        else:
-            return reverse("comment-detail", kwargs = {"author_id": obj.comment_id.user.id, "post_id": obj.comment_id.post.post_id,
-                                                        "comment_id": obj.comment_id.comment_id }, request=request)
+        return obj.object
+        # request = self.context.get('request')
+        # if obj.post_id:
+        #     return reverse("post-detail", kwargs = {"author_id": obj.post_id.user_id.id, "post_id": obj.post_id.post_id}, request=request)
+        # else:
+        #     return reverse("comment-detail", kwargs = {"author_id": obj.comment_id.user.id, "post_id": obj.comment_id.post.post_id,
+        #                                                 "comment_id": obj.comment_id.comment_id }, request=request)
 
+class LikesInboxSerializer(serializers.ModelSerializer):
+    class Meta:
+            model = Likes
+            fields = [
+                'context',
+                'summary',
+                'type',
+                # 'author',
+                'object'
+            ]
 
 class PostLikeSerializer(serializers.ModelSerializer):
     class Meta:

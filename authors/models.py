@@ -48,13 +48,16 @@ class Following(models.Model):
         return f'{self.user} is following {self.following_user}'
 
 class FollowingRequest(models.Model):
-    user_request = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='requester')
-    follow_request_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='is_follow_request')
-    
+    actor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='actor')
+    object = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='object')
+
+    type = models.CharField(max_length=6,editable=True)
+    summary = models.CharField(max_length=150,editable=True)
+
     class Meta:
         constraints = [
-            models.CheckConstraint(check=models.Q(user_request__isnull=False) & models.Q(follow_request_user__isnull=False), name='user_request_and_follow_request_user_not_null'),
+            models.CheckConstraint(check=models.Q(actor__isnull=False) & models.Q(object__isnull=False), name='actor_and_object_not_null'),
         ]
-    
-    def __str__(self):
-        return f'{self.user_request} has requested to follow {self.follow_request_user}'
+
+    # def __str__(self):
+    #     return f'{self.actor} has requested to follow {self.object}'

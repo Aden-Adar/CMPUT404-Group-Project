@@ -4,7 +4,7 @@ from rest_framework.exceptions import NotAcceptable, ValidationError
 
 from .models import *
 from comments.serializers import CommentSerializer
-from authors.serializers import SingleAuthorSerializer, ListAllAuthorSerializer
+from authors.serializers import *
 
 class PostSerializer(serializers.ModelSerializer):
     # private_post_viewers = ListAllAuthorSerializer(write_only=True, required=False)
@@ -85,10 +85,22 @@ class PostSerializer(serializers.ModelSerializer):
         return obj
 
 
-# class PrivatePostViewerSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = PrivatePostViewer
-#         fields = [
-#             'post_id',
-#             'viewer_id'
-#         ]
+class PostInboxSerializer(serializers.ModelSerializer):
+    author = AuthorInboxSerializer(source="user_id", read_only=True)
+    class Meta:
+        model = Posts
+        fields = [
+            'type',
+            "title",
+            'id',
+            'source',
+            # 'origin',
+            'description',
+            'content_type',
+            "content",
+            'author',
+            'comments_id',
+            'published',
+            'visibility',
+            "unlisted",
+        ]
