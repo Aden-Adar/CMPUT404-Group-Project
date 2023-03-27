@@ -4,6 +4,7 @@ from rest_framework.exceptions import NotAcceptable, ValidationError
 
 from .models import *
 from comments.serializers import CommentSerializer
+from comments.models import *
 from authors.serializers import *
 
 class PostSerializer(serializers.ModelSerializer):
@@ -16,6 +17,7 @@ class PostSerializer(serializers.ModelSerializer):
     comments_set = CommentSerializer(many=True, read_only=True) # add '_set' after the child model name
     id = serializers.SerializerMethodField(read_only=True)
     published = serializers.SerializerMethodField(read_only=True)
+    count = serializers.SerializerMethodField(read_only = True)
 
     class Meta:
         model = Posts
@@ -29,6 +31,7 @@ class PostSerializer(serializers.ModelSerializer):
             'content_type',
             "content",
             'author', # need a serializer for author
+            'count',
             'comments',
             "comments_set", # needs to be inside comment_src eventually
             'published',
@@ -37,6 +40,18 @@ class PostSerializer(serializers.ModelSerializer):
             "unlisted",
             "post_id"
         ]
+
+    def get_count(self, obj):
+        #comments = self.comments_set
+        post_id = obj.post_id
+        comments = Comments.objects.all().filter(post = post_id)
+        count = 0
+        print("data",comments)
+        for c in comments:
+            count += 1
+            
+        return count
+
 
     def get_type(self, obj):
         return obj.type

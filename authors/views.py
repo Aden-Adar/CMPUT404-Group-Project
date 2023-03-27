@@ -7,6 +7,8 @@ from .models import *
 from .serializers import *
 from base.forms import *
 
+from .pagination import *
+
 
 class SingleAuthorView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
@@ -16,6 +18,7 @@ class SingleAuthorView(mixins.ListModelMixin,
                     generics.GenericAPIView):
 
     queryset = CustomUser.objects.all()
+    
     serializer_class = SingleAuthorSerializer
     lookup_field = 'id'
 
@@ -28,6 +31,7 @@ class SingleAuthorView(mixins.ListModelMixin,
 #https://stackoverflow.com/questions/73522898/how-i-can-use-nested-serializer-in-django-rest-framework
 #Question by Mohsin and answered by Mohsin
 class AllAuthorView(generics.RetrieveAPIView):
+    
     def get(self,request,*args,**kwargs):
         qs = CustomUser.objects.all()
         data = {

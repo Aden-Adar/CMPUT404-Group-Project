@@ -2,12 +2,13 @@ from rest_framework import generics, mixins
 from rest_framework.exceptions import NotAuthenticated, NotFound, NotAcceptable
 from .models import *
 from .serializers import *
-
+from .pagination import *
 
 class PostListView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
                     generics.GenericAPIView):
     queryset = Posts.objects.all()
+    pagination_class = CustomPageNumberPagination
     serializer_class = PostSerializer
     lookup_field = ('author_id')
 

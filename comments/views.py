@@ -5,11 +5,13 @@ from rest_framework.exceptions import NotAuthenticated, NotFound, NotAcceptable
 from .models import *
 from .serializers import *
 from posts.serializers import PostSerializer
+from .pagination import *
 
 class CommentListView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
                     generics.GenericAPIView):
     queryset = Comments.objects.all()
+    pagination_class = CustomPageNumberPagination
     serializer_class = CommentSerializer
     lookup_field = ('author_id', 'post_id')
 
