@@ -2,17 +2,20 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework import generics, mixins
 from rest_framework.exceptions import *
 from rest_framework.viewsets import ViewSet
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
-
+from rest_framework.permissions import IsAuthenticated
+from base.permissions import IsRemoteNode
 from .models import *
 from .serializers import *
 
 @api_view(['GET', 'POST', 'DELETE'])
+@permission_classes([IsAuthenticated, IsRemoteNode])
 def InboxView(request, pk=None, *args, **kwargs):
+    name = "InboxView"
     method = request.method
 
     if method == "GET":
