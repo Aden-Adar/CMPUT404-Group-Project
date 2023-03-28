@@ -33,7 +33,7 @@ class PostSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField(read_only=True)
     published = serializers.SerializerMethodField(read_only=True)
     count = serializers.SerializerMethodField(read_only = True)
-    
+    categories = StringArrayField()
     class Meta:
         model = Posts
         fields = [
