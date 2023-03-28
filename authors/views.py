@@ -50,6 +50,7 @@ class AllAuthorView(generics.RetrieveAPIView):
 class AllAuthorView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
                     generics.GenericAPIView):
+    name = "AllAuthorView"
     queryset = CustomUser.objects.all()
     permission_classes = [IsAuthenticated, IsRemoteNode]
     pagination_class = CustomPageNumberPagination

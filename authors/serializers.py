@@ -9,6 +9,7 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField(read_only=True)
     host = serializers.SerializerMethodField(read_only=True)
     url = serializers.SerializerMethodField(read_only=True)
+    displayName = serializers.CharField(source="username")
     class Meta:
         model = CustomUser
         fields = [
@@ -16,7 +17,7 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'host', # Need to look at this again
-            'username',
+            'displayName',
             'github',
             'profileImage' 
         ]
