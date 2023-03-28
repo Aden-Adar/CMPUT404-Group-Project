@@ -7,6 +7,7 @@ from base.permissions import IsRemoteNode
 from .models import *
 from .serializers import *
 from posts.serializers import PostSerializer
+from .pagination import *
 
 class CommentListView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
@@ -14,6 +15,7 @@ class CommentListView(mixins.ListModelMixin,
     name = "CommentListView"
     permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Comments.objects.all()
+    pagination_class = CustomPageNumberPagination
     serializer_class = CommentSerializer
     lookup_field = ('author_id', 'post_id')
 

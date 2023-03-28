@@ -31,9 +31,12 @@ class Posts(models.Model):
     description = models.CharField(max_length=200,editable=True)
     content = models.TextField(max_length=300,editable=True)
     unlisted = models.BooleanField(default=False)
+    categories = models.TextField(max_length=300,editable=True, null=True,blank=True, default='')
 
     type = models.CharField(max_length=4,editable=True)
     source = models.CharField(max_length=250,editable=True)
     comments_id = models.CharField(max_length=250,editable=True)
     id = models.CharField(max_length=250,editable=True)
-    origin = models.CharField(max_length=250,editable=True)
+    origin = models.CharField(max_length=250,editable=True, blank=True)
+
+   
