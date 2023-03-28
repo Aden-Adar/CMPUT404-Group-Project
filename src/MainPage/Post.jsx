@@ -4,7 +4,6 @@ import { Avatar, Card, CardContent, CardHeader, CardActions, IconButton, Typogra
 import { Favorite, Comment, AccountCircle, Send } from '@material-ui/icons';
 
 import CommentItem from './Comment';
-import LikeCard from './Like';
 
 function PostCard({
     currentAuthorID,
@@ -90,7 +89,7 @@ function PostCard({
             avatar={<AccountCircle fontSize='large'></AccountCircle>}
             title={
               <span>
-                <Typography component="span" variant="body1">{author.username}</Typography><Typography component="span" style={{ color: '#a3a3a3' }}>{"  -  " + title}</Typography>
+                <Typography component="span" variant="body1">{author.username ? author.username : author.displayName}</Typography><Typography component="span" style={{ color: '#a3a3a3' }}>{"  -  " + title}</Typography>
               </span>}
             subheader={published.substring(0, 10)}
           />
