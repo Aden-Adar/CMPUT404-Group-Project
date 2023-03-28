@@ -50,7 +50,7 @@ class AuthorInboxSerializer(serializers.ModelSerializer):
             'url',
             'host', # Need to look at this again
             'username',
-            'github'
+            'github',
             'profileImage' 
         ]
 
