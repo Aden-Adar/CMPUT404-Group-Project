@@ -1,11 +1,26 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import NotAcceptable, ValidationError
-
+from rest_framework.fields import ListField, CharField
+import json
 from .models import *
 from comments.serializers import CommentSerializer
 from comments.models import *
 from authors.serializers import *
+
+# Reference: https://stackoverflow.com/questions/47170009/drf-serialize-arrayfield-as-string#_=_
+class StringArrayField(CharField):
+    """
+    String representation of an array field.
+    """
+    def to_representation(self, obj):
+        obj = super().to_representation(obj)
+        # convert list to string
+        return json.loads(obj)
+
+    def to_internal_value(self, data):
+        data = json.dumps(data)
+        return super().to_internal_value(data)
 
 class PostSerializer(serializers.ModelSerializer):
     # private_post_viewers = ListAllAuthorSerializer(write_only=True, required=False)
@@ -103,6 +118,9 @@ class PostSerializer(serializers.ModelSerializer):
 
 class PostInboxSerializer(serializers.ModelSerializer):
     author = AuthorInboxSerializer(source="user_id", read_only=True)
+    comments = serializers.CharField(source="comments_id")
+    categories = StringArrayField()
+
     class Meta:
         model = Posts
         fields = [
@@ -110,12 +128,13 @@ class PostInboxSerializer(serializers.ModelSerializer):
             "title",
             'id',
             'source',
-            # 'origin',
+            'origin',
             'description',
             'content_type',
             "content",
             'author',
-            'comments_id',
+            'categories',
+            'comments',
             'published',
             'visibility',
             "unlisted",
