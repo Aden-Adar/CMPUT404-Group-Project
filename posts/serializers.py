@@ -18,7 +18,7 @@ class PostSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField(read_only=True)
     published = serializers.SerializerMethodField(read_only=True)
     count = serializers.SerializerMethodField(read_only = True)
-
+    
     class Meta:
         model = Posts
         fields = [
@@ -26,11 +26,12 @@ class PostSerializer(serializers.ModelSerializer):
             "title",
             'id', # come back to this once author is finished
             'source',
-            # 'origin',
+            'origin',
             'description',
             'content_type',
             "content",
             'author', # need a serializer for author
+            'categories',
             'count',
             'comments',
             "comments_set", # needs to be inside comment_src eventually
@@ -42,11 +43,11 @@ class PostSerializer(serializers.ModelSerializer):
         ]
 
     def get_count(self, obj):
-        #comments = self.comments_set
+
         post_id = obj.post_id
         comments = Comments.objects.all().filter(post = post_id)
         count = 0
-        print("data",comments)
+
         for c in comments:
             count += 1
             
@@ -92,7 +93,7 @@ class PostSerializer(serializers.ModelSerializer):
         validated_data["type"] = "post"
         validated_data["id"] = reverse("post-detail", kwargs = {"author_id": request.user.id, "post_id": validated_data["post_id"]}, request=request)
         validated_data["source"] = request.META.get('HTTP_REFERER')
-        validated_data["origin"] = "ADD ORIGIN HERE"
+        validated_data["origin"] = reverse("post-detail", kwargs = {"author_id": request.user.id, "post_id": validated_data["post_id"]}, request=request)
         validated_data["comments_id"] = reverse("comments-list", kwargs = {"author_id": request.user.id, "post_id": validated_data["post_id"]}, request=request)
 
         obj = super().create(validated_data)
