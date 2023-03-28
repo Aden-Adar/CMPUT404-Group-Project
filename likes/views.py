@@ -1,12 +1,15 @@
 from rest_framework import generics, mixins
 from rest_framework.response import Response
-
+from rest_framework.permissions import IsAuthenticated
+from base.permissions import IsRemoteNode
 from .models import *
 from .serializers import *
 
 
 class PostLikesView(mixins.ListModelMixin,
                     generics.GenericAPIView):
+    name = "PostLikesView"
+    permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Likes.objects.all()
     serializer_class = LikesSerializer
     lookup_field = ('post_id', 'author_id')
@@ -31,6 +34,8 @@ class PostLikesView(mixins.ListModelMixin,
 
 class CommentLikesView(mixins.ListModelMixin,
                     generics.GenericAPIView):
+    name = "CommentLikesView"
+    permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Likes.objects.all()
     serializer_class = LikesSerializer
     lookup_field = ('comment_id', 'author_id')
@@ -55,6 +60,8 @@ class CommentLikesView(mixins.ListModelMixin,
 
 class AuthorLikedView(mixins.RetrieveModelMixin,
                     generics.GenericAPIView):
+    name = "AuthorLikedView"
+    permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Likes.objects.all()
     serializer_class = LikedSerializer
     lookup_field = 'author_id'

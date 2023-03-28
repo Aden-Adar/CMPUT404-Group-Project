@@ -6,14 +6,14 @@ from .forms import UserChangeForm, UserCreationForm
 
 
 class CustomUserAdmin(UserAdmin):
-    form = UserCreationForm
-    add_form = UserChangeForm
+    form = UserChangeForm
+    add_form = UserCreationForm
     list_display = ('username', 'github')
     list_filter = ('github',)
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        ('Personal info', {'fields': ('github',)}),
-        ('Permissions', {'fields': ('is_staff',)}),
+        ('Personal info', {'fields': ()}),
+        ('Permissions', {'fields': ('is_staff','groups')}),
     )
     add_fieldsets = (
         (None, {

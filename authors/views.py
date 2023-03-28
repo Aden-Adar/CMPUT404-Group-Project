@@ -1,6 +1,7 @@
 from rest_framework import status, generics, mixins
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from base.permissions import IsRemoteNode
 from rest_framework.response import Response
 from django.db import IntegrityError
 from django.core.paginator import Paginator
@@ -17,7 +18,8 @@ class SingleAuthorView(mixins.ListModelMixin,
                     mixins.DestroyModelMixin,
                     mixins.UpdateModelMixin,
                     generics.GenericAPIView):
-
+    name = "SingleAuthorView"
+    permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = CustomUser.objects.all()
     
     serializer_class = SingleAuthorSerializer
@@ -29,10 +31,13 @@ class SingleAuthorView(mixins.ListModelMixin,
             return self.retrieve(request, *args, **kwargs)
         return self.list(request, *args, **kwargs)
 
+
+"""
 #https://stackoverflow.com/questions/73522898/how-i-can-use-nested-serializer-in-django-rest-framework
 #Question by Mohsin and answered by Mohsin
-""" class AllAuthorView(generics.RetrieveAPIView):
-    
+class AllAuthorView(generics.RetrieveAPIView):
+    name = "AllAuthorView"
+    permission_classes = [IsAuthenticated, IsRemoteNode]
     def get(self,request,*args,**kwargs):
         qs = CustomUser.objects.all()
         paginator = Paginator(qs,5) #5 per page
@@ -46,6 +51,7 @@ class AllAuthorView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
                     generics.GenericAPIView):
     queryset = CustomUser.objects.all()
+    permission_classes = [IsAuthenticated, IsRemoteNode]
     pagination_class = CustomPageNumberPagination
     serializer_class = SingleAuthorSerializer
     #lookup_field = ('author_id')
@@ -63,7 +69,8 @@ class AllAuthorView(mixins.ListModelMixin,
 
 
 class FollowerList(APIView):
-    permission_classes = [IsAuthenticated]
+    name = "FollowerList"
+    permission_classes = [IsAuthenticated, IsRemoteNode]
     serializer_class = FollowingSerializer
     lookup_field = 'id'
     
@@ -82,6 +89,8 @@ class FollowerList(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST,data={"error": "Please provide a valid author id."} )       
     
 class FollowingView(APIView):
+    name = "FollowingView"
+    permission_classes = [IsAuthenticated, IsRemoteNode]
     def get(self, request, *args, **kwargs):
         author_id = kwargs.get('id')
         if not self.user_exists(author_id):
@@ -138,68 +147,3 @@ class FollowingView(APIView):
             return user
         except CustomUser.DoesNotExist:
             return None
-
-
-
-
-
-
-
-# class FollowingView(APIView):
-#     def get(self, request, *args, **kwargs):
-#         author_id = kwargs.get('id')
-#         if not self.user_exists(author_id):
-#             return Response(status=status.HTTP_400_BAD_REQUEST,data={"error": "Please provide a valid author id."} )
-#         following_id = kwargs.get('follow_id')
-#         if not self.user_exists(following_id):
-#             return Response(status=status.HTTP_400_BAD_REQUEST,data={"error": "Please provide a valid following id."} )
-#         if author_id == following_id:
-#             return Response(status=status.HTTP_400_BAD_REQUEST,data={"error": "You cannot follow yourself."} )        
-#         following = Following.objects.filter(user_id=author_id,following_user_id=following_id)
-#         if following:
-#             following = FollowingSerializer(following, many=True)
-#             return Response(following.data, status=status.HTTP_200_OK)
-#         else:
-#             return Response(status=status.HTTP_200_OK,data={"error": "You are not following this user."} )
-    
-#     def post(self, request, *args, **kwargs):
-#         author_id = kwargs.get('id')
-#         if not self.user_exists(author_id):
-#             return Response(status=status.HTTP_400_BAD_REQUEST,data={"error": "Please provide a valid author id."} )
-#         following_id = kwargs.get('follow_id')
-#         if not self.user_exists(following_id):
-#             return Response(status=status.HTTP_400_BAD_REQUEST,data={"error": "Please provide a valid following id."} )
-#         if author_id == following_id:
-#             return Response(status=status.HTTP_400_BAD_REQUEST,data={"error": "You cannot follow yourself."} )
-#         try: 
-#             serializer = FollowingRequestSerializer(data=request.data)
-#             serializer.initial_data = {"user_request": author_id, "follow_request_user": following_id}
-#             if serializer.is_valid():
-#                 serializer.save(user_request=CustomUser.objects.get(id=author_id), follow_request_user=CustomUser.objects.get(id=following_id))
-#                 response_data = {"type": "follow", "summary": f"user {author_id} has sent a follow request to {following_id}", "actor": author_id, "object": following_id}
-#                 return Response(response_data, status=status.HTTP_201_CREATED)
-#         except IntegrityError:
-#             return Response(status=status.HTTP_400_BAD_REQUEST,data={"error": "You are already following this user."} )
-#         return Response(status=status.HTTP_400_BAD_REQUEST,data={"error": "Something went wrong."} )
-            
-#     def delete(self, request, *args, **kwargs):
-#         author_id = kwargs.get('id')
-#         if not self.user_exists(author_id):
-#             return Response(status=status.HTTP_400_BAD_REQUEST,data={"error": "Please provide a valid author id."} )
-#         following_id = kwargs.get('follow_id')
-#         if not self.user_exists(following_id):
-#             return Response(status=status.HTTP_400_BAD_REQUEST,data={"error": "Please provide a valid following id."} )
-#         if author_id == following_id:
-#             return Response(status=status.HTTP_400_BAD_REQUEST,data={"error": "You cannot follow yourself."} )
-#         following = Following.objects.filter(user_id=author_id,following_user_id=following_id).first()
-#         if not following:
-#             return Response(status=status.HTTP_400_BAD_REQUEST,data={"error": "You are not following this user."} )
-#         following.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)  
-    
-#     def user_exists(self, user_id):
-#         try:
-#             user = CustomUser.objects.get(id=user_id)
-#             return user
-#         except CustomUser.DoesNotExist:
-#             return None
