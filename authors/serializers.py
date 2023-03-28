@@ -43,6 +43,7 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
 
 
 class AuthorInboxSerializer(serializers.ModelSerializer):
+    displayName = serializers.CharField(source="username")
     class Meta:
         model = CustomUser
         fields = [
@@ -50,7 +51,7 @@ class AuthorInboxSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'host', # Need to look at this again
-            'username',
+            'displayName',
             'github',
             'profileImage' 
         ]
