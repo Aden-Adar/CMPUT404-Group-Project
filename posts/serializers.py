@@ -26,7 +26,7 @@ class PostSerializer(serializers.ModelSerializer):
     # private_post_viewers = ListAllAuthorSerializer(write_only=True, required=False)
     type = serializers.SerializerMethodField(read_only=True)
     source = serializers.SerializerMethodField(read_only=True)
-    # origin = serializers.SerializerMethodField(read_only=True)
+    origin = serializers.SerializerMethodField(read_only=True)
     author = SingleAuthorSerializer(source='user_id', read_only=True)
     comments = serializers.SerializerMethodField(read_only=True)
     comments_set = CommentSerializer(many=True, read_only=True) # add '_set' after the child model name
