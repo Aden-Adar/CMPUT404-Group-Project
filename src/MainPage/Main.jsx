@@ -4,18 +4,17 @@ import TopAppBar from './AppBar'
 import PostCard from './Post';
 import LikeCard from './Like'
 import CommentCard from './CommentCard';
+import { getExplorePosts, getMyPosts, getInbox } from '../API/mainRequests';
 
 export const Main = () => {
-    const AUTHOR_ID = 'e654cd42-cae7-4934-aaf5-514d62d446d4'
+    const AUTHOR_ID = window.localStorage.getItem("UUID")
     console.log(AUTHOR_ID)
-    const [inboxFlag, setInboxFlag] = React.useState(true);
-    const [exploreFlag, setExploreFlag] = React.useState(false);
+    const [inboxFlag, setInboxFlag] = React.useState(false);
+    const [exploreFlag, setExploreFlag] = React.useState(true);
     const [myPostsFlag, setMyPostsFlag] = React.useState(false);
     const [myPosts, setMyPosts] = React.useState([]);
     const [explorePosts, setExplorePosts] = React.useState([]);
     const [inbox, setInbox] = React.useState([]);
-
-    console.log(inboxFlag, exploreFlag, myPostsFlag)
 
     // Manage what tab we're on and re-render accordingly
     function handleTabClick(option) {
@@ -36,49 +35,23 @@ export const Main = () => {
 
     // API CALL TO GET EXPLORE POSTS
     React.useEffect(() => {
-        async function getExplorePosts() {
-            let posts = []
-            let authorsResponse = await fetch('/service/authors/')
-            let authorsRes_data = await authorsResponse.json()
-            for (let i = 0; i < authorsRes_data.items.length; i++) {
-                if (authorsRes_data.items[i].id !== AUTHOR_ID) {
-                    let authorPosts = []
-                    let response = await fetch(authorsRes_data.items[i].url + "posts/")
-                    let res_data = await response.json()
-                    // Filter out any of logged in users' posts
-                    for (let j = 0; j < res_data.length; j++) {
-                        if (res_data[j].visibility === "PUBLIC") {
-                            authorPosts.push(res_data[j])
-                        }
-                    }
-                    posts = posts.concat(authorPosts)
-                }
-            }
+        getExplorePosts().then(posts => {
             setExplorePosts(posts);
-        }
-        getExplorePosts();
+        });
     }, []);
 
     // API CALL TO GET MY POSTS
     React.useEffect(() => {
-        async function getMyPosts() {
-            let response = await fetch('/service/authors/' + AUTHOR_ID + '/posts/')
-            let res_data = await response.json()
-            // console.log(res_data)
-            setMyPosts(res_data);
-        }
-        getMyPosts();
+        getMyPosts().then(posts => {
+            setMyPosts(posts);
+        });
     }, []);
 
     // API CALL TO GET INBOX
     React.useEffect(() => {
-        async function getInbox() {
-            let response = await fetch('/service/authors/' + AUTHOR_ID + '/inbox/')
-            let res_data = await response.json()
-            // console.log(res_data)
-            setInbox(res_data.items);
-        }
-        getInbox();
+        getInbox().then(posts => {
+            setInbox(posts);
+        });
     }, []);
 
     return (

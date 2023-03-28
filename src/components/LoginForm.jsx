@@ -9,8 +9,6 @@ import FormLabel from '@mui/joy/FormLabel';
 import Input from '@mui/joy/Input';
 import Button from '@mui/joy/Button';
 import Link from '@mui/joy/Link';
-import { setUserId } from './userID';
-import { getUserId } from './userID';
 
 function ModeToggle() {
   const { mode, setMode } = useColorScheme();
@@ -36,7 +34,6 @@ function ModeToggle() {
 }
 
 function LoginForm() {
-
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
 
@@ -60,11 +57,9 @@ function LoginForm() {
     })
       .then(response => response.json())
       .then(data => {
-        window.location.href = '/main';
         console.log(data);
-        setUserId(data.user_id);
-        const userid = getUserId();
-        console.log(userid);
+        window.localStorage.setItem("UUID", data.user_id);
+        window.location.href = '/main';
       })
       .catch(error => {
         console.error('Error:', error);
