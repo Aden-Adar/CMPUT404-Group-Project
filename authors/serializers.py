@@ -17,8 +17,8 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
             'url',
             'host', # Need to look at this again
             'username',
-            'github'
-            #'profileImage' *** to be added later
+            'github',
+            'profileImage' 
         ]
 
     def get_type(self, obj):
@@ -39,6 +39,8 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
         # origin = request.META.get("HTTP_HOST")
         # return origin
 
+
+
 class AuthorInboxSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -49,7 +51,7 @@ class AuthorInboxSerializer(serializers.ModelSerializer):
             'host', # Need to look at this again
             'username',
             'github'
-            #'profileImage' *** to be added later
+            'profileImage' 
         ]
 
 class ListAllAuthorSerializer(serializers.ModelSerializer):

@@ -4,6 +4,7 @@ from rest_framework.exceptions import NotAcceptable, ValidationError
 
 from .models import *
 from comments.serializers import CommentSerializer
+from comments.models import *
 from authors.serializers import *
 
 class PostSerializer(serializers.ModelSerializer):
@@ -16,7 +17,8 @@ class PostSerializer(serializers.ModelSerializer):
     comments_set = CommentSerializer(many=True, read_only=True) # add '_set' after the child model name
     id = serializers.SerializerMethodField(read_only=True)
     published = serializers.SerializerMethodField(read_only=True)
-
+    count = serializers.SerializerMethodField(read_only = True)
+    
     class Meta:
         model = Posts
         fields = [
@@ -24,11 +26,13 @@ class PostSerializer(serializers.ModelSerializer):
             "title",
             'id', # come back to this once author is finished
             'source',
-            # 'origin',
+            'origin',
             'description',
             'content_type',
             "content",
             'author', # need a serializer for author
+            'categories',
+            'count',
             'comments',
             "comments_set", # needs to be inside comment_src eventually
             'published',
@@ -37,6 +41,18 @@ class PostSerializer(serializers.ModelSerializer):
             "unlisted",
             "post_id"
         ]
+
+    def get_count(self, obj):
+
+        post_id = obj.post_id
+        comments = Comments.objects.all().filter(post = post_id)
+        count = 0
+
+        for c in comments:
+            count += 1
+            
+        return count
+
 
     def get_type(self, obj):
         return obj.type
@@ -77,7 +93,7 @@ class PostSerializer(serializers.ModelSerializer):
         validated_data["type"] = "post"
         validated_data["id"] = reverse("post-detail", kwargs = {"author_id": request.user.id, "post_id": validated_data["post_id"]}, request=request)
         validated_data["source"] = request.META.get('HTTP_REFERER')
-        validated_data["origin"] = "ADD ORIGIN HERE"
+        validated_data["origin"] = reverse("post-detail", kwargs = {"author_id": request.user.id, "post_id": validated_data["post_id"]}, request=request)
         validated_data["comments_id"] = reverse("comments-list", kwargs = {"author_id": request.user.id, "post_id": validated_data["post_id"]}, request=request)
 
         obj = super().create(validated_data)

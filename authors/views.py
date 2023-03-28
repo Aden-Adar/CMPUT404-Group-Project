@@ -4,9 +4,12 @@ from rest_framework.permissions import IsAuthenticated
 from base.permissions import IsRemoteNode
 from rest_framework.response import Response
 from django.db import IntegrityError
+from django.core.paginator import Paginator
+
 from .models import *
 from .serializers import *
 from base.forms import *
+from .pagination import *
 
 
 class SingleAuthorView(mixins.ListModelMixin,
@@ -18,6 +21,7 @@ class SingleAuthorView(mixins.ListModelMixin,
     name = "SingleAuthorView"
     permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = CustomUser.objects.all()
+    
     serializer_class = SingleAuthorSerializer
     lookup_field = 'id'
 
@@ -27,6 +31,8 @@ class SingleAuthorView(mixins.ListModelMixin,
             return self.retrieve(request, *args, **kwargs)
         return self.list(request, *args, **kwargs)
 
+
+"""
 #https://stackoverflow.com/questions/73522898/how-i-can-use-nested-serializer-in-django-rest-framework
 #Question by Mohsin and answered by Mohsin
 class AllAuthorView(generics.RetrieveAPIView):
@@ -34,11 +40,33 @@ class AllAuthorView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated, IsRemoteNode]
     def get(self,request,*args,**kwargs):
         qs = CustomUser.objects.all()
+        paginator = Paginator(qs,5) #5 per page
         data = {
             "type":"authors",
             "items": SingleAuthorSerializer(qs,many=True,context={"request":request}).data,
         }
-        return Response(data=data)
+        return Response(data=data) """
+
+class AllAuthorView(mixins.ListModelMixin,
+                    mixins.CreateModelMixin,
+                    generics.GenericAPIView):
+    queryset = CustomUser.objects.all()
+    permission_classes = [IsAuthenticated, IsRemoteNode]
+    pagination_class = CustomPageNumberPagination
+    serializer_class = SingleAuthorSerializer
+    #lookup_field = ('author_id')
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        return qs
+
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.request.user)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+
 
 class FollowerList(APIView):
     name = "FollowerList"
