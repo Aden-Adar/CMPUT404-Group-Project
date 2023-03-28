@@ -37,6 +37,6 @@ class Posts(models.Model):
     source = models.CharField(max_length=250,editable=True)
     comments_id = models.CharField(max_length=250,editable=True)
     id = models.CharField(max_length=250,editable=True)
-    origin = models.CharField(max_length=250,editable=True)
+    origin = models.CharField(max_length=250,editable=True, blank=True)
 
    
