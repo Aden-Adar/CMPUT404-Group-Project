@@ -19,8 +19,11 @@ class Comments(models.Model):
     #Use django auto-generated id
     comment_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    post = models.ForeignKey(Posts, on_delete=models.CASCADE)
+    post = models.ForeignKey(Posts, null=True, blank=True,  on_delete=models.CASCADE)
     parent_comment_id = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
     content_type = models.CharField(max_length=200, choices=ContentType.choices, default=ContentType.PLAIN)
     published = models.DateTimeField(auto_now_add=True)
     comment = models.TextField(max_length=301,editable=True)
+
+    type = models.CharField(max_length=8,editable=True)
+    id = models.CharField(max_length=250,editable=True)

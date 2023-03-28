@@ -1,5 +1,7 @@
 from rest_framework import generics, mixins
 from rest_framework.exceptions import NotAuthenticated, NotFound, NotAcceptable
+from rest_framework.permissions import IsAuthenticated
+from base.permissions import IsRemoteNode
 from .models import *
 from .serializers import *
 
@@ -7,6 +9,8 @@ from .serializers import *
 class PostListView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
                     generics.GenericAPIView):
+    name = "PostListView"
+    permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Posts.objects.all()
     serializer_class = PostSerializer
     lookup_field = ('author_id')
@@ -37,6 +41,8 @@ class PostDetailView(mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin,
                     generics.GenericAPIView):
+    name = "PostDetailView"
+    permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Posts.objects.all()
     serializer_class = PostSerializer
     lookup_field = ('author_id', 'post_id')

@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework import generics, mixins
 from rest_framework.exceptions import NotAuthenticated, NotFound, NotAcceptable
+from rest_framework.permissions import IsAuthenticated
+from base.permissions import IsRemoteNode
 
 from .models import *
 from .serializers import *
@@ -9,6 +11,8 @@ from posts.serializers import PostSerializer
 class CommentListView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
                     generics.GenericAPIView):
+    name = "CommentListView"
+    permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Comments.objects.all()
     serializer_class = CommentSerializer
     lookup_field = ('author_id', 'post_id')
@@ -40,6 +44,8 @@ class CommentListView(mixins.ListModelMixin,
 
 class CommentDetailView(mixins.RetrieveModelMixin,
                         generics.GenericAPIView):
+    name = "CommentDetailView"
+    permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Comments.objects.all()
     serializer_class = CommentSerializer
     lookup_field = ('author_id', 'post_id', 'comment_id')

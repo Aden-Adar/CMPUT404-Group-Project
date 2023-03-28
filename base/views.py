@@ -22,7 +22,7 @@ class CreateAccount(APIView):
             form.save()
             form = UserCreationForm()
         
-        serializers = CreateAccountSerializer(data=request.data)
+        serializers = CreateAccountSerializer(data=request.data, context={"request":request})
         if serializers.is_valid():
             serializers.save()
             return Response(serializers.data, status=status.HTTP_201_CREATED)

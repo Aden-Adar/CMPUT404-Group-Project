@@ -4,7 +4,7 @@ from rest_framework.exceptions import NotAcceptable, ValidationError
 
 from .models import *
 from comments.serializers import CommentSerializer
-from authors.serializers import SingleAuthorSerializer, ListAllAuthorSerializer
+from authors.serializers import *
 
 class PostSerializer(serializers.ModelSerializer):
     # private_post_viewers = ListAllAuthorSerializer(write_only=True, required=False)
@@ -39,26 +39,31 @@ class PostSerializer(serializers.ModelSerializer):
         ]
 
     def get_type(self, obj):
-        return "post"
+        return obj.type
+        # return "post"
 
     def get_id(self, obj):
-        request = self.context.get('request')
-        return reverse("post-detail", kwargs = {"author_id": obj.user_id.id, "post_id": obj.post_id}, request=request)
+        return obj.id
+        # request = self.context.get('request')
+        # return reverse("post-detail", kwargs = {"author_id": obj.user_id.id, "post_id": obj.post_id}, request=request)
     
     def get_source(self, obj):
-        return self.context.get('request').META.get('HTTP_REFERER')
+        return obj.source
+        # return self.context.get('request').META.get('HTTP_REFERER')
     
     def get_origin(self, obj): # Not sure what origin means
         # request = self.context.get('request')
         # return reverse("post-detail", kwargs = {"author_id": obj.user_id.id, "post_id": obj.post_id}, request=request)
-        return "NEED TO FIGURE OUT WHAT THIS IS"
+        return obj.origin
+        # return "NEED TO FIGURE OUT WHAT THIS IS"
 
     # def get_author(self, obj):
     #     return obj.user_id.id
 
     def get_comments(self, obj):
-        request = self.context.get('request')
-        return reverse("comments-list", kwargs = {"author_id": obj.user_id.id, "post_id": obj.post_id}, request=request)
+        return obj.comments_id
+        # request = self.context.get('request')
+        # return reverse("comments-list", kwargs = {"author_id": obj.user_id.id, "post_id": obj.post_id}, request=request)
 
     def get_comments_list(self, obj, **kwargs):
         return CommentSerializer(many=True, read_only=True).data # https://docs.djangoproject.com/en/dev/topics/db/queries/#following-relationships-backward
@@ -67,38 +72,35 @@ class PostSerializer(serializers.ModelSerializer):
         return obj.published.isoformat()
     
     def create(self, validated_data):
+        request = self.context.get('request')
+        validated_data["post_id"] = str(uuid.uuid4())
+        validated_data["type"] = "post"
+        validated_data["id"] = reverse("post-detail", kwargs = {"author_id": request.user.id, "post_id": validated_data["post_id"]}, request=request)
+        validated_data["source"] = request.META.get('HTTP_REFERER')
+        validated_data["origin"] = "ADD ORIGIN HERE"
+        validated_data["comments_id"] = reverse("comments-list", kwargs = {"author_id": request.user.id, "post_id": validated_data["post_id"]}, request=request)
+
         obj = super().create(validated_data)
-        # try:
-        #     private_post_viewers = validated_data.pop("private_post_viewers")
-        # except KeyError: # viewer_ids was not passed
-        #     if validated_data.get('visibility') == 'PRIVATE':
-        #         raise NotAcceptable(detail="Post cannot be set to private without providing the private post viewer id")
-        #     obj = super().create(validated_data)
-        # else:
-        #     if validated_data.get('visibility') != 'PRIVATE':
-        #         raise NotAcceptable(detail="Private post viewer id should only be included for private posts")
-        #     if CustomUser.objects.filter(id=private_post_viewers).exists():
-        #         obj = super().create(validated_data)
-        #         private_post_viewers_serializer = PrivatePostViewerSerializer(data=[{
-        #                 "post_id": obj.post_id,
-        #                 "viewer_id" : private_post_viewers
-        #             }]
-        #             , many=True)
-        #         if private_post_viewers_serializer.is_valid():
-        #             private_post_viewers_serializer.save()
-        #         else:
-        #             obj.delete()
-        #             raise ValidationError()
-        #     else:
-        #         raise NotAcceptable(detail="User does not exist")
 
         return obj
 
 
-# class PrivatePostViewerSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = PrivatePostViewer
-#         fields = [
-#             'post_id',
-#             'viewer_id'
-#         ]
+class PostInboxSerializer(serializers.ModelSerializer):
+    author = AuthorInboxSerializer(source="user_id", read_only=True)
+    class Meta:
+        model = Posts
+        fields = [
+            'type',
+            "title",
+            'id',
+            'source',
+            # 'origin',
+            'description',
+            'content_type',
+            "content",
+            'author',
+            'comments_id',
+            'published',
+            'visibility',
+            "unlisted",
+        ]
