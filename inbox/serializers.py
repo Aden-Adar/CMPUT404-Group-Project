@@ -39,9 +39,9 @@ class InboxSerializer(serializers.ModelSerializer):
         user = CustomUser.objects.filter(url=author_data["url"]).first()
         if not user:
             author_create = AuthorInboxSerializer(data=author_data)
-            if author_create.is_valid():
-                user = author_create.save()
-            # print("Author errors: ", author_create.errors)
+            if not author_create.is_valid():
+                raise ValidationError(f"Author validation errors: {author_create.errors}")
+            user = author_create.save()
         return user
 
     def create_post(self, data):
@@ -50,9 +50,9 @@ class InboxSerializer(serializers.ModelSerializer):
         if post:
             return post
         post = PostInboxSerializer(data=data)
-        if post.is_valid():
-            obj = post.save(user_id=author)
-        # print("\n\nPost errors: ",post.errors)
+        if not post.is_valid():
+            raise ValidationError(f"Post validation errors: {post.errors}")
+        obj = post.save(user_id=author)
         return obj
 
     def create_comment(self, data):
@@ -61,9 +61,9 @@ class InboxSerializer(serializers.ModelSerializer):
         if comment:
             return comment
         comment = CommentInboxSerializer(data=data)
-        if comment.is_valid():
-            obj = comment.save(user=author)
-        # print("\n\nComment errors: ",comment.errors)
+        if not comment.is_valid():
+            raise ValidationError(f"Comment errors: {comment.errors}")
+        obj = comment.save(user=author)
         return obj
 
     def create_like(self, data):
@@ -81,16 +81,18 @@ class InboxSerializer(serializers.ModelSerializer):
             post = Posts.objects.filter(post_id=id).first()
             if not post:
                 raise NotAcceptable(detail="Cannot like a post that doesn't exist")
-            if like.is_valid():
-                obj = like.save(author_id=author, post_id=post)
-                return obj
+            if not like.is_valid():
+                raise ValidationError(f"Like post errors: {like.errors}")
+            obj = like.save(author_id=author, post_id=post)
+            return obj
         if type == "comments":
             comment = Comments.objects.filter(id=id).first()
             if not comment:
                 raise NotAcceptable(detail="Cannot like a comment that doesn't exist")
-            if like.is_valid():
-                obj = like.save(author_id=author, comment_id=comment)
-                return obj
+            if not like.is_valid():
+                raise ValidationError(detail=f"Like comment errors: {like.errors}")
+            obj = like.save(author_id=author, comment_id=comment)
+            return obj
 
     def create_request(self, data):
         actor = self.create_author(data.pop("actor"))
@@ -114,7 +116,7 @@ class InboxSerializer(serializers.ModelSerializer):
         try:
             type = data["type"]
         except Exception:
-            raise NotAcceptable
+            raise NotAcceptable(detail="Body missing type field")
 
         if type == "post":
             post = self.create_post(data)
@@ -129,52 +131,9 @@ class InboxSerializer(serializers.ModelSerializer):
             follow_request = self.create_request(data)
             obj = super().save(follow_request=follow_request, author=author)
         else:
-            raise NotAcceptable()
+            raise NotAcceptable(detail=f"type field of {type} is invalid. Should be either 'post', 'comment', 'Like', or 'Follow'.")
 
-        
         return obj
-
-    # def create(self, validated_data):
-    #     author = validated_data.pop('author_id')
-    #     if len(validated_data) != 1:
-    #         raise NotAcceptable()
-    #     else:
-    #         flag = list(validated_data.keys())[0]
-    #     validated_data['author_id'] = author
-
-    #     for key in validated_data.keys():
-    #         if key == 'author_id':
-    #             if not CustomUser.objects.all().filter(id=validated_data[key]).exists():
-    #                 raise NotAcceptable(detail="Author does not exist")
-    #         elif key == 'post_id' and flag == 'post_id':
-    #             if not Posts.objects.all().filter(post_id=validated_data[key]).exists():
-    #                 raise NotAcceptable(detail="Post does not exist")
-    #         elif key == 'comment_id' and flag == 'comment_id':
-    #             if not Comments.objects.all().filter(comment_id=validated_data[key]).exists():
-    #                 raise NotAcceptable(detail="Comment does not exist")
-    #         elif key == 'like_id' and flag == 'like_id':
-    #             if validated_data[key].get("comment_id"):
-    #                 like_serializer = CommentLikeSerializer(data={
-    #                     "author_id": self.context.get('request').user.id,
-    #                     "comment_id": Comments.objects.all().filter(comment_id=validated_data[key].get("comment_id")).first().comment_id
-    #                 })
-    #             elif validated_data[key].get("post_id"):
-    #                 like_serializer = PostLikeSerializer(data={
-    #                     "author_id": self.context.get('request').user.id,
-    #                     "post_id": Posts.objects.all().filter(post_id=validated_data[key].get("post_id")).first().post_id
-    #                 })
-    #             else:
-    #                 raise NotAcceptable(detail="Cannot like comment/post that does not exist")
-    #             if like_serializer.is_valid(raise_exception=True):
-    #                 like_obj = like_serializer.save()
-    #                 validated_data['like_id'] = like_obj.id
-    #                 print(validated_data)
-    #             else:
-    #                 raise ValidationError()
-
-    #     obj = super().create(validated_data)
-
-    #     return obj
 
     def get_type(self, obj):
         return 'inbox'

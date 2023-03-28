@@ -48,8 +48,8 @@ class AuthorInboxSerializer(serializers.ModelSerializer):
             'url',
             'host', # Need to look at this again
             'username',
-            'github'
-            #'profileImage' *** to be added later
+            'github',
+            'profileImage' 
         ]
 
 class ListAllAuthorSerializer(serializers.ModelSerializer):
