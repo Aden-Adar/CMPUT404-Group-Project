@@ -31,6 +31,9 @@ class SingleAuthorView(mixins.ListModelMixin,
             return self.retrieve(request, *args, **kwargs)
         return self.list(request, *args, **kwargs)
 
+    def post(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
 
 """
 #https://stackoverflow.com/questions/73522898/how-i-can-use-nested-serializer-in-django-rest-framework

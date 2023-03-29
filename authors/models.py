@@ -13,10 +13,10 @@ FOREIGN KEYS:
 '''
 class CustomUser(AbstractUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    username = models.CharField(max_length = 50, blank = True, null = True, unique = True)
+    username = models.CharField(max_length = 50, blank = True, null = True, unique = True, editable= True)
     email = None
     password = models.CharField(max_length=200)
-    github = models.CharField(max_length=200)
+    github = models.CharField(max_length=200, editable=True, default='', blank=True)
     # profile_image = models.CharField(max_length=200) https://www.geeksforgeeks.org/imagefield-django-models/
     profileImage = models.TextField(max_length=10000, blank=True, null=True, editable=True, default='https://cdn0.iconfinder.com/data/icons/google-material-design-3-0/48/ic_account_circle_48px-512.png')
     password = models.CharField(max_length=200)
