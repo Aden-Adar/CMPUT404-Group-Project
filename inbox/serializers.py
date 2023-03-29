@@ -105,8 +105,9 @@ class InboxSerializer(serializers.ModelSerializer):
         # if not object:
         #     raise NotFound(detail="object author not found")
         follow_request = FollowingRequestInboxSerializer(data=data)
-        if follow_request.is_valid():
-            obj = follow_request.save(actor=actor, object=object)
+        if not follow_request.is_valid():
+            raise ValidationError(detail=f"Follow request errors: {follow_request.errors}")
+        obj = follow_request.save(actor=actor, object=object)
         return obj
 
     def save(self, **kwargs):
@@ -165,8 +166,7 @@ class InboxSerializer(serializers.ModelSerializer):
                 data = LikesInboxSerializer(like, context={"request":request}).data
                 result_list.append(data)
             elif item.follow_request is not None:
-                follow_request = FollowingRequest.objects.all().filter(object=item.follow_request.object).first()
-                data = FollowingRequestInboxSerializer(follow_request).data
+                data = FollowingRequestInboxSerializer(item.follow_request).data
                 result_list.append(data)
         return result_list
 
