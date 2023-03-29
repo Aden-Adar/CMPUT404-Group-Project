@@ -31,8 +31,10 @@ class SingleAuthorView(mixins.ListModelMixin,
             return self.retrieve(request, *args, **kwargs)
         return self.list(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
+    def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+
+
 
 
 """
