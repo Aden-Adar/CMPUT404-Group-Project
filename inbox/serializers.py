@@ -74,7 +74,11 @@ class InboxSerializer(serializers.ModelSerializer):
             return like
 
         like = LikesInboxSerializer(data=data)
-        type, id = urlparse(data["object"]).path.split("/")[-2:]
+        path = urlparse(data["object"]).path
+        if path[-1] == "/":
+            type, id = path.split("/")[-3:-1]
+        else:
+            type, id = path.split("/")[-2:]
         id = uuid.UUID(hex=id)
 
         if type == "posts":
