@@ -148,3 +148,19 @@ class FollowingView(APIView):
             return user
         except CustomUser.DoesNotExist:
             return None
+
+class RemoveRequestView(APIView):
+    name = "FollowingView"
+    permission_classes = [IsAuthenticated, IsRemoteNode]
+
+    def delete(self, request, *args, **kwargs):
+        author_id = kwargs.get('id')
+        following_id = kwargs.get('follow_id')
+
+        follow_request = FollowingRequest.objects.filter(actor=following_id, object=author_id)
+
+        if not follow_request:
+            Response(status=404)
+        
+        follow_request.delete()
+        return Response(status=200)
