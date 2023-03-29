@@ -58,8 +58,14 @@ function LoginForm() {
       .then(response => response.json())
       .then(data => {
         console.log(data);
-        window.localStorage.setItem("UUID", data.user_id);
-        window.location.href = '/main';
+        async function setAuthorInStorage() {
+          window.localStorage.setItem("UUID", data.user_id);
+          let response = await fetch('/service/authors/' + data.user_id + '/')
+          let res_data = await response.json()
+          window.localStorage.setItem("Author", JSON.stringify(res_data));
+          window.location.href = '/main';
+        }
+        setAuthorInStorage()
       })
       .catch(error => {
         console.error('Error:', error);

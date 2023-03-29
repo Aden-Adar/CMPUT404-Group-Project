@@ -4,11 +4,14 @@ import TopAppBar from './AppBar'
 import PostCard from './Post';
 import LikeCard from './Like'
 import CommentCard from './CommentCard';
+import FollowCard from './FollowCard';
 import { getExplorePosts, getMyPosts, getInbox } from '../API/mainRequests';
 
 export const Main = () => {
     const AUTHOR_ID = window.localStorage.getItem("UUID")
+    const AUTHOR = window.localStorage.getItem("Author")
     console.log(AUTHOR_ID)
+    console.log(AUTHOR)
     const [inboxFlag, setInboxFlag] = React.useState(false);
     const [exploreFlag, setExploreFlag] = React.useState(true);
     const [myPostsFlag, setMyPostsFlag] = React.useState(false);
@@ -36,6 +39,7 @@ export const Main = () => {
     // API CALL TO GET EXPLORE POSTS
     React.useEffect(() => {
         getExplorePosts().then(posts => {
+            console.log(posts)
             setExplorePosts(posts);
         });
     }, []);
@@ -85,7 +89,8 @@ export const Main = () => {
                     title={post.title}
                     visibility={post.visibility}
                     published={post.published}
-                    
+                    post_id={post.post_id}
+                    url={post.id}
                 />
                 </Grid>
             ))}
@@ -101,6 +106,7 @@ export const Main = () => {
                     visibility={post.visibility}
                     published={post.published}
                     post_id={post.post_id}
+                    url={post.id}
                 />
                 </Grid>
             ))}
@@ -115,7 +121,8 @@ export const Main = () => {
                         title={item.title}
                         visibility={item.visibility}
                         published={item.published}
-                        post_id={item.post_id} />}
+                        post_id={item.post_id}
+                        url={item.id} />}
                     {item.type === "Like" && <LikeCard
                         author={item.author}
                         summary={item.summary}
@@ -124,6 +131,10 @@ export const Main = () => {
                         author={item.author}
                         comment={item.comment}
                         published={item.published} />}
+                    {item.type === "Follow" && <FollowCard
+                        summary={item.summary}
+                        actor={item.actor}
+                        object={item.object} />} 
                 </Grid>
             ))}
         </Grid>
