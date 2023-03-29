@@ -18,7 +18,7 @@ class CustomUser(AbstractUser, PermissionsMixin):
     password = models.CharField(max_length=200)
     github = models.CharField(max_length=200)
     # profile_image = models.CharField(max_length=200) https://www.geeksforgeeks.org/imagefield-django-models/
-    profileImage = models.TextField(max_length=10000, blank=True, null=True, editable=True)
+    profileImage = models.TextField(max_length=10000, blank=True, null=True, editable=True, default='https://cdn0.iconfinder.com/data/icons/google-material-design-3-0/48/ic_account_circle_48px-512.png')
     password = models.CharField(max_length=200)
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ["password"]    
