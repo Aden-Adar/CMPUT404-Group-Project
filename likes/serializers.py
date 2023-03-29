@@ -32,6 +32,9 @@ class LikesSerializer(serializers.ModelSerializer):
         obj = super().create(validated_data)
         return obj
 
+    def get_type(self, obj):
+        return obj.type
+
     def get_context(self, obj):
         return obj.context
 
