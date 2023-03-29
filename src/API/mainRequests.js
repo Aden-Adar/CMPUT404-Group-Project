@@ -1,5 +1,6 @@
 const AUTHOR_ID = window.localStorage.getItem("UUID")
-
+const GROUP1URL = "https://social-distribution-w23-t17.herokuapp.com/"
+const GROUP1CREDS = btoa("remote-user-t22:pZHAe3PWukpd3Nv")
 async function getExplorePosts() {
     let posts = []
 
@@ -22,12 +23,10 @@ async function getExplorePosts() {
     }
     
     // POSTS FROM GROUP 1's BE
-    var auth = btoa('remote-user-t22' + ':' + 'pZHAe3PWukpd3Nv');
-    var group1URL = 'https://social-distribution-w23-t17.herokuapp.com/'
-    let authorsResponse2 = await fetch(group1URL+'authors/', {
+    let authorsResponse2 = await fetch(GROUP1URL+'authors/', {
         method: 'GET',
         headers: {
-            'Authorization': 'Basic ' + auth,
+            'Authorization': 'Basic ' + GROUP1CREDS,
             'Access-Control-Request-Method': 'GET' 
         }
     })
@@ -36,10 +35,10 @@ async function getExplorePosts() {
     for (let i = 0; i < authorsRes_data2.items.length; i++) {
         if (authorsRes_data2.items[i].id !== AUTHOR_ID) {
             let authorPosts = []
-            let response = await fetch(group1URL + 'authors/' + authorsRes_data2.items[i].id + '/posts/', {
+            let response = await fetch(GROUP1URL + 'authors/' + authorsRes_data2.items[i].id + '/posts/', {
                 method: 'GET',
                 headers: {
-                    'Authorization': 'Basic ' + auth,
+                    'Authorization': 'Basic ' + GROUP1CREDS,
                     'Access-Control-Request-Method': 'GET' 
                 }
             })
@@ -47,10 +46,10 @@ async function getExplorePosts() {
             // Filter out any of logged in users' posts
             for (let j = 0; j < res_data.items.length; j++) {
                 if (res_data.items[j].visibility === "PUBLIC") {
-                    let commentsResponse = await fetch(group1URL + 'authors/' + authorsRes_data2.items[i].id + '/posts/' + res_data.items[j].id + '/comments/', {
+                    let commentsResponse = await fetch(GROUP1URL + 'authors/' + authorsRes_data2.items[i].id + '/posts/' + res_data.items[j].id + '/comments/', {
                         method: 'GET',
                         headers: {
-                            'Authorization': 'Basic ' + auth,
+                            'Authorization': 'Basic ' + GROUP1CREDS,
                             'Access-Control-Request-Method': 'GET' 
                         }
                     })
