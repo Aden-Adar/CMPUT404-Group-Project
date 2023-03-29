@@ -9,6 +9,7 @@ import SignUpForm from "./components/SignUpForm";
 import { Main } from './MainPage/Main';
 import Profile from './components/Profile';
 import CreatePost from './components/CreatePost';
+import Followers from './components/Followers';
 
 function App() {
   const navigate = useNavigate();
@@ -49,6 +50,7 @@ function App() {
         <Route path="/main" element={<Main />} />
         <Route path="/profile" element={<Profile user={user} onSave={handleSaveProfile} />} />
         <Route path="/create" element={<CreatePost />} />
+        <Route path="/followers" element={<Followers />} />
     </Routes>
     </div>
   );

@@ -59,6 +59,8 @@ function CreatePost()  {
   const [content, setContent] = useState('');
   const [visibility, setVisibility] = useState('');
   const [unlisted, setUnlisted] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const AUTHOR_ID = window.localStorage.getItem("UUID");
 
   
   const handleSubmit = (event) => {
@@ -71,9 +73,10 @@ function CreatePost()  {
       content: content,
       visibility: visibility,
       unlisted: unlisted,
+      categories: categories,
     };
     
-    fetch('/service/authors/<author_id>/posts', {
+    fetch('/service/authors/'+ AUTHOR_ID+ '/posts/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -82,7 +85,7 @@ function CreatePost()  {
     })
       .then(response => response.json())
       .then(data => console.log(data))
-      .catch(error => console.error(error));
+      //.catch(error => console.error(error));
   };
 
   return (
@@ -104,6 +107,13 @@ function CreatePost()  {
         value={description}
         onChange={(event) => setDescription(event.target.value)}
       />
+      <TextField
+        required
+        fullWidth
+        label="Categories (separated by commas)"
+        value={categories}
+        onChange={(event) => setCategories(event.target.value.split(","))}
+      />
       <FormControl className={classes.formControl}>
         <Select
           required
@@ -123,6 +133,7 @@ function CreatePost()  {
           <MenuItem value="JPEG">JPEG</MenuItem>
         </Select>
       </FormControl>
+
       <FormControl className={classes.formControl}>
         <Select
           required
@@ -135,9 +146,9 @@ function CreatePost()  {
           <MenuItem value="" disabled>
             Visibility
           </MenuItem>
-          <MenuItem value="Public">Public</MenuItem>
-          <MenuItem value="Private">Private</MenuItem>
-          <MenuItem value="Friends">Friends</MenuItem>
+          <MenuItem value="PUBLIC">PUBLIC</MenuItem>
+          <MenuItem value="PRIVATE">PRIVATE</MenuItem>
+          <MenuItem value="FRIENDS">FRIENDS</MenuItem>
         </Select>
       </FormControl>
       <FormControlLabel className={classes.checkbox}
