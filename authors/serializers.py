@@ -27,7 +27,7 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
         # return "author"
 
     def get_id(self, obj):
-        return obj.id
+        return obj.url
 
     def get_url(self, obj):
         return obj.url
