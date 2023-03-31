@@ -139,3 +139,10 @@ class PostInboxSerializer(serializers.ModelSerializer):
             'visibility',
             "unlisted",
         ]
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Posts
+        fields = [
+            "content"
+        ]
