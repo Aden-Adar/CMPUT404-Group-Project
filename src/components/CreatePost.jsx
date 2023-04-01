@@ -56,7 +56,7 @@ function CreatePost()  {
   const classes = useStyles();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [contentType, setContentType] = useState('');
+  const [content_type, setContentType] = useState('');
   const [content, setContent] = useState('');
   const [visibility, setVisibility] = useState('');
   const [unlisted, setUnlisted] = useState(false);
@@ -71,7 +71,7 @@ function CreatePost()  {
     const postData = {
       title: title,
       description: description,
-      contentType: contentType,
+      content_type: content_type,
       content: content,
       visibility: visibility,
       unlisted: unlisted,
@@ -80,7 +80,9 @@ function CreatePost()  {
   
     if (visibility === "PUBLIC") {
       try {
-        const response = await axios.post(AUTHOR_ID+'posts/', JSON.stringify(postData));
+        const response = await axios.post(AUTHOR_ID+'posts/', JSON.stringify(postData),{
+          headers:{'Content-Type': 'application/json'}
+        });
         console.log(response.data);
       } catch (error) {
         console.error(error);
@@ -98,7 +100,7 @@ function CreatePost()  {
           try {
             console.log('friend:',friend);
             const response = await axios.post(friend+'inbox/', JSON.stringify(postData),{
-              headers:{'Content-Type': 'text/plain'}
+              headers:{'Content-Type': 'application/json'}
           });
             console.log('friend post:',response.data);
           } catch (error) {
@@ -106,7 +108,9 @@ function CreatePost()  {
           }
         }
   
-        const publicResponse = await axios.post(AUTHOR_ID+'posts/', postData);
+        const publicResponse = await axios.post(AUTHOR_ID+'posts/', JSON.stringify(postData),{
+          headers:{'Content-Type': 'application/json'}
+        });
         console.log('mypost:',publicResponse.data);
       } catch (error) {
         console.error(error);
@@ -120,13 +124,19 @@ function CreatePost()  {
         console.log('authors:' ,authorsResponse);
         const private_author = authorsResponse.data.items.find((item) => item.displayName === authorName);
         postData.unlisted = true;
-        const response = await axios.post(private_author.id+'inbox/', postData,{
-          headers:{'Content-Type': 'text/plain'}
+        try {
+          const response = await axios.post(private_author.id+'inbox/', JSON.stringify(postData),{
+            headers:{'Content-Type': 'application/json'}
+          });
+          console.log('private post:',response.data);
+        } catch (error) {
+          console.error(error);
+        }
+
+        const publicResponse = await axios.post(AUTHOR_ID+'posts/', JSON.stringify(postData),{
+          headers:{'Content-Type': 'application/json'}
         });
-        console.log('private post:',response.data);
-  
-        const publicResponse = await axios.post(AUTHOR_ID+'posts/', postData);
-        console.log(publicResponse.data);
+        console.log('mypost:',publicResponse.data);
       } catch (error) {
         console.error(error);
       }
@@ -174,7 +184,7 @@ function CreatePost()  {
       <FormControl className={classes.formControl}>
         <Select
           required
-          value={contentType}
+          value={content_type}
           onChange={(event) => setContentType(event.target.value)}
           displayEmpty
           className={classes.selectEmpty}
@@ -183,11 +193,11 @@ function CreatePost()  {
           <MenuItem value="" disabled>
             Content type
           </MenuItem>
-          <MenuItem value="Plain">Plain</MenuItem>
-          <MenuItem value="Markdown">Markdown</MenuItem>
-          <MenuItem value="Base64">Base64</MenuItem>
-          <MenuItem value="PNG">PNG</MenuItem>
-          <MenuItem value="JPEG">JPEG</MenuItem>
+          <MenuItem value="text/plain">Plain</MenuItem>
+          <MenuItem value="text/markdown">Markdown</MenuItem>
+          <MenuItem value="text/base64">Base64</MenuItem>
+          <MenuItem value="image/png">PNG</MenuItem>
+          <MenuItem value="image/jpeg">JPEG</MenuItem>
         </Select>
       </FormControl>
 
