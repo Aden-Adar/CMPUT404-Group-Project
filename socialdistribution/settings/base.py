@@ -74,7 +74,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    'http://cmput404-group-project.herokuapp.com',
+    'https://cmput404-group-project.herokuapp.com',
     'https://social-distribution-w23-t17.herokuapp.com'
 ]
 
