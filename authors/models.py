@@ -12,7 +12,7 @@ PRIMARY KEY: author_id
 FOREIGN KEYS:
 '''
 class CustomUser(AbstractUser, PermissionsMixin):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     username = models.CharField(max_length = 50, blank = True, null = True, unique = True, editable= True)
     email = None
     password = models.CharField(max_length=200)

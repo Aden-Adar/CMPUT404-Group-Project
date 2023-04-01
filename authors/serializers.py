@@ -1,8 +1,22 @@
 from rest_framework import serializers
+from rest_framework.fields import UUIDField
 from rest_framework.reverse import reverse
-
+from urllib.parse import urlparse
 from .models import *
 
+class StringUuidField(UUIDField):
+    """
+    UUID representation of a string field.
+    """
+    def to_internal_value(self, data):
+        # Convert string to UUID
+        path = urlparse(data).path
+        if path[-1] == "/":
+            id = path.split("/")[-2]
+        else:
+            id = path.split("/")[-1]
+        id = uuid.UUID(hex=id)
+        return super().to_internal_value(id)
 
 class SingleAuthorSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField(read_only=True)
@@ -44,6 +58,8 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
 
 class AuthorInboxSerializer(serializers.ModelSerializer):
     displayName = serializers.CharField(source="username")
+    id = StringUuidField(write_only = True)
+    id = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = CustomUser
         fields = [
@@ -55,6 +71,13 @@ class AuthorInboxSerializer(serializers.ModelSerializer):
             'github',
             'profileImage' 
         ]
+    def get_id(self, obj):
+        return obj.url
+
+    def create(self, validated_data):
+        print("Validated Data: ", validated_data)
+        obj = super().create(validated_data)
+        return obj
 
 class ListAllAuthorSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField(read_only=True)
