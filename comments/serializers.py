@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import *
 from rest_framework.exceptions import NotAcceptable, NotFound
 from rest_framework.reverse import reverse
-
+from django.utils import timezone
 from authors.serializers import SingleAuthorSerializer
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -51,6 +51,7 @@ class CommentSerializer(serializers.ModelSerializer):
         validated_data["comment_id"] = str(uuid.uuid4())
         validated_data["type"] = "comment"
         validated_data["id"] = reverse("comment-detail", kwargs={"author_id" : validated_data["user"].id, "post_id" : validated_data["post"].post_id, "comment_id" : validated_data["comment_id"]}, request=request)
+        validated_data["published"] = timezone.now()
 
         obj = super().create(validated_data)
         return obj
