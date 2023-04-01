@@ -58,8 +58,9 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
 
 class AuthorInboxSerializer(serializers.ModelSerializer):
     displayName = serializers.CharField(source="username")
-    id = StringUuidField(write_only = True)
     id = serializers.SerializerMethodField(read_only=True)
+    id = StringUuidField(write_only=True)
+
     class Meta:
         model = CustomUser
         fields = [
@@ -71,6 +72,7 @@ class AuthorInboxSerializer(serializers.ModelSerializer):
             'github',
             'profileImage' 
         ]
+
     def get_id(self, obj):
         return obj.url
 
