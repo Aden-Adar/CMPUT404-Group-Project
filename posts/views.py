@@ -91,7 +91,7 @@ class PostDetailView(mixins.RetrieveModelMixin,
 class ImageView(mixins.RetrieveModelMixin, 
                 generics.GenericAPIView):
     queryset = Posts.objects.all()
-    serializer_class = ImageSerializer
+    serializer_class = ImagesSerializer
     lookup_field = ('author_id', 'post_id')
 
     def get_object(self, *args, **kwargs):
