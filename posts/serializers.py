@@ -140,7 +140,7 @@ class PostInboxSerializer(serializers.ModelSerializer):
             "unlisted",
         ]
 
-class ImageSerializer(serializers.ModelSerializer):
+class ImagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Posts
         fields = [
