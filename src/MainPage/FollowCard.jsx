@@ -10,7 +10,9 @@ function FollowCard({
 }) {
     function handleAccept() {
         async function putRequest() {
-            let response = await fetch('/service/authors/' + object.id +'/followers/' + actor.id + '/', {
+            let splitID = actor.id.split('/')
+            let foreignID = splitID[splitID.length - 2]
+            let response = await fetch(object.id +'followers/' + foreignID + '/', {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',

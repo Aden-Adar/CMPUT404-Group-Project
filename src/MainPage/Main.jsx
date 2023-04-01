@@ -8,10 +8,8 @@ import FollowCard from './FollowCard';
 import { getExplorePosts, getMyPosts, getInbox } from '../API/mainRequests';
 
 export const Main = () => {
-    const AUTHOR_ID = window.localStorage.getItem("UUID")
+    const UUID = window.localStorage.getItem("UUID")
     const AUTHOR = window.localStorage.getItem("Author")
-    console.log(AUTHOR_ID)
-    console.log(AUTHOR)
     const [inboxFlag, setInboxFlag] = React.useState(false);
     const [exploreFlag, setExploreFlag] = React.useState(true);
     const [myPostsFlag, setMyPostsFlag] = React.useState(false);
@@ -39,7 +37,6 @@ export const Main = () => {
     // API CALL TO GET EXPLORE POSTS
     React.useEffect(() => {
         getExplorePosts().then(posts => {
-            console.log(posts)
             setExplorePosts(posts);
         });
     }, []);
@@ -81,48 +78,42 @@ export const Main = () => {
             {myPosts.length>0 && myPostsFlag && myPosts.map(post => (
                 <Grid item xs={8} justifyContent="center">
                 <PostCard
-                    currentAuthorID={AUTHOR_ID}
-                    author={post.author}
+                    postAuthor={post.author}
                     comments={post.comments_set}
                     contentType={post.content_type}
                     content={post.content}
                     title={post.title}
                     visibility={post.visibility}
                     published={post.published}
-                    post_id={post.post_id}
-                    url={post.id}
+                    id={post.id}
                 />
                 </Grid>
             ))}
             {explorePosts.length>0 && exploreFlag && explorePosts.map(post => (
                 <Grid item xs={8} justifyContent="center">
                 <PostCard
-                    currentAuthorID={AUTHOR_ID}
-                    author={post.author}
+                    postAuthor={post.author}
                     comments={post.comments_set}
                     contentType={post.content_type}
                     content={post.content}
                     title={post.title}
                     visibility={post.visibility}
                     published={post.published}
-                    post_id={post.post_id}
-                    url={post.id}
+                    id={post.id}
                 />
                 </Grid>
             ))}
             {inbox.length>0 && inboxFlag && inbox.map(item => (
                 <Grid item xs={8} justifyContent="center">
                     {item.type === "post" && <PostCard
-                        currentAuthorID={AUTHOR_ID}
-                        author={item.author}
+                        postAuthor={item.author}
                         comments={item.comments_set}
                         contentType={item.content_type}
                         content={item.content}
                         title={item.title}
                         visibility={item.visibility}
                         published={item.published}
-                        post_id={item.post_id}
-                        url={item.id} />}
+                        id={item.id} />}
                     {item.type === "Like" && <LikeCard
                         author={item.author}
                         summary={item.summary}

@@ -15,7 +15,7 @@ function CommentCard({
             avatar={<AccountCircle fontSize='large'></AccountCircle>}
             title={
               <span>
-                <Typography component="span" variant="body1">{author.username + "commented: " + comment + " on your post! (" + published.substring(0,10) + ")"}</Typography>
+                <Typography component="span" variant="body1">{author.displayName + " commented: " + comment + " on your post! (" + published.substring(0,10) + ")"}</Typography>
               </span>}
           />
         </Card>
