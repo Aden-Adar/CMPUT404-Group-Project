@@ -64,6 +64,9 @@ export default function TopAppBar() {
                <MenuItem onClick={handleCloseUserMenu} component={Link} to="/main">
                 <Typography textAlign="center">Dashboard</Typography>
               </MenuItem>
+              <MenuItem onClick={handleCloseUserMenu} component={Link} to="/create">
+                <Typography textAlign="center">Create Post</Typography>
+              </MenuItem>
                 <MenuItem onClick={handleCloseUserMenu} component={Link} to="/profile">
                 <Typography textAlign="center">Profile</Typography>
               </MenuItem>

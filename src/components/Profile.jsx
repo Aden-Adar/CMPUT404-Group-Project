@@ -36,6 +36,12 @@ const useStyles = makeStyles((theme) => ({
     display: 'float',
     justifyContent: 'space-between',
   },
+  AppBar: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,},
+
 }));
 
 function Profile({ user, onSave }) {
@@ -69,7 +75,7 @@ function Profile({ user, onSave }) {
 
   return (
     <div className={classes.root}>
-      <AppBar /> 
+      <AppBar classname = {classes.AppBar}/> 
       {editing ? (
         <div className={classes.form}>
           <TextField

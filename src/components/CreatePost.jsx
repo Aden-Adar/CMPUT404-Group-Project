@@ -9,6 +9,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import axios from 'axios';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -60,12 +61,13 @@ function CreatePost()  {
   const [visibility, setVisibility] = useState('');
   const [unlisted, setUnlisted] = useState(false);
   const [categories, setCategories] = useState([]);
-  const AUTHOR_ID = window.localStorage.getItem("UUID");
+  const author = JSON.parse(window.localStorage.getItem("Author"));
+  const AUTHOR_ID = author.id;
 
   
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     const postData = {
       title: title,
       description: description,
@@ -75,18 +77,73 @@ function CreatePost()  {
       unlisted: unlisted,
       categories: categories,
     };
-    
-    fetch('/service/authors/'+ AUTHOR_ID+ '/posts/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(postData)
-    })
-      .then(response => response.json())
-      .then(data => console.log(data))
-      //.catch(error => console.error(error));
+  
+    if (visibility === "PUBLIC") {
+      try {
+        const response = await axios.post(AUTHOR_ID+'posts/', JSON.stringify(postData));
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    } 
+    else if (visibility === "FRIENDS") {
+      try {
+        const followersResponse = await axios.get(AUTHOR_ID+'followers/');
+        console.log('followers:',followersResponse)
+        const friends = followersResponse.data.items.map(item => item.id);
+        console.log('friends:', friends);
+        postData.unlisted = true;
+
+        for (const friend of friends) {
+          try {
+            console.log('friend:',friend);
+            const response = await axios.post(friend+'inbox/', JSON.stringify(postData),{
+              headers:{'Content-Type': 'text/plain'}
+          });
+            console.log('friend post:',response.data);
+          } catch (error) {
+            console.error(error);
+          }
+        }
+  
+        const publicResponse = await axios.post(AUTHOR_ID+'posts/', postData);
+        console.log('mypost:',publicResponse.data);
+      } catch (error) {
+        console.error(error);
+      }
+    } 
+    else if (visibility === "PRIVATE") {
+      const authorName = prompt("Please enter the username of the recipient:");
+  
+      try {
+        const authorsResponse = await axios.get('/service/authors/');
+        console.log('authors:' ,authorsResponse);
+        const private_author = authorsResponse.data.items.find((item) => item.displayName === authorName);
+        postData.unlisted = true;
+        const response = await axios.post(private_author.id+'inbox/', postData,{
+          headers:{'Content-Type': 'text/plain'}
+        });
+        console.log('private post:',response.data);
+  
+        const publicResponse = await axios.post(AUTHOR_ID+'posts/', postData);
+        console.log(publicResponse.data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
   };
+    
+  //   fetch('/service/authors/'+ AUTHOR_ID+ '/posts/', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify(postData)
+  //   })
+  //     .then(response => response.json())
+  //     .then(data => console.log(data))
+  //     //.catch(error => console.error(error));
+  // };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -151,7 +208,7 @@ function CreatePost()  {
           <MenuItem value="FRIENDS">FRIENDS</MenuItem>
         </Select>
       </FormControl>
-      <FormControlLabel className={classes.checkbox}
+      {/* <FormControlLabel className={classes.checkbox}
         control={
           <Checkbox
             checked={unlisted}
@@ -160,7 +217,7 @@ function CreatePost()  {
           />
         }
         label="Unlisted"
-      />
+      /> */}
       <TextField
         required
         fullWidth
