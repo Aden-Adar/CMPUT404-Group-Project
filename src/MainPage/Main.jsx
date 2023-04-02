@@ -4,11 +4,12 @@ import TopAppBar from './AppBar'
 import PostCard from './Post';
 import LikeCard from './Like'
 import CommentCard from './CommentCard';
+import FollowCard from './FollowCard';
 import { getExplorePosts, getMyPosts, getInbox } from '../API/mainRequests';
 
 export const Main = () => {
-    const AUTHOR_ID = window.localStorage.getItem("UUID")
-    console.log(AUTHOR_ID)
+    const UUID = window.localStorage.getItem("UUID")
+    const AUTHOR = window.localStorage.getItem("Author")
     const [inboxFlag, setInboxFlag] = React.useState(false);
     const [exploreFlag, setExploreFlag] = React.useState(true);
     const [myPostsFlag, setMyPostsFlag] = React.useState(false);
@@ -77,45 +78,42 @@ export const Main = () => {
             {myPosts.length>0 && myPostsFlag && myPosts.map(post => (
                 <Grid item xs={8} justifyContent="center">
                 <PostCard
-                    currentAuthorID={AUTHOR_ID}
-                    author={post.author}
+                    postAuthor={post.author}
                     comments={post.comments_set}
                     contentType={post.content_type}
                     content={post.content}
                     title={post.title}
                     visibility={post.visibility}
                     published={post.published}
-                    
+                    id={post.id}
                 />
                 </Grid>
             ))}
             {explorePosts.length>0 && exploreFlag && explorePosts.map(post => (
                 <Grid item xs={8} justifyContent="center">
                 <PostCard
-                    currentAuthorID={AUTHOR_ID}
-                    author={post.author}
+                    postAuthor={post.author}
                     comments={post.comments_set}
                     contentType={post.content_type}
                     content={post.content}
                     title={post.title}
                     visibility={post.visibility}
                     published={post.published}
-                    post_id={post.post_id}
+                    id={post.id}
                 />
                 </Grid>
             ))}
             {inbox.length>0 && inboxFlag && inbox.map(item => (
                 <Grid item xs={8} justifyContent="center">
                     {item.type === "post" && <PostCard
-                        currentAuthorID={AUTHOR_ID}
-                        author={item.author}
+                        postAuthor={item.author}
                         comments={item.comments_set}
                         contentType={item.content_type}
                         content={item.content}
                         title={item.title}
                         visibility={item.visibility}
                         published={item.published}
-                        post_id={item.post_id} />}
+                        id={item.id} />}
                     {item.type === "Like" && <LikeCard
                         author={item.author}
                         summary={item.summary}
@@ -124,6 +122,10 @@ export const Main = () => {
                         author={item.author}
                         comment={item.comment}
                         published={item.published} />}
+                    {item.type === "Follow" && <FollowCard
+                        summary={item.summary}
+                        actor={item.actor}
+                        object={item.object} />} 
                 </Grid>
             ))}
         </Grid>

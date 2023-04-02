@@ -1,7 +1,11 @@
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, status
 from rest_framework.exceptions import NotAuthenticated, NotFound, NotAcceptable
 from rest_framework.permissions import IsAuthenticated
 from base.permissions import IsRemoteNode
+from django.db.models import Q
+from rest_framework.response import Response
+import json
+
 from .models import *
 from .serializers import *
 from .pagination import *
@@ -83,3 +87,33 @@ class PostDetailView(mixins.RetrieveModelMixin,
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+
+class ImageView(mixins.RetrieveModelMixin, 
+                generics.GenericAPIView):
+    queryset = Posts.objects.all()
+    serializer_class = ImagesSerializer
+    lookup_field = ('author_id', 'post_id')
+
+    def get_object(self, *args, **kwargs):
+        qs = self.filter_queryset(self.get_queryset())
+        request = self.request
+
+        obj = qs.filter(user_id=self.kwargs.get('author_id'), post_id=self.kwargs.get('post_id'), content_type__in=['application/base64','image/png;base64','image/jpeg;base64']).first()
+
+        if not obj:
+            raise NotFound()
+
+        if request.method == "GET":
+            return obj
+        else:
+            if self.request.user.id == obj.user_id.id:
+                return obj
+            else:
+                raise NotAcceptable(code=403)
+    
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+       
+
+
+

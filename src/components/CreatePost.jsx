@@ -9,6 +9,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import axios from 'axios';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -59,11 +60,14 @@ function CreatePost()  {
   const [content, setContent] = useState('');
   const [visibility, setVisibility] = useState('');
   const [unlisted, setUnlisted] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const author = JSON.parse(window.localStorage.getItem("Author"));
+  const AUTHOR_ID = author.id;
 
   
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     const postData = {
       title: title,
       description: description,
@@ -71,19 +75,75 @@ function CreatePost()  {
       content: content,
       visibility: visibility,
       unlisted: unlisted,
+      categories: categories,
     };
-    
-    fetch('/service/authors/<author_id>/posts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(postData)
-    })
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .catch(error => console.error(error));
+  
+    if (visibility === "PUBLIC") {
+      try {
+        const response = await axios.post(AUTHOR_ID+'posts/', JSON.stringify(postData));
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    } 
+    else if (visibility === "FRIENDS") {
+      try {
+        const followersResponse = await axios.get(AUTHOR_ID+'followers/');
+        console.log('followers:',followersResponse)
+        const friends = followersResponse.data.items.map(item => item.id);
+        console.log('friends:', friends);
+        postData.unlisted = true;
+
+        for (const friend of friends) {
+          try {
+            console.log('friend:',friend);
+            const response = await axios.post(friend+'inbox/', JSON.stringify(postData),{
+              headers:{'Content-Type': 'text/plain'}
+          });
+            console.log('friend post:',response.data);
+          } catch (error) {
+            console.error(error);
+          }
+        }
+  
+        const publicResponse = await axios.post(AUTHOR_ID+'posts/', postData);
+        console.log('mypost:',publicResponse.data);
+      } catch (error) {
+        console.error(error);
+      }
+    } 
+    else if (visibility === "PRIVATE") {
+      const authorName = prompt("Please enter the username of the recipient:");
+  
+      try {
+        const authorsResponse = await axios.get('/service/authors/');
+        console.log('authors:' ,authorsResponse);
+        const private_author = authorsResponse.data.items.find((item) => item.displayName === authorName);
+        postData.unlisted = true;
+        const response = await axios.post(private_author.id+'inbox/', postData,{
+          headers:{'Content-Type': 'text/plain'}
+        });
+        console.log('private post:',response.data);
+  
+        const publicResponse = await axios.post(AUTHOR_ID+'posts/', postData);
+        console.log(publicResponse.data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
   };
+    
+  //   fetch('/service/authors/'+ AUTHOR_ID+ '/posts/', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify(postData)
+  //   })
+  //     .then(response => response.json())
+  //     .then(data => console.log(data))
+  //     //.catch(error => console.error(error));
+  // };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -104,6 +164,13 @@ function CreatePost()  {
         value={description}
         onChange={(event) => setDescription(event.target.value)}
       />
+      <TextField
+        required
+        fullWidth
+        label="Categories (separated by commas)"
+        value={categories}
+        onChange={(event) => setCategories(event.target.value.split(","))}
+      />
       <FormControl className={classes.formControl}>
         <Select
           required
@@ -123,6 +190,7 @@ function CreatePost()  {
           <MenuItem value="JPEG">JPEG</MenuItem>
         </Select>
       </FormControl>
+
       <FormControl className={classes.formControl}>
         <Select
           required
@@ -135,12 +203,12 @@ function CreatePost()  {
           <MenuItem value="" disabled>
             Visibility
           </MenuItem>
-          <MenuItem value="Public">Public</MenuItem>
-          <MenuItem value="Private">Private</MenuItem>
-          <MenuItem value="Friends">Friends</MenuItem>
+          <MenuItem value="PUBLIC">PUBLIC</MenuItem>
+          <MenuItem value="PRIVATE">PRIVATE</MenuItem>
+          <MenuItem value="FRIENDS">FRIENDS</MenuItem>
         </Select>
       </FormControl>
-      <FormControlLabel className={classes.checkbox}
+      {/* <FormControlLabel className={classes.checkbox}
         control={
           <Checkbox
             checked={unlisted}
@@ -149,7 +217,7 @@ function CreatePost()  {
           />
         }
         label="Unlisted"
-      />
+      /> */}
       <TextField
         required
         fullWidth

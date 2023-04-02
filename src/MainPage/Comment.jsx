@@ -21,7 +21,7 @@ function CommentItem({
                 secondary={
                 <React.Fragment>
                     <Typography style={{ color: '#a3a3a3' }}>
-                        {author.username + " — " + published.substring(0,10)}
+                        {author.displayName + " — " + published.substring(0,10)}
                     </Typography>
                 </React.Fragment>
                 }

@@ -22,7 +22,7 @@ class Comments(models.Model):
     post = models.ForeignKey(Posts, null=True, blank=True,  on_delete=models.CASCADE)
     parent_comment_id = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
     content_type = models.CharField(max_length=200, choices=ContentType.choices, default=ContentType.PLAIN)
-    published = models.DateTimeField(auto_now_add=True)
+    published = models.DateTimeField()
     comment = models.TextField(max_length=301,editable=True)
 
     type = models.CharField(max_length=8,editable=True)

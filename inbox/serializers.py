@@ -90,7 +90,7 @@ class InboxSerializer(serializers.ModelSerializer):
             obj = like.save(author_id=author, post_id=post)
             return obj
         if type == "comments":
-            comment = Comments.objects.filter(id=id).first()
+            comment = Comments.objects.filter(comment_id=id).first()
             if not comment:
                 raise NotAcceptable(detail="Cannot like a comment that doesn't exist")
             if not like.is_valid():
