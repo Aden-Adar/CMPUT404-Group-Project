@@ -7,12 +7,11 @@ const GROUP1URL = "https://social-distribution-w23-t17.herokuapp.com/"
 const GROUP1CREDS = btoa("remote-user-t22:pZHAe3PWukpd3Nv")
 
 function FollowersPage() {
-  const [followers, setFollowers] = useState([]);
+  const [followers, setFollowers] = useState(null);
   const [displayName, setDisplayName] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const author = JSON.parse(window.localStorage.getItem("Author"));
   const AUTHOR_ID = author.id;
-
 
   useEffect(() => {
     const fetchFollowers = async () => {
@@ -22,6 +21,18 @@ function FollowersPage() {
 
     fetchFollowers();
   }, [AUTHOR_ID]);
+
+  let followersList = null;
+  if (followers) {
+    followersList = followers.map((follower) => (
+      <div key={follower.id}>
+        <p>{follower.displayName}</p>
+      </div>
+    ));
+  } else {
+    followersList = <p>No followers</p>
+  }
+
 
   const handleAddFriend = async () => {
     const response = await axios.get('/service/authors/');
@@ -93,23 +104,20 @@ function FollowersPage() {
     <div>
         <AppBar />     
         <h2>Followers</h2>
-        {followers.map((follower) => (
-        <div key={follower.id}>
-        <p>{follower.displayName}</p>
-        </div>
-        ))}
-        <div>
-        <input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-        <button onClick={handleAddFriend}>Add Friend</button>
-        </div>
-        {selectedUser && (
-        <div>
-        <h3>Selected User</h3>
-        <p>{selectedUser.displayName}</p>
-        </div>
-        )}
-        </div>
-        );
-    };
-    
-    export default FollowersPage;
+        {followersList}
+       
+            <div>
+              <input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+              <button onClick={handleAddFriend}>Add Friend</button>
+            </div>
+            {selectedUser && (
+            <div>
+              <h3>Selected User</h3>
+              <p>{selectedUser.displayName}</p>
+              </div>
+              )}
+              </div>
+              );
+            };
+
+export default FollowersPage;
