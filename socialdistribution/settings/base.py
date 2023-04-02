@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'corsheaders',
     'rest_framework',
-    'rest_framework.authtoken', #https://www.django-rest-framework.org/api-guide/authentication/
+    # 'rest_framework.authtoken', #https://www.django-rest-framework.org/api-guide/authentication/
     'authors',
     'base',
     'comments',
@@ -107,10 +107,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS' : "rest_framework.pagination.PageNumberPagination",
     'PAGE_SIZE' : 5,
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'base.authentication.TokenAuthSupportCookie',
+        'base.authentication.BasicAuthSupportCookie',
     )
 }
 
