@@ -242,8 +242,8 @@ function CreatePost()  {
         onChange={(event) => setContent(event.target.value)}
       />
      
-      <Button variant="contained" color="primary" type="submit">
-        POST
+      <Button variant="contained" color="primary" type="submit" onClick={handleSubmit}>
+       POST 
       </Button>
     </form>
   );
