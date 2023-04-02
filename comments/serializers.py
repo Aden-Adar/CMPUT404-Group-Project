@@ -2,10 +2,9 @@ from rest_framework import serializers
 from .models import *
 from rest_framework.exceptions import *
 from rest_framework.reverse import reverse
-from authors.serializers import *
 
+from authors.serializers import *
 from django.utils import timezone
-from authors.serializers import SingleAuthorSerializer
 
 
 class CommentSerializer(serializers.ModelSerializer):
