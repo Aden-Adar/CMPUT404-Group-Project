@@ -25,7 +25,7 @@ class Posts(models.Model):
     post_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     visibility = models.CharField(max_length=7,choices=Visibility.choices,default=Visibility.PRIVATE)
     user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    published = models.DateTimeField(auto_now_add=True)
+    published = models.DateTimeField()
     content_type = models.CharField(max_length=200, choices=ContentType.choices, default=ContentType.PLAIN)
     title = models.CharField(max_length=200,editable=True)
     description = models.CharField(max_length=200,editable=True)
