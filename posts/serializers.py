@@ -2,6 +2,9 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import NotAcceptable, ValidationError
 from rest_framework.fields import ListField, CharField
+# from django.db.models.functions import Now
+# from datetime import datetime
+from django.utils import timezone
 import json
 from .models import *
 from comments.serializers import CommentSerializer
@@ -110,6 +113,7 @@ class PostSerializer(serializers.ModelSerializer):
         validated_data["source"] = request.META.get('HTTP_REFERER')
         validated_data["origin"] = reverse("post-detail", kwargs = {"author_id": request.user.id, "post_id": validated_data["post_id"]}, request=request)
         validated_data["comments_id"] = reverse("comments-list", kwargs = {"author_id": request.user.id, "post_id": validated_data["post_id"]}, request=request)
+        validated_data["published"] = timezone.now()
 
         obj = super().create(validated_data)
 
@@ -138,4 +142,11 @@ class PostInboxSerializer(serializers.ModelSerializer):
             'published',
             'visibility',
             "unlisted",
+        ]
+
+class ImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Posts
+        fields = [
+            "content"
         ]
