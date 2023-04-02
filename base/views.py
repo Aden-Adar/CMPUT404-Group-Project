@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+import base64
 from django.contrib.auth import authenticate, login
 from rest_framework.exceptions import NotAcceptable
 from .serializers import *
@@ -37,7 +38,11 @@ class LoginView(APIView):
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
-            token = Token.objects.get_or_create(user=user)[0].key
+            # token = Token.objects.get_or_create(user=user)[0].key
+            token_bytes = f"{username}:{password}".encode("ascii")
+            base64_bytes = base64.b64encode(token_bytes)
+            token = base64_bytes.decode("ascii")
+
             response = Response()
             response.set_cookie(key="auth_token", value=token, httponly=True, samesite='Strict')
             response.data = {"Success" : "Login successful", "token" : token, "user_id": request.user.id}
