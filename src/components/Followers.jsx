@@ -10,15 +10,18 @@ function FollowersPage() {
   const [followers, setFollowers] = useState([]);
   const [displayName, setDisplayName] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
+  const author = JSON.parse(window.localStorage.getItem("Author"));
+  const AUTHOR_ID = author.id;
 
-//   useEffect(() => {
-//     const fetchFollowers = async () => {
-//       const response = await axios.get(`/service/authors/${AUTHOR_ID}/followers/`);
-//       setFollowers(response.data.items);
-//     };
 
-//     fetchFollowers();
-//   }, [AUTHOR_ID]);
+  useEffect(() => {
+    const fetchFollowers = async () => {
+      const response = await axios.get(AUTHOR_ID+'followers/');
+      setFollowers(response.data.items);
+    };
+
+    fetchFollowers();
+  }, [AUTHOR_ID]);
 
   const handleAddFriend = async () => {
     const response = await axios.get('/service/authors/');

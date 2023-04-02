@@ -77,6 +77,7 @@ function CreatePost()  {
       unlisted: unlisted,
       categories: categories,
     };
+
   
     if (visibility === "PUBLIC") {
       try {
@@ -95,11 +96,16 @@ function CreatePost()  {
         const friends = followersResponse.data.items.map(item => item.id);
         console.log('friends:', friends);
         postData.unlisted = true;
+        const publicResponse = await axios.post(AUTHOR_ID+'posts/', JSON.stringify(postData),{
+          headers:{'Content-Type': 'application/json'}
+        });
+        console.log('mypost:',publicResponse.data);
+        const friendResponse = publicResponse.data;
 
         for (const friend of friends) {
           try {
             console.log('friend:',friend);
-            const response = await axios.post(friend+'inbox/', JSON.stringify(postData),{
+            const response = await axios.post(friend+'inbox/', friendResponse,{
               headers:{'Content-Type': 'application/json'}
           });
             console.log('friend post:',response.data);
@@ -107,14 +113,12 @@ function CreatePost()  {
             console.error(error);
           }
         }
-  
-        const publicResponse = await axios.post(AUTHOR_ID+'posts/', JSON.stringify(postData),{
-          headers:{'Content-Type': 'application/json'}
-        });
-        console.log('mypost:',publicResponse.data);
       } catch (error) {
         console.error(error);
       }
+      
+  
+        
     } 
     else if (visibility === "PRIVATE") {
       const authorName = prompt("Please enter the username of the recipient:");
@@ -124,8 +128,12 @@ function CreatePost()  {
         console.log('authors:' ,authorsResponse);
         const private_author = authorsResponse.data.items.find((item) => item.displayName === authorName);
         postData.unlisted = true;
+        const publicResponse = await axios.post(AUTHOR_ID+'posts/', JSON.stringify(postData),{
+          headers:{'Content-Type': 'application/json'}
+        });
+        console.log('mypost:',publicResponse.data);
         try {
-          const response = await axios.post(private_author.id+'inbox/', JSON.stringify(postData),{
+          const response = await axios.post(private_author.id+'inbox/', publicResponse.data,{
             headers:{'Content-Type': 'application/json'}
           });
           console.log('private post:',response.data);
@@ -133,14 +141,12 @@ function CreatePost()  {
           console.error(error);
         }
 
-        const publicResponse = await axios.post(AUTHOR_ID+'posts/', JSON.stringify(postData),{
-          headers:{'Content-Type': 'application/json'}
-        });
-        console.log('mypost:',publicResponse.data);
+       
       } catch (error) {
         console.error(error);
       }
     }
+    window.location.href = '/main';
   };
     
   //   fetch('/service/authors/'+ AUTHOR_ID+ '/posts/', {
