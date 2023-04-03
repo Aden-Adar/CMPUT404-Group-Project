@@ -112,7 +112,7 @@ function FollowersPage() {
             </div>
             {selectedUser && (
             <div>
-              <h3>Selected User</h3>
+              <h3>Follow request sent to:</h3>
               <p>{selectedUser.displayName}</p>
               </div>
               )}
