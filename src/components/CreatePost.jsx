@@ -56,7 +56,7 @@ function CreatePost()  {
   const classes = useStyles();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [contentType, setContentType] = useState('');
+  const [content_type, setContentType] = useState('');
   const [content, setContent] = useState('');
   const [visibility, setVisibility] = useState('');
   const [unlisted, setUnlisted] = useState(false);
@@ -71,16 +71,19 @@ function CreatePost()  {
     const postData = {
       title: title,
       description: description,
-      contentType: contentType,
+      content_type: content_type,
       content: content,
       visibility: visibility,
       unlisted: unlisted,
       categories: categories,
     };
+
   
     if (visibility === "PUBLIC") {
       try {
-        const response = await axios.post(AUTHOR_ID+'posts/', JSON.stringify(postData));
+        const response = await axios.post(AUTHOR_ID+'posts/', JSON.stringify(postData),{
+          headers:{'Content-Type': 'application/json'}
+        });
         console.log(response.data);
       } catch (error) {
         console.error(error);
@@ -93,24 +96,29 @@ function CreatePost()  {
         const friends = followersResponse.data.items.map(item => item.id);
         console.log('friends:', friends);
         postData.unlisted = true;
+        const publicResponse = await axios.post(AUTHOR_ID+'posts/', JSON.stringify(postData),{
+          headers:{'Content-Type': 'application/json'}
+        });
+        console.log('mypost:',publicResponse.data);
+        const friendResponse = publicResponse.data;
 
         for (const friend of friends) {
           try {
             console.log('friend:',friend);
-            const response = await axios.post(friend+'inbox/', JSON.stringify(postData),{
-              headers:{'Content-Type': 'text/plain'}
+            const response = await axios.post(friend+'inbox/', friendResponse,{
+              headers:{'Content-Type': 'application/json'}
           });
             console.log('friend post:',response.data);
           } catch (error) {
             console.error(error);
           }
         }
-  
-        const publicResponse = await axios.post(AUTHOR_ID+'posts/', postData);
-        console.log('mypost:',publicResponse.data);
       } catch (error) {
         console.error(error);
       }
+      
+  
+        
     } 
     else if (visibility === "PRIVATE") {
       const authorName = prompt("Please enter the username of the recipient:");
@@ -120,17 +128,25 @@ function CreatePost()  {
         console.log('authors:' ,authorsResponse);
         const private_author = authorsResponse.data.items.find((item) => item.displayName === authorName);
         postData.unlisted = true;
-        const response = await axios.post(private_author.id+'inbox/', postData,{
-          headers:{'Content-Type': 'text/plain'}
+        const publicResponse = await axios.post(AUTHOR_ID+'posts/', JSON.stringify(postData),{
+          headers:{'Content-Type': 'application/json'}
         });
-        console.log('private post:',response.data);
-  
-        const publicResponse = await axios.post(AUTHOR_ID+'posts/', postData);
-        console.log(publicResponse.data);
+        console.log('mypost:',publicResponse.data);
+        try {
+          const response = await axios.post(private_author.id+'inbox/', publicResponse.data,{
+            headers:{'Content-Type': 'application/json'}
+          });
+          console.log('private post:',response.data);
+        } catch (error) {
+          console.error(error);
+        }
+
+       
       } catch (error) {
         console.error(error);
       }
     }
+    window.location.href = '/main';
   };
     
   //   fetch('/service/authors/'+ AUTHOR_ID+ '/posts/', {
@@ -174,7 +190,7 @@ function CreatePost()  {
       <FormControl className={classes.formControl}>
         <Select
           required
-          value={contentType}
+          value={content_type}
           onChange={(event) => setContentType(event.target.value)}
           displayEmpty
           className={classes.selectEmpty}
@@ -183,11 +199,11 @@ function CreatePost()  {
           <MenuItem value="" disabled>
             Content type
           </MenuItem>
-          <MenuItem value="Plain">Plain</MenuItem>
-          <MenuItem value="Markdown">Markdown</MenuItem>
-          <MenuItem value="Base64">Base64</MenuItem>
-          <MenuItem value="PNG">PNG</MenuItem>
-          <MenuItem value="JPEG">JPEG</MenuItem>
+          <MenuItem value="text/plain">Plain</MenuItem>
+          <MenuItem value="text/markdown">Markdown</MenuItem>
+          <MenuItem value="text/base64">Base64</MenuItem>
+          <MenuItem value="image/png">PNG</MenuItem>
+          <MenuItem value="image/jpeg">JPEG</MenuItem>
         </Select>
       </FormControl>
 
@@ -226,8 +242,8 @@ function CreatePost()  {
         onChange={(event) => setContent(event.target.value)}
       />
      
-      <Button variant="contained" color="primary" type="submit">
-        POST
+      <Button variant="contained" color="primary" type="submit" onClick={handleSubmit}>
+       POST 
       </Button>
     </form>
   );
