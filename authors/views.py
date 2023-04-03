@@ -63,7 +63,7 @@ class AllAuthorView(mixins.ListModelMixin,
     #lookup_field = ('author_id')
 
     def get_queryset(self, *args, **kwargs):
-        qs = super().get_queryset(*args, **kwargs)
+        qs = super().get_queryset(*args, **kwargs).exclude(username="admin")
         return qs
 
     def perform_create(self, serializer):
