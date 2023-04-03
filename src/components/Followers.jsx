@@ -11,9 +11,9 @@ function FollowersPage() {
   const [followers, setFollowers] = useState(null);
   const [displayName, setDisplayName] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
-  const [authors, setAuthors] = useState(null);
-  const author = JSON.parse(window.localStorage.getItem("Author"));
-  const AUTHOR_ID = author.id;
+  const [allAuthors, setAuthors] = useState(null);
+  const current_author = JSON.parse(window.localStorage.getItem("Author"));
+  const AUTHOR_ID = current_author.id;
 
 
   useEffect(() => {
@@ -25,7 +25,24 @@ function FollowersPage() {
     fetchFollowers();
   }, [AUTHOR_ID]);
 
-  
+  useEffect(() => {
+    const fetchAuthors = async () => {
+      const response = await axios.get('/service/authors/');
+      setAuthors(response.data.items);
+    };
+
+    fetchAuthors();
+  }, []);
+
+  // const handleShowAuthors = async () => {
+  //   const author_response =  await axios.get('/service/authors/');
+  //   const auth_list = author_response.response.data.items;
+  //   const authorList = auth_list.map(author => (
+  //     <p key={author.id}>{author.displayName}</p>
+  //   ));
+  //   setAuthors(authorList);
+  // };
+
   let followersList = null;
   if (followers) {
     followersList = followers.map((follower) => {
@@ -46,17 +63,21 @@ function FollowersPage() {
     followersList = <p>No followers</p>
   }
 
-  const handleShowAuthors = () => {
-    // logic to show all authors in a card
-  };
-  const handleUnfollow = async () => {
-    // logic to show all authors in a card
-    // const unfollowresponse = await axios.get('/service/authors/');
-    // const unfollowUser = unfollowresponse.data.items.find((item) => item.displayName === displayName);
-    // let splitID = follower.id.split('/');
-    // let foreignID = splitID[splitID.length - 2];
-    // const response = await axios.delete(AUTHOR_ID+'followers/'+foreignID);
-  };
+  let authorsList = null;
+  if (allAuthors) {
+    authorsList = allAuthors.map((author) => {
+  return (
+      <Card key={author.id}>
+      <CardContent>
+        <Typography variant="h5" component="h2">
+          {author.displayName}
+        </Typography>
+      </CardContent>
+    </Card>
+    )
+  });
+  } 
+
   const handleAddFriend = async () => {
     const response = await axios.get('/service/authors/');
     // const group1Res = await fetch(GROUP1URL+'authors/', {
@@ -128,18 +149,22 @@ function FollowersPage() {
     <div>
       <input 
       type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} 
-      style={{ border: '2px solid #ccc', padding: '8px', backgroundColor: 'gray', color: 'lightgray'}} />
+      style={{ border: '2px solid #ccc', padding: '8px', backgroundColor: 'lightgray', color: 'white'}} />
       <button onClick={handleAddFriend}>Add Friend</button>
-      <button onClick={handleShowAuthors}>Show All Authors</button>
     </div>
     <h2>Followers</h2>
-    <Card>{followersList}</Card>
     {selectedUser && (
       <div>
-        <h3>Follow request sent to:</h3>
-        <p>{selectedUser.displayName}</p>
+        <h3>
+        Follow request sent to:<p>{selectedUser.displayName}</p>
+        </h3>
       </div>
     )}
+    <Card>{followersList}</Card>
+    <h2>All Authors</h2>
+    <Card>{authorsList}</Card>
+
+  
   </div>
   );
 };
