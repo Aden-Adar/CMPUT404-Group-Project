@@ -13,6 +13,14 @@ from .pagination import *
 class PostListView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
                     generics.GenericAPIView):
+    '''
+    Post List Enpoint
+
+    Shows all of the post of an author
+
+    Methods Allowed: POST, GET
+    URL: /service/authors/{author_id}/posts/
+    '''
     name = "PostListView"
     permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Posts.objects.all()
@@ -46,6 +54,14 @@ class PostDetailView(mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin,
                     generics.GenericAPIView):
+    '''
+    Post Detail Enpoint
+
+    Shows detailed info of an author's post
+
+    Methods Allowed: PUT, GET, DELETE
+    URL: /service/authors/{author_id}/posts/{post_id}
+    '''
     name = "PostDetailView"
     permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Posts.objects.all()
@@ -69,27 +85,25 @@ class PostDetailView(mixins.RetrieveModelMixin,
             else:
                 raise NotAcceptable(code=403)
 
-    # def perform_create(self, serializer):
-    #     serializer.save(user_id=self.request.user)
-
     def get(self, request, *args, **kwargs):
             return self.retrieve(request, *args, **kwargs)
-
-    # def post(self, request, *args, **kwargs):
-    #     return self.post(request, *args, **kwargs)
     
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
-    
-    # def perform_update(self, serializer):
-    #     # serializer.update(user_id=self.request.user)
-    #     return super().perform_update(serializer)
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 
-class ImageView(mixins.RetrieveModelMixin, 
+class ImagesView(mixins.RetrieveModelMixin, 
                 generics.GenericAPIView):
+    '''
+    Image View Enpoint
+
+    Shows an image
+
+    Methods Allowed: GET
+    URL: /service/authors/{author_id}/posts/{post_id}/image/
+    '''
     queryset = Posts.objects.all()
     serializer_class = ImagesSerializer
     lookup_field = ('author_id', 'post_id')

@@ -12,6 +12,15 @@ from .pagination import *
 class CommentListView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
                     generics.GenericAPIView):
+
+    '''
+    Comment list Enpoint
+
+    Shows a list of comments within a post
+
+    Methods Allowed: GET, POST
+    URL: /service/authors/{author_id}/posts/{post_id}/comments/
+    '''
     name = "CommentListView"
     permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Comments.objects.all()
@@ -33,14 +42,6 @@ class CommentListView(mixins.ListModelMixin,
     def get_serializer_context(self):
         return {"post_id": self.kwargs['post_id'], "request": self.request}
 
-    # def perform_create(self, serializer):
-    #     post = Posts.objects.all().filter(post_id=self.kwargs["post_id"]).first()
-    #     #print("post is:", post.post_id)
-    #     if not post:
-    #         raise NotFound()
-
-    #     serializer.save(user=self.request.user, post=post)
-
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
@@ -49,6 +50,14 @@ class CommentListView(mixins.ListModelMixin,
 
 class CommentDetailView(mixins.RetrieveModelMixin,
                         generics.GenericAPIView):
+    '''
+    Comment detail Enpoint
+
+    Shows a detailed view of a comment
+
+    Methods Allowed: GET
+    URL: /service/authors/{author_id}/posts/{post_id}/comments/{comment_id}
+    '''
     name = "CommentDetailView"
     permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Comments.objects.all()
@@ -72,11 +81,5 @@ class CommentDetailView(mixins.RetrieveModelMixin,
             else:
                 raise NotAcceptable(code=403)
 
-    # def perform_create(self, serializer):
-    #     serializer.save(user=self.request.user)
-
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
-
-    # def post(self, request, *args, **kwargs):
-    #     return self.create(request, *args, **kwargs)

@@ -9,8 +9,6 @@ from django.utils import timezone
 
 class CommentSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField(read_only=True)
-    # parent_comment_id = serializers.IntegerField(write_only=True, required=False)
-    # author = serializers.SerializerMethodField(read_only=True)
     author = SingleAuthorSerializer(source='user')
     published = serializers.SerializerMethodField(read_only=True)
     id = serializers.SerializerMethodField(read_only=True)
@@ -24,10 +22,9 @@ class CommentSerializer(serializers.ModelSerializer):
             'comment',
             'content_type',
             'published',
-            'id', # come back to this once author is finished
+            'id', 
             'comment_id',
             'post',
-            # 'parent_comment_id'
         ]
 
     def get_author(self, obj):
@@ -35,15 +32,12 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_type(self, obj):
         return obj.type
-        # return "comment"
 
     def get_published(self, obj):
         return obj.published.isoformat()
 
     def get_id(self, obj):
         return obj.id
-        # request = self.context.get('request')
-        # return reverse("comment-detail", kwargs={"author_id" : obj.user_id, "post_id" : obj.post.post_id, "comment_id" : obj.comment_id}, request=request)
 
     def get_post(self, obj):
         return obj.post.post_id
@@ -89,6 +83,4 @@ class CommentInboxSerializer(serializers.ModelSerializer):
             'published',
             'id',
             'comment_id',
-            # 'post',
-            # 'parent_comment_id'
         ]

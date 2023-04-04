@@ -1,6 +1,12 @@
 from django.urls import path
 from . import views
 
+'''
+Contains the URLs for the authors endpoints.
+
+Preceding URL is /service/{path in urlpatterns}/
+'''
+
 
 urlpatterns = [
     path("authors/<uuid:id>/",views.SingleAuthorView.as_view(), name="author-detail"),

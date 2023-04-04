@@ -12,12 +12,6 @@ from likes.serializers import *
 
 
 class InboxSerializer(serializers.ModelSerializer):
-    # body = serializers.JSONField(required=True, write_only=True)
-    # author_id = serializers.UUIDField(write_only=True)
-    # post_id = serializers.UUIDField(required=False, write_only=True)
-    # comment_id = serializers.UUIDField(required=False, write_only=True)
-    # like_id = serializers.JSONField(required=False, write_only=True)
-
     type = serializers.SerializerMethodField(read_only=True)
     author = serializers.SerializerMethodField(read_only=True)
     items = serializers.SerializerMethodField(read_only=True)
@@ -25,11 +19,6 @@ class InboxSerializer(serializers.ModelSerializer):
     class Meta:
         model = Inbox
         fields =  [
-            # '',
-            # 'author_id',
-            # 'post_id',
-            # 'comment_id',
-            # 'like_id',
             'type',
             'author',
             'items'
@@ -101,9 +90,7 @@ class InboxSerializer(serializers.ModelSerializer):
     def create_request(self, data):
         actor = self.create_author(data.pop("actor"))
         object = self.create_author(data.pop("object")) # For testing (I don't wanna manually create the object user myself)
-        # object = CustomUser.objects.filter(url=data.pop("object")["id"]).first()
-        # if not object:
-        #     raise NotFound(detail="object author not found")
+    
         follow_request = FollowingRequestInboxSerializer(data=data)
         if not follow_request.is_valid():
             raise ValidationError(detail=f"Follow request errors: {follow_request.errors}")
@@ -144,7 +131,6 @@ class InboxSerializer(serializers.ModelSerializer):
         return 'inbox'
     
     def get_author(self, obj):
-        # return None
         request = self.context.get('request')
         return reverse("author-detail", kwargs = {"id": obj.author_id}, request=request)
 

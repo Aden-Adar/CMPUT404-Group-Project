@@ -25,30 +25,4 @@ class LikesTest(TestCase):
         url = reverse("author-liked-view", args=["f7b2ba2c-e91c-4365-9ab2-8320ff9cbf1a"])
 
         self.assertEquals(resolve(url).func.view_class,AuthorLikedView)
-    #Do this later
-    """ def test_like_a_post(self):
-        url_signup = reverse("signup")
-        url_login = reverse("login")
-        user = {
-            "username": "User1",
-            "password": "password123"
-        }
-
-        signup = self.client.post(url_signup,user,'application/json')
-        login = self.client.post(url_login,user,'application/json')
-        
-
-        post_content = {
-            "title": "Title 1",
-            "description": "Some content",
-            "content_type": "text/plain",
-            "content": "This is a test",
-            "visibility": "PUBLIC",
-            "unlisted": "false",
-        }
-
-        url_post = reverse("posts-list",args=["21197f66-d233-4b96-8ce9-fe548ac700f2"])
-        post = self.client.post(url_post,post_content,'application/json')
-        
-        list = post.content.decode("utf-8")
-        post_id = list[-38:-2] """
+  

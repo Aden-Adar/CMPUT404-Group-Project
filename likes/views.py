@@ -8,6 +8,14 @@ from .serializers import *
 
 class PostLikesView(mixins.ListModelMixin,
                     generics.GenericAPIView):
+    '''
+    Post Likes Enpoint
+
+    Likes a post
+
+    Methods Allowed: POST, GET, DELETE
+    URL: /service/authors/{author_id}/posts/{post_id}/likes/
+    '''
     name = "PostLikesView"
     permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Likes.objects.all()
@@ -34,6 +42,14 @@ class PostLikesView(mixins.ListModelMixin,
 
 class CommentLikesView(mixins.ListModelMixin,
                     generics.GenericAPIView):
+    '''
+    Comment Likes Enpoint
+
+    Likes a comment
+
+    Methods Allowed: POST, GET, DELETE
+    URL: /service/authors/{author_id}/posts/{post_id}/comments/{comment_id}/likes/
+    '''
     name = "CommentLikesView"
     permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Likes.objects.all()
@@ -60,6 +76,14 @@ class CommentLikesView(mixins.ListModelMixin,
 
 class AuthorLikedView(mixins.RetrieveModelMixin,
                     generics.GenericAPIView):
+    '''
+    Author liked Enpoint
+
+    Shows what the author has liked
+
+    Methods Allowed: GET
+    URL: /service/authors/{author_id}/liked/
+    '''
     name = "AuthorLikedView"
     permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Likes.objects.all()

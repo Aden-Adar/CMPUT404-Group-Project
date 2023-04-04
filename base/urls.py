@@ -2,6 +2,11 @@ from django.urls import path
 from . import views
 from rest_framework.authtoken.views import obtain_auth_token
 
+'''
+Contains the URLs for the signup endpoints.
+
+Preceding URL is /service/ {path in urlpatterns}/
+'''
 
 urlpatterns = [
     path("signup/", views.CreateAccount.as_view(), name="signup"),
