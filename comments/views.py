@@ -12,6 +12,15 @@ from .pagination import *
 class CommentListView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
                     generics.GenericAPIView):
+
+    '''
+    Comment list Enpoint
+
+    Shows a list of comments within a post
+
+    Methods Allowed: GET, POST
+    URL: /service/authors/{author_id}/posts/{post_id}/comments/
+    '''
     name = "CommentListView"
     permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Comments.objects.all()
@@ -41,6 +50,14 @@ class CommentListView(mixins.ListModelMixin,
 
 class CommentDetailView(mixins.RetrieveModelMixin,
                         generics.GenericAPIView):
+    '''
+    Comment detail Enpoint
+
+    Shows a detailed view of a comment
+
+    Methods Allowed: GET
+    URL: /service/authors/{author_id}/posts/{post_id}/comments/{comment_id}
+    '''
     name = "CommentDetailView"
     permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Comments.objects.all()

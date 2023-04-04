@@ -13,6 +13,14 @@ from .pagination import *
 class PostListView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
                     generics.GenericAPIView):
+    '''
+    Post List Enpoint
+
+    Shows all of the post of an author
+
+    Methods Allowed: POST, GET
+    URL: /service/authors/{author_id}/posts/
+    '''
     name = "PostListView"
     permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Posts.objects.all()
@@ -46,6 +54,14 @@ class PostDetailView(mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin,
                     generics.GenericAPIView):
+    '''
+    Post Detail Enpoint
+
+    Shows detailed info of an author's post
+
+    Methods Allowed: PUT, GET, DELETE
+    URL: /service/authors/{author_id}/posts/{post_id}
+    '''
     name = "PostDetailView"
     permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = Posts.objects.all()
@@ -78,8 +94,16 @@ class PostDetailView(mixins.RetrieveModelMixin,
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 
-class ImageView(mixins.RetrieveModelMixin, 
+class ImagesView(mixins.RetrieveModelMixin, 
                 generics.GenericAPIView):
+    '''
+    Image View Enpoint
+
+    Shows an image
+
+    Methods Allowed: GET
+    URL: /service/authors/{author_id}/posts/{post_id}/image/
+    '''
     queryset = Posts.objects.all()
     serializer_class = ImagesSerializer
     lookup_field = ('author_id', 'post_id')

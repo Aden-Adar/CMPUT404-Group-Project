@@ -1,6 +1,11 @@
 from django.urls import path
 from . import views
 
+'''
+Contains the URLs for the authors endpoints.
+
+Preceding URL is /service/authors/{author_id}/{paths in urlpatterns}/
+'''
 
 urlpatterns = [
     path('posts/<uuid:post_id>/likes/', views.PostLikesView.as_view(), name="post-likes-list"),

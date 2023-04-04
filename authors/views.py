@@ -18,6 +18,13 @@ class SingleAuthorView(mixins.ListModelMixin,
                     mixins.DestroyModelMixin,
                     mixins.UpdateModelMixin,
                     generics.GenericAPIView):
+    '''
+    Single Author Enpoint
+
+    Methods Allowed: GET, PUT
+    URL: /service/authors/{author_id}/
+    '''
+    
     name = "SingleAuthorView"
     permission_classes = [IsAuthenticated, IsRemoteNode]
     queryset = CustomUser.objects.all()
@@ -42,12 +49,17 @@ class SingleAuthorView(mixins.ListModelMixin,
 class AllAuthorView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
                     generics.GenericAPIView):
+    '''
+    Author List Enpoint
+
+    Methods Allowed: GET
+    URL: /service/authors/
+    '''
     name = "AllAuthorView"
     queryset = CustomUser.objects.all()
     permission_classes = [IsAuthenticated, IsRemoteNode]
     pagination_class = CustomPageNumberPagination
     serializer_class = SingleAuthorSerializer
-    #lookup_field = ('author_id')
 
     def get_queryset(self, *args, **kwargs):
         qs = super().get_queryset(*args, **kwargs).exclude(username="admin")
@@ -62,6 +74,12 @@ class AllAuthorView(mixins.ListModelMixin,
 
 
 class FollowerList(APIView):
+    '''
+    Author Followers Enpoint
+
+    Methods Allowed: GET
+    URL: /service/authors/{author_id}/followers/
+    '''
     name = "FollowerList"
     permission_classes = [IsAuthenticated, IsRemoteNode]
     serializer_class = FollowingSerializer
@@ -81,6 +99,14 @@ class FollowerList(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST,data={"error": "Please provide a valid author id."} )       
     
 class FollowingView(APIView):
+    '''
+    Following Enpoint
+
+    Checks if foreign_user is following current author
+
+    Methods Allowed: GET, PUT, DELETE
+    URL: /service/authors/{author_id}/followers/{foreign_user_id}/
+    '''
     name = "FollowingView"
     permission_classes = [IsAuthenticated, IsRemoteNode]
     def get(self, request, *args, **kwargs):
@@ -141,6 +167,12 @@ class FollowingView(APIView):
             return None
 
 class RemoveRequestView(APIView):
+    '''
+    Remove Follower Request Enpoint
+
+    Methods Allowed: DELETE
+    URL: /service/authors/{author_id}/
+    '''
     name = "FollowingView"
     permission_classes = [IsAuthenticated, IsRemoteNode]
 

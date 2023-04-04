@@ -15,6 +15,14 @@ from .serializers import *
 @api_view(['GET', 'POST', 'DELETE'])
 @permission_classes([IsAuthenticated, IsRemoteNode])
 def InboxView(request, pk=None, *args, **kwargs):
+    '''
+    Inbox Enpoint
+
+    Shows an author's inbox
+
+    Methods Allowed: GET, POST, DELETE
+    URL: /service/authors/{author_id}/inbox/
+    '''
     name = "InboxView"
     method = request.method
 
@@ -38,6 +46,5 @@ def InboxView(request, pk=None, *args, **kwargs):
         return Response({"invalid": "not good data"}, status=400)
 
     if method == "DELETE":
-        # inbox_data = JSONParser().parse(request)
         Inbox.objects.filter(author = request.user.id).delete()
         return Response("Inbox Cleared", status=200)

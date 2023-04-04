@@ -11,12 +11,24 @@ from .forms import *
 
 
 class UselessView(APIView):
+    '''
+    Useless Enpoint
+
+    Methods Allowed: GET
+    URL: /service/useless
+    '''
     permission_classes = (IsAuthenticated,)
     def get(self, request, format=None):
         content = {'message': 'Hello, World!'}
         return Response(content)
 
 class CreateAccount(APIView):
+    '''
+    Create Account Enpoint
+
+    Methods Allowed: POST
+    URL: /service/signup/
+    '''
     def post(self, request, format=None):
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -30,6 +42,12 @@ class CreateAccount(APIView):
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(APIView):
+    '''
+    Login Enpoint
+
+    Methods Allowed: POST
+    URL: /service/login/
+    '''
     def post(self, request, format=None):
         if "username" not in request.data or "password" not in request.data:
             return Response({"error": "Please provide both username and password"}, status=status.HTTP_400_BAD_REQUEST) 

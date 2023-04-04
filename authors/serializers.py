@@ -19,6 +19,9 @@ class StringUuidField(UUIDField):
         return super().to_internal_value(id)
 
 class SingleAuthorSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for a Single Author endpoint
+    '''
     type = serializers.SerializerMethodField(read_only=True)
     id = serializers.SerializerMethodField(read_only=True)
     host = serializers.SerializerMethodField(read_only=True)
@@ -49,6 +52,9 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
         return obj.host
 
 class AuthorInboxSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for a Author inbox endpoint
+    '''
     displayName = serializers.CharField(source="username")
     id = serializers.SerializerMethodField(read_only=True)
     id = StringUuidField(write_only=True)
@@ -74,8 +80,10 @@ class AuthorInboxSerializer(serializers.ModelSerializer):
         return obj
 
 class ListAllAuthorSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for Author list endpoint
+    '''
     type = serializers.SerializerMethodField(read_only=True)
-    #items = serializers.SerializerMethodField(read_only=True)
     items = SingleAuthorSerializer(many=True, read_only=True)
     class Meta:
         model = CustomUser
@@ -85,6 +93,9 @@ class ListAllAuthorSerializer(serializers.ModelSerializer):
         ]
 
 class FollowingSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for following endpoint
+    '''
     class Meta:
         model = Following
         fields = [
@@ -93,6 +104,9 @@ class FollowingSerializer(serializers.ModelSerializer):
         ]
 
 class FollowingRequestInboxSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for inbox follow request endpoint
+    '''
     actor = SingleAuthorSerializer(read_only=True)
     object = SingleAuthorSerializer(read_only=True)
     class Meta:
@@ -105,6 +119,9 @@ class FollowingRequestInboxSerializer(serializers.ModelSerializer):
         ]
 
 class FollowingRequestSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for follow request endpoint
+    '''   
     actor = SingleAuthorSerializer(read_only=True)
     object = SingleAuthorSerializer(read_only=True)
     class Meta:
