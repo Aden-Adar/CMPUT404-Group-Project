@@ -28,4 +28,6 @@ Social.ly is the social media app for authors! Start creating today.
 
 >Run the server 'python manage.py runserver'.
 
+>Go to https://localhost:8000/
+
 
