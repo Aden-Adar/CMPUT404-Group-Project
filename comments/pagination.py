@@ -10,13 +10,3 @@ class CustomPageNumberPagination(pagination.PageNumberPagination):
     
     def get_paginated_response(self, data):
         return Response(data)
-
-"""     def get_paginated_response(self, data):
-        
-        return Response({
-            
-            #'next': self.get_next_link(),#delete this
-            #'previous': self.get_previous_link(),#delete this
-            'count': self.page.paginator.count,
-            'comments': data
-        }) """

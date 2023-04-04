@@ -30,7 +30,7 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
             'type',
             'id',
             'url',
-            'host', # Need to look at this again
+            'host', 
             'displayName',
             'github',
             'profileImage' 
@@ -38,23 +38,15 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
 
     def get_type(self, obj):
         return obj.type
-        # return "author"
 
     def get_id(self, obj):
         return obj.url
 
     def get_url(self, obj):
         return obj.url
-        # request = self.context.get('request')
-        # return reverse("author-detail", kwargs = {"id": obj.id}, request=request)
 
     def get_host(self, obj):
         return obj.host
-        # request = self.context.get('request')
-        # origin = request.META.get("HTTP_HOST")
-        # return origin
-
-
 
 class AuthorInboxSerializer(serializers.ModelSerializer):
     displayName = serializers.CharField(source="username")
@@ -67,7 +59,7 @@ class AuthorInboxSerializer(serializers.ModelSerializer):
             'type',
             'id',
             'url',
-            'host', # Need to look at this again
+            'host',
             'displayName',
             'github',
             'profileImage' 

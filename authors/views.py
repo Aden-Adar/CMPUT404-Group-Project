@@ -35,23 +35,10 @@ class SingleAuthorView(mixins.ListModelMixin,
         return self.update(request, *args, **kwargs)
 
 
-
-
 """
 #https://stackoverflow.com/questions/73522898/how-i-can-use-nested-serializer-in-django-rest-framework
 #Question by Mohsin and answered by Mohsin
-class AllAuthorView(generics.RetrieveAPIView):
-    name = "AllAuthorView"
-    permission_classes = [IsAuthenticated, IsRemoteNode]
-    def get(self,request,*args,**kwargs):
-        qs = CustomUser.objects.all()
-        paginator = Paginator(qs,5) #5 per page
-        data = {
-            "type":"authors",
-            "items": SingleAuthorSerializer(qs,many=True,context={"request":request}).data,
-        }
-        return Response(data=data) """
-
+"""
 class AllAuthorView(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
                     generics.GenericAPIView):
@@ -81,7 +68,6 @@ class FollowerList(APIView):
     lookup_field = 'id'
     
     def get(self, request, *args, **kwargs):
-        #following = UserSerializer(CustomUser.objects.filter(~Q(id=user.id)), many=True)
         authour_id = kwargs.get('id')
         if authour_id is not None:
             following = Following.objects.filter(following_user=authour_id)

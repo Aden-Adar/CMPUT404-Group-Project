@@ -33,14 +33,6 @@ class CommentListView(mixins.ListModelMixin,
     def get_serializer_context(self):
         return {"post_id": self.kwargs['post_id'], "request": self.request}
 
-    # def perform_create(self, serializer):
-    #     post = Posts.objects.all().filter(post_id=self.kwargs["post_id"]).first()
-    #     #print("post is:", post.post_id)
-    #     if not post:
-    #         raise NotFound()
-
-    #     serializer.save(user=self.request.user, post=post)
-
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
@@ -72,11 +64,5 @@ class CommentDetailView(mixins.RetrieveModelMixin,
             else:
                 raise NotAcceptable(code=403)
 
-    # def perform_create(self, serializer):
-    #     serializer.save(user=self.request.user)
-
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
-
-    # def post(self, request, *args, **kwargs):
-    #     return self.create(request, *args, **kwargs)

@@ -69,21 +69,11 @@ class PostDetailView(mixins.RetrieveModelMixin,
             else:
                 raise NotAcceptable(code=403)
 
-    # def perform_create(self, serializer):
-    #     serializer.save(user_id=self.request.user)
-
     def get(self, request, *args, **kwargs):
             return self.retrieve(request, *args, **kwargs)
-
-    # def post(self, request, *args, **kwargs):
-    #     return self.post(request, *args, **kwargs)
     
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
-    
-    # def perform_update(self, serializer):
-    #     # serializer.update(user_id=self.request.user)
-    #     return super().perform_update(serializer)
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
