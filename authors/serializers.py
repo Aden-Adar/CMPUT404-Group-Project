@@ -43,9 +43,13 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
         return obj.type
 
     def get_id(self, obj):
+        if obj.url[-1] != '/':
+            return obj.url+'/'
         return obj.url
 
     def get_url(self, obj):
+        if obj.url[-1] != '/':
+            return obj.url+'/'
         return obj.url
 
     def get_host(self, obj):
@@ -72,6 +76,8 @@ class AuthorInboxSerializer(serializers.ModelSerializer):
         ]
 
     def get_id(self, obj):
+        if obj.url[-1] != '/':
+            return obj.url+'/'
         return obj.url
 
     def create(self, validated_data):
