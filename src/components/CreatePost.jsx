@@ -168,7 +168,7 @@ function CreatePost()  {
         console.error(error);
       }
     }
-    //window.location.href = '/main';
+    window.location.href = '/main';
   };
     
 
