@@ -61,8 +61,16 @@ function CreatePost()  {
   const [visibility, setVisibility] = useState('');
   const [unlisted, setUnlisted] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [file, setFile] = useState(null);
   const author = JSON.parse(window.localStorage.getItem("Author"));
   const AUTHOR_ID = author.id;
+
+  
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setFile(file);
+  };
 
   
   const handleSubmit = async (event) => {
@@ -78,7 +86,21 @@ function CreatePost()  {
       categories: categories,
     };
 
-  
+    let base64Image = '';
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        base64Image = reader.result.replace(/^data:image\/(png|jpeg);base64,/, '');
+        postData.content = base64Image;
+        setContent(base64Image);
+        handlePostSubmit(postData)
+      };
+    } else {
+      handlePostSubmit(postData)
+    }
+  };
+    const handlePostSubmit = async (postData) =>  {
     if (visibility === "PUBLIC") {
       try {
         const response = await axios.post(AUTHOR_ID+'posts/', JSON.stringify(postData),{
@@ -149,17 +171,6 @@ function CreatePost()  {
     window.location.href = '/main';
   };
     
-  //   fetch('/service/authors/'+ AUTHOR_ID+ '/posts/', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     },
-  //     body: JSON.stringify(postData)
-  //   })
-  //     .then(response => response.json())
-  //     .then(data => console.log(data))
-  //     //.catch(error => console.error(error));
-  // };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -201,11 +212,12 @@ function CreatePost()  {
           </MenuItem>
           <MenuItem value="text/plain">Plain</MenuItem>
           <MenuItem value="text/markdown">Markdown</MenuItem>
-          <MenuItem value="text/base64">Base64</MenuItem>
-          <MenuItem value="image/png">PNG</MenuItem>
-          <MenuItem value="image/jpeg">JPEG</MenuItem>
+          <MenuItem value="application/base64">Base64</MenuItem>
+          <MenuItem value="image/png;base64">PNG</MenuItem>
+          <MenuItem value="image/jpeg;base64">JPEG</MenuItem>
         </Select>
       </FormControl>
+      <input type="file" accept="image/png, image/jpeg" onChange={handleFileChange} />
 
       <FormControl className={classes.formControl}>
         <Select
@@ -224,16 +236,6 @@ function CreatePost()  {
           <MenuItem value="FRIENDS">FRIENDS</MenuItem>
         </Select>
       </FormControl>
-      {/* <FormControlLabel className={classes.checkbox}
-        control={
-          <Checkbox
-            checked={unlisted}
-            onChange={(event) => setUnlisted(event.target.checked)}
-            name="unlisted"
-          />
-        }
-        label="Unlisted"
-      /> */}
       <TextField
         required
         fullWidth
