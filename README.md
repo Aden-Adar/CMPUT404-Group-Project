@@ -9,8 +9,10 @@ Social.ly is the social media app for authors! Start creating today.
 
 
 
-## Run
-To run the project:  
+## Run on Heroku:
+>Start the heroku app https://cmput404-group-project.herokuapp.com/
+
+## To run the project locally:  
 
 >create virtual environment in the Terminal by 'venv virtualenv'. 
 
@@ -26,4 +28,4 @@ To run the project:
 
 >Run the server 'python manage.py runserver'.
 
->Start the heroku app ''.
+
