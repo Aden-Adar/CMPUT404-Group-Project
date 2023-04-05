@@ -33,44 +33,52 @@ async function getExplorePosts(page) {
     }
     
     // POSTS FROM GROUP 1's BE
-    let authorsResponse2 = await fetch(GROUP1URL+`authors/?page=${page}&size=3`, {
-        method: 'GET',
-        headers: {
-            'Authorization': 'Basic ' + GROUP1CREDS,
-            'Access-Control-Request-Method': 'GET' 
-        }
-    })
-    let authorsRes_data2 = await authorsResponse2.json()
-    console.log(authorsRes_data2)
-    for (let i = 0; i < authorsRes_data2.items.length; i++) {
-        if (authorsRes_data2.items[i].id !== AUTHOR.id) {
-            let authorPosts = []
-            let response = await fetch(GROUP1URL + 'authors/' + authorsRes_data2.items[i].id + '/posts/', {
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Basic ' + GROUP1CREDS,
-                    'Access-Control-Request-Method': 'GET' 
-                }
-            })
-            let res_data = await response.json()
-            console.log(res_data)
-            for (let j = 0; j < res_data.items.length; j++) {
-                res_data.items[j].comments = GROUP1URL + 'authors/' + authorsRes_data2.items[i].id + '/posts/' + res_data.items[j].id + '/comments/'
-                authorPosts.push(res_data.items[j])
+    try {
+        let authorsResponse2 = await fetch(GROUP1URL+`authors/?page=${page}&size=3`, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Basic ' + GROUP1CREDS,
+                'Access-Control-Request-Method': 'GET' 
             }
-            posts = posts.concat(authorPosts)
+        })
+        let authorsRes_data2 = await authorsResponse2.json()
+        console.log(authorsRes_data2)
+        for (let i = 0; i < authorsRes_data2.items.length; i++) {
+            if (authorsRes_data2.items[i].id !== AUTHOR.id) {
+                let authorPosts = []
+                let response = await fetch(GROUP1URL + 'authors/' + authorsRes_data2.items[i].id + '/posts/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Basic ' + GROUP1CREDS,
+                        'Access-Control-Request-Method': 'GET' 
+                    }
+                })
+                let res_data = await response.json()
+                console.log(res_data)
+                for (let j = 0; j < res_data.items.length; j++) {
+                    res_data.items[j].comments = GROUP1URL + 'authors/' + authorsRes_data2.items[i].id + '/posts/' + res_data.items[j].id + '/comments/'
+                    authorPosts.push(res_data.items[j])
+                }
+                posts = posts.concat(authorPosts)
+            }
         }
+    } catch (error) {
+        console.log(error)
     }
 
-    let authorsResponse3 = await fetch(GROUP2URL+`authors/?page=${page}&size=5`, {
-        method: 'GET',
-        headers: {
-            'Authorization': 'Basic ' + GROUP2CREDS,
-            'Access-Control-Request-Method': 'GET' 
-        }
-    })
-    let authorsRes_data3 = await authorsResponse3.json()
-    console.log(authorsRes_data3)
+    try {
+        let authorsResponse3 = await fetch(GROUP2URL+`authors/?page=${page}&size=5`, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Basic ' + GROUP2CREDS,
+                'Access-Control-Request-Method': 'GET' 
+            }
+        })
+        let authorsRes_data3 = await authorsResponse3.json()
+        console.log(authorsRes_data3)
+    } catch (error) {
+        console.log(error)
+    }
     return posts
 }
 

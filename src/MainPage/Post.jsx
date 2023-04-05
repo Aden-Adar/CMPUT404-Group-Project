@@ -19,6 +19,7 @@ function PostCard({
     postType
 }) {
     const AUTHOR = window.localStorage.getItem("Author")
+    const UUID = window.localStorage.getItem("UUID")
 
     const GROUP1URL = "https://social-distribution-w23-t17.herokuapp.com/"
     const GROUP1CREDS = Buffer.from("remote-user-t22:pZHAe3PWukpd3Nv").toString('base64')
@@ -42,9 +43,7 @@ function PostCard({
         async function getLikes() {
           let likesResponse = await fetch(id + 'likes/')
           let likesRes_data = await likesResponse.json()
-          console.log(likesRes_data)
           for (let i = 0; i < likesRes_data.results.length; i++) {
-              console.log(likesRes_data.results[i].author.id)
               if (likesRes_data.results[i].author.id === JSON.parse(AUTHOR).id) {
                   setLiked(true)
               }
@@ -62,9 +61,8 @@ function PostCard({
             }
           })
           let likesRes_data = await likesResponse.json()
-          console.log(likesRes_data)
           for (let i = 0; i < likesRes_data.items.length; i++) {
-              if (likesRes_data.items[i].author.id === JSON.parse(AUTHOR).id) {
+              if (likesRes_data.items[i].author.id.includes(UUID)) {
                   setLiked(true)
               }
           }
