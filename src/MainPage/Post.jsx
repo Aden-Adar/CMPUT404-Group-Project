@@ -26,12 +26,13 @@ function PostCard({
 
     const GROUP1URL = "https://social-distribution-w23-t17.herokuapp.com/"
     const GROUP1CREDS = Buffer.from("remote-user-t22:pZHAe3PWukpd3Nv").toString('base64')
+    const group1Post = id.includes(GROUP1URL) ? true : false;
 
     const GROUP2URL = "https://floating-fjord-51978.herokuapp.com/"
     const GROUP2CREDS = Buffer.from("admin:admin").toString('base64')
-
-    const group1Post = id.includes(GROUP1URL) ? true : false;
-    const internalPost = group1Post ? false : true;
+    const group2Post = id.includes(GROUP2URL) ? true : false;
+    
+    const internalPost = (group1Post || group2Post) ? false : true;
 
     const [liked, setLiked] = React.useState(false);
     const [likes, setLikes] = React.useState(0);
@@ -44,7 +45,7 @@ function PostCard({
       // Call to our BE
       if (internalPost) {
         async function getLikes() {
-          let likesResponse = await fetch(id + 'likes/')
+          let likesResponse = await fetch(id + '/likes')
           let likesRes_data = await likesResponse.json()
           for (let i = 0; i < likesRes_data.results.length; i++) {
               if (likesRes_data.results[i].author.id === JSON.parse(AUTHOR).id) {
@@ -60,6 +61,24 @@ function PostCard({
             method: 'GET',
             headers: {
               'Authorization': 'Basic ' + GROUP1CREDS,
+              'Access-Control-Request-Method': 'GET' 
+            }
+          })
+          let likesRes_data = await likesResponse.json()
+          for (let i = 0; i < likesRes_data.items.length; i++) {
+              if (likesRes_data.items[i].author.id.includes(UUID)) {
+                  setLiked(true)
+              }
+          }
+          setLikes(likesRes_data.items.length)
+          }
+          getLikes();
+      } else if (group2Post) {
+        async function getLikes() {
+          let likesResponse = await fetch(id + '/likes', {
+            method: 'GET',
+            headers: {
+              'Authorization': 'Basic ' + GROUP2CREDS,
               'Access-Control-Request-Method': 'GET' 
             }
           })
@@ -132,6 +151,10 @@ function PostCard({
           let res_data = await response.json()
           setComments(res_data)
         } else if (internalPost) {
+          let response = await fetch(commentsURL)
+          let res_data = await response.json()
+          setComments(res_data)
+        } else if (group2Post) {
           let response = await fetch(commentsURL)
           let res_data = await response.json()
           setComments(res_data)
