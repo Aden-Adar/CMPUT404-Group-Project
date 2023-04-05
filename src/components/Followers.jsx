@@ -149,7 +149,7 @@ function FollowersPage() {
     <div>
       <input 
       type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} 
-      style={{ border: '2px solid #ccc', padding: '8px', backgroundColor: 'lightgray', color: 'white'}} />
+      style={{ border: '2px solid #ccc', padding: '8px', backgroundColor: 'lightgray', color: 'black'}} />
       <button onClick={handleAddFriend}>Add Friend</button>
     </div>
     <h2>Followers</h2>

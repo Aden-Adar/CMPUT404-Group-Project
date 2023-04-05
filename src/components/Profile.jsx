@@ -2,16 +2,12 @@ import * as React from 'react';
 import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Card, CardActions, CardContent, CardMedia, TextField, Typography } from '@material-ui/core';
-//import { Link } from 'react-router-dom';
 import AppBar from '../MainPage/AppBar';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'float',
-    justifyContent: 'center',
-    alignItems: 'center',
     textAlign: 'center',
-    padding: theme.spacing(10),
   },
   card: {
     maxWidth: 600,
