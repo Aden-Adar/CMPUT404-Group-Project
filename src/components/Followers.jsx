@@ -4,7 +4,6 @@ import axios from 'axios';
 import AppBar from '../MainPage/AppBar';
 import { Button, Card, CardActions, CardContent, CardMedia, TextField, Typography } from '@material-ui/core';
 
-//const AUTHOR_ID = window.localStorage.getItem("UUID")
 const GROUP1URL = "https://social-distribution-w23-t17.herokuapp.com/"
 const GROUP1CREDS = Buffer.from("remote-user-t22:pZHAe3PWukpd3Nv").toString('base64')
 
@@ -43,15 +42,6 @@ function FollowersPage() {
 
     fetchAuthors();
   }, []);
-
-  // const handleShowAuthors = async () => {
-  //   const author_response =  await axios.get('/service/authors/');
-  //   const auth_list = author_response.response.data.items;
-  //   const authorList = auth_list.map(author => (
-  //     <p key={author.id}>{author.displayName}</p>
-  //   ));
-  //   setAuthors(authorList);
-  // };
 
   let followersList = null;
   if (followers) {
