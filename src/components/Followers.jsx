@@ -97,10 +97,10 @@ function FollowersPage() {
       }
     })
     //const group1Authors = await group1Res.json()
-    console.log('Remote users:',group1Authors);
+    console.log('Remote users:',group1Authors.json());
     const followRemoteUser = group1Authors.data.items.find((item) => item.displayName === displayName);
     const followUser = response.data.items.find((item) => item.displayName === displayName);
-    const FOREIGN_AUTHOR_ID = followUser.id;
+    //const FOREIGN_AUTHOR_ID = followUser.id;
     const current_author = JSON.parse(window.localStorage.getItem("Author"));
     const current_author_id = current_author.id;
     const currentUser = response.data.items.find((item) => item.id === current_author_id);
