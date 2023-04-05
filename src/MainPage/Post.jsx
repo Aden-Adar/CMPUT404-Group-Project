@@ -6,6 +6,9 @@ import { Card, CardContent, CardHeader, CardActions, IconButton, Typography, Col
 import { Favorite, Comment, AccountCircle, Send } from '@material-ui/icons';
 
 import CommentItem from './Comment';
+import ReactMarkdown from 'react-markdown'
+import ReactDom from 'react-dom'
+
 
 function PostCard({
     postAuthor,
@@ -249,6 +252,18 @@ function PostCard({
                 }
                 </Typography>
               }
+              {contentType === 'text/markdown' &&//|| contentType === 'text/markdown'&&
+                <Typography variant="body1">
+                {
+                  <ReactMarkdown>
+                    {content}
+                  </ReactMarkdown>
+                  
+                }
+                </Typography>
+              }
+
+
           </CardContent>
           {postType !== "myposts" &&
             <CardActions disableSpacing>
