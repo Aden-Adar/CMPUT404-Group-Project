@@ -15,6 +15,8 @@ function FollowersPage() {
   const [displayName, setDisplayName] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [allAuthors, setAuthors] = useState(null);
+  const [group1Authors, setGroup1Authors] = useState([]);
+  const [group2Authors, setGroup2Authors] = useState([]);
   const current_author = JSON.parse(window.localStorage.getItem("Author"));
   const AUTHOR_ID = current_author.id;
 
@@ -38,6 +40,22 @@ function FollowersPage() {
         }
       } 
       setAuthors(authors);
+
+      const gr1Response = await axios.get(GROUP1URL+'authors/?page=1&size=150', {
+        headers: {
+            'Authorization': 'Basic ' + GROUP1CREDS,
+            'Access-Control-Request-Method': 'GET' 
+        }
+      })
+      setGroup1Authors(gr1Response.data.items)
+
+      const gr2Response = await axios.get(GROUP2URL+'authors/?page=1&size=150', {
+        headers: {
+            'Authorization': 'Basic ' + GROUP2CREDS,
+            'Access-Control-Request-Method': 'GET' 
+        }
+      })
+      setGroup2Authors(gr2Response.data.items)
     };
 
     fetchAuthors();
@@ -65,12 +83,13 @@ function FollowersPage() {
 
   let authorsList = null;
   if (allAuthors) {
-    authorsList = allAuthors.map((author) => {
+    let allAuthorsWithRemote = allAuthors.concat(group1Authors).concat(group2Authors)
+    authorsList = allAuthorsWithRemote.map((author) => {
   return (
       <Card key={author.id}>
       <CardContent>
         <Typography variant="h5" component="h2">
-          {author.displayName}
+          {((!author.id.includes('http://localhost:8000/') && !author.id.includes('https://cmput404-group-project.herokuapp.com/')) ? '(remote) ' : '') + author.displayName}
         </Typography>
       </CardContent>
     </Card>
@@ -79,25 +98,12 @@ function FollowersPage() {
   } 
 
   const handleAddFriend = async () => {
-    const response = await axios.get('/service/authors/');
-    const group1Authors = await axios.get(GROUP1URL+'authors/?page=1&size=150', {
-      headers: {
-          'Authorization': 'Basic ' + GROUP1CREDS,
-          'Access-Control-Request-Method': 'GET' 
-      }
-    })
-    const group2Authors = await axios.get(GROUP2URL+'authors/?page=1&size=150', {
-      headers: {
-          'Authorization': 'Basic ' + GROUP2CREDS,
-          'Access-Control-Request-Method': 'GET' 
-      }
-    })
-    const Group1RemoteUser = group1Authors.data.items.find((item) => item.displayName === displayName);
-    const Group2RemoteUser = group2Authors.data.items.find((item) => item.displayName === displayName);
-    const localUser = response.data.items.find((item) => item.displayName === displayName);
+    const Group1RemoteUser = group1Authors.find((item) => item.displayName === displayName);
+    const Group2RemoteUser = group2Authors.find((item) => item.displayName === displayName);
+    const localUser = allAuthors.find((item) => item.displayName === displayName);
     const current_author = JSON.parse(window.localStorage.getItem("Author"));
     const current_author_id = current_author.id;
-    const currentUser = response.data.items.find((item) => item.id === current_author_id);
+    const currentUser = allAuthors.find((item) => item.id === current_author_id);
     console.log('user to follow:', localUser);
     console.log('group 1 user to follow:', Group1RemoteUser);
     console.log('group 2 user to follow:', Group2RemoteUser);
