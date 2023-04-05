@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { Buffer } from "buffer"
 import axios from 'axios';
 import AppBar from '../MainPage/AppBar';
 import { Button, Card, CardActions, CardContent, CardMedia, TextField, Typography } from '@material-ui/core';
 
 //const AUTHOR_ID = window.localStorage.getItem("UUID")
 const GROUP1URL = "https://social-distribution-w23-t17.herokuapp.com/"
-const GROUP1CREDS = btoa("remote-user-t22:pZHAe3PWukpd3Nv")
+const GROUP1CREDS = Buffer.from("remote-user-t22:pZHAe3PWukpd3Nv").toString('base64')
+
+const GROUP2URL = "https://floating-fjord-51978.herokuapp.com/"
+const GROUP2CREDS = Buffer.from("admin:admin").toString('base64')
 
 function FollowersPage() {
   const [followers, setFollowers] = useState(null);
@@ -28,7 +32,13 @@ function FollowersPage() {
   useEffect(() => {
     const fetchAuthors = async () => {
       const response = await axios.get('/service/authors/');
-      setAuthors(response.data.items);
+      let authors = []
+      for (let i = 0; i < response.data.items.length; i++) {
+        if (!response.data.items[i].id.includes(GROUP1URL) && !response.data.items[i].id.includes(GROUP2URL)) {
+          authors.push(response.data.items[i])
+        }
+      } 
+      setAuthors(authors);
     };
 
     fetchAuthors();
