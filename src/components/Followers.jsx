@@ -90,24 +90,24 @@ function FollowersPage() {
 
   const handleAddFriend = async () => {
     const response = await axios.get('/service/authors/');
-    const group1Res = await fetch(GROUP1URL+'authors/', {
-      method: 'GET',
+    const group1Authors = await axios.get(GROUP1URL+'authors/', {
       headers: {
           'Authorization': 'Basic ' + GROUP1CREDS,
           'Access-Control-Request-Method': 'GET' 
       }
     })
-    const group1Authors = await group1Res.json()
-    console.log(group1Authors)
-    const followRemoteUser = group1Authors.items.find((item) => item.displayName === displayName);
+    //const group1Authors = await group1Res.json()
+    console.log('Remote users:',group1Authors);
+    const followRemoteUser = group1Authors.data.items.find((item) => item.displayName === displayName);
     const followUser = response.data.items.find((item) => item.displayName === displayName);
     const FOREIGN_AUTHOR_ID = followUser.id;
     const current_author = JSON.parse(window.localStorage.getItem("Author"));
     const current_author_id = current_author.id;
     const currentUser = response.data.items.find((item) => item.id === current_author_id);
     console.log('user to follow:', followUser);
+    console.log('remote user to follow:', followRemoteUser);
     console.log('CURRENT USER:', currentUser);
-    if (followUser ||followRemoteUser) {
+    if (followUser || followRemoteUser) {
       
       setSelectedUser(followUser);
       await axios.post(FOREIGN_AUTHOR_ID+'inbox/', {
@@ -126,15 +126,13 @@ function FollowersPage() {
         'actor': currentUser,
         'object': followRemoteUser,
       }
-      await fetch(GROUP1URL + `authors/${REMOTE_AUTHOR_ID}/inbox/`, {
-        method: 'POST',
+      await axios.post(GROUP1URL + `authors/${REMOTE_AUTHOR_ID}/inbox/`,JSON.stringify(followBody),{
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
           'Authorization': 'Basic ' + GROUP1CREDS,
           'Access-Control-Request-Method': 'POST' 
         },
-        body: JSON.stringify(followBody)
       });
     } else {
       console.log(`User with display name ${displayName} not found`);
