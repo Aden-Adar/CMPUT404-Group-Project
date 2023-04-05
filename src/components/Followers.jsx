@@ -90,13 +90,13 @@ function FollowersPage() {
 
   const handleAddFriend = async () => {
     const response = await axios.get('/service/authors/');
-    const group1Res = await axios.get(GROUP1URL+'authors/', {
+    const group1Authors = await axios.get(GROUP1URL+'authors/', {
       headers: {
           'Authorization': 'Basic ' + GROUP1CREDS,
           'Access-Control-Request-Method': 'GET' 
       }
     })
-    const group1Authors = await group1Res.json()
+    //const group1Authors = await group1Res.json()
     console.log('Remote users:',group1Authors);
     const followRemoteUser = group1Authors.data.items.find((item) => item.displayName === displayName);
     const followUser = response.data.items.find((item) => item.displayName === displayName);
