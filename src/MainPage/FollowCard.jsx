@@ -20,12 +20,35 @@ function FollowCard({
               }
             })
             let res_data = await response.json()
+
+          // delete request from inbox
+          let del_response = await fetch(object.id +'followers/' + foreignID + '/delete/', {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          })
+          let del_res_data = await del_response.json()
         }
         putRequest()
     }
 
     function handleDecline() {
-        
+      async function deleteRequest() {
+        let splitID = actor.id.split('/')
+        let foreignID = splitID[splitID.length - 2]
+        // delete request from inbox
+        let del_response = await fetch(object.id +'followers/' + foreignID + '/delete/', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        })
+        let del_res_data = await del_response.json()
+      }
+      deleteRequest()
     }
 
     return (
