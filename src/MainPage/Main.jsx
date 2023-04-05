@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Grid, Button, ButtonGroup } from '@material-ui/core';
+import { Pagination } from '@mui/material';
 import TopAppBar from './AppBar'
 import PostCard from './Post';
 import LikeCard from './Like'
@@ -10,12 +11,14 @@ import { getExplorePosts, getMyPosts, getInbox } from '../API/mainRequests';
 export const Main = () => {
     const UUID = window.localStorage.getItem("UUID")
     const AUTHOR = window.localStorage.getItem("Author")
+
     const [inboxFlag, setInboxFlag] = React.useState(false);
     const [exploreFlag, setExploreFlag] = React.useState(true);
     const [myPostsFlag, setMyPostsFlag] = React.useState(false);
     const [myPosts, setMyPosts] = React.useState([]);
     const [explorePosts, setExplorePosts] = React.useState([]);
     const [inbox, setInbox] = React.useState([]);
+    const [page, setPage] = React.useState(1);
 
     // Manage what tab we're on and re-render accordingly
     function handleTabClick(option) {
@@ -36,10 +39,10 @@ export const Main = () => {
 
     // API CALL TO GET EXPLORE POSTS
     React.useEffect(() => {
-        getExplorePosts().then(posts => {
+        getExplorePosts(page).then(posts => {
             setExplorePosts(posts);
         });
-    }, []);
+    }, [page]);
 
     // API CALL TO GET MY POSTS
     React.useEffect(() => {
@@ -52,6 +55,7 @@ export const Main = () => {
     React.useEffect(() => {
         getInbox().then(posts => {
             setInbox(posts);
+            console.log("INBOX ->", posts)
         });
     }, []);
 
@@ -86,6 +90,7 @@ export const Main = () => {
                     visibility={post.visibility}
                     published={post.published}
                     id={post.id}
+                    postType="myposts"
                 />
                 </Grid>
             ))}
@@ -100,6 +105,7 @@ export const Main = () => {
                     visibility={post.visibility}
                     published={post.published}
                     id={post.id}
+                    postType="explore"
                 />
                 </Grid>
             ))}
@@ -113,7 +119,8 @@ export const Main = () => {
                         title={item.title}
                         visibility={item.visibility}
                         published={item.published}
-                        id={item.id} />}
+                        id={item.id}
+                        postType="inbox" />}
                     {item.type === "Like" && <LikeCard
                         author={item.author}
                         summary={item.summary}
@@ -128,6 +135,11 @@ export const Main = () => {
                         object={item.object} />} 
                 </Grid>
             ))}
+            <Grid item xs={12}>
+            </Grid>
+            <Grid item xs={4.5}>
+                <Pagination count={10} shape="rounded" onChange={(e, page) => setPage(page)}/>
+            </Grid>
         </Grid>
     )
 }
