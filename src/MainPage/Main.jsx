@@ -46,7 +46,7 @@ export const Main = () => {
 
     // API CALL TO GET MY POSTS
     React.useEffect(() => {
-        getMyPosts().then(posts => {
+        getMyPosts(page).then(posts => {
             setMyPosts(posts);
         });
     }, []);
@@ -83,7 +83,7 @@ export const Main = () => {
                 <Grid item xs={8} justifyContent="center">
                 <PostCard
                     postAuthor={post.author}
-                    comments={post.comments_set}
+                    commentsURL={post.comments}
                     contentType={post.content_type?post.content_type:post.contentType}
                     content={post.content}
                     title={post.title}
@@ -98,7 +98,7 @@ export const Main = () => {
                 <Grid item xs={8} justifyContent="center">
                 <PostCard
                     postAuthor={post.author}
-                    comments={post.comments_set}
+                    commentsURL={post.comments}
                     contentType={post.content_type?post.content_type:post.contentType}
                     content={post.content}
                     title={post.title}
@@ -113,7 +113,7 @@ export const Main = () => {
                 <Grid item xs={8} justifyContent="center">
                     {item.type === "post" && <PostCard
                         postAuthor={item.author}
-                        comments={item.comments_set}
+                        commentsURL={item.comments}
                         contentType={item.content_type?item.content_type:item.contentType}
                         content={item.content}
                         title={item.title}
