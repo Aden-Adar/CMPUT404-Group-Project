@@ -109,13 +109,13 @@ function FollowersPage() {
     console.log('CURRENT USER:', currentUser);
     if (followUser || followRemoteUser) {
       
-      setSelectedUser(followUser);
-      await axios.post(FOREIGN_AUTHOR_ID+'inbox/', {
-        type: 'Follow',
-        summary: `${currentUser.displayName} wants to follow ${followUser.displayName}`,
-        actor: currentUser,
-        object: followUser,
-      });
+      // setSelectedUser(followUser);
+      // await axios.post(FOREIGN_AUTHOR_ID+'inbox/', {
+      //   type: 'Follow',
+      //   summary: `${currentUser.displayName} wants to follow ${followUser.displayName}`,
+      //   actor: currentUser,
+      //   object: followUser,
+      // });
 
     //} else if (followRemoteUser) {
       const REMOTE_AUTHOR_ID = followRemoteUser.id;
