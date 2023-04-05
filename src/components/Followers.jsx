@@ -149,7 +149,7 @@ function FollowersPage() {
         'actor': currentUser,
         'object': Group2RemoteUser,
       }
-      await axios.post(GROUP2_AUTHOR_ID+'/inbox/',JSON.stringify(followBody),{
+      await axios.post(GROUP2_AUTHOR_ID+'/inbox',JSON.stringify(followBody),{
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
