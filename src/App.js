@@ -12,30 +12,33 @@ import CreatePost from './components/CreatePost';
 import Followers from './components/Followers';
 
 function App() {
-  const navigate = useNavigate();
-
-  const navigateToSignIn = () => {
-    navigate('/');
-  };
-
-  const navigateToSignUp = () => {
-    navigate('/signup');
-  };
+  
+  const current_author = JSON.parse(window.localStorage.getItem("Author"));
+  const AUTHOR_ID = current_author.id;
 
   const [user, setUser] = useState({
-    name: 'Social.ly',
+    name: current_author.displayName,
     bio: 'I am a social media app',
-    image: 'https://i.stack.imgur.com/l60Hf.png',
+    image: current_author.profileImage,
   });
 
 
   const handleSaveProfile = ({name, bio, image}) => {
+    let profileData = { 
+    "type": "author",
+    "id": AUTHOR_ID,
+    "url": AUTHOR_ID,
+    "host": window.location.hostname,
+    "displayName": name,
+    "github": "",
+    "profileImage": image
+    };
+    fetch(AUTHOR_ID, {method: 'PUT', headers: {'Content-Type': 'application/json'},
+    body:JSON.stringify(profileData)
+    })
     setUser({...user, name, bio, image});
   };
 
-  const handleLogin = (user) => {
-    setUser(user);
-  };
 
   const handleLogout = () => {
     setUser(null);

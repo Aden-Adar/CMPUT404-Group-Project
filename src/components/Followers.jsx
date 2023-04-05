@@ -80,16 +80,16 @@ function FollowersPage() {
 
   const handleAddFriend = async () => {
     const response = await axios.get('/service/authors/');
-    // const group1Res = await fetch(GROUP1URL+'authors/', {
-    //   method: 'GET',
-    //   headers: {
-    //       'Authorization': 'Basic ' + GROUP1CREDS,
-    //       'Access-Control-Request-Method': 'GET' 
-    //   }
-    // })
-    //const group1Authors = await group1Res.json()
-    //console.log(group1Authors)
-    //const followRemoteUser = group1Authors.items.find((item) => item.displayName === displayName);
+    const group1Res = await fetch(GROUP1URL+'authors/', {
+      method: 'GET',
+      headers: {
+          'Authorization': 'Basic ' + GROUP1CREDS,
+          'Access-Control-Request-Method': 'GET' 
+      }
+    })
+    const group1Authors = await group1Res.json()
+    console.log(group1Authors)
+    const followRemoteUser = group1Authors.items.find((item) => item.displayName === displayName);
     const followUser = response.data.items.find((item) => item.displayName === displayName);
     const FOREIGN_AUTHOR_ID = followUser.id;
     const current_author = JSON.parse(window.localStorage.getItem("Author"));
@@ -108,37 +108,34 @@ function FollowersPage() {
       });
 
     }
-    // else if (followRemoteUser) {
+    else if (followRemoteUser) {
     //   const followRemoteUser = group1Authors.items.find((item) => item.displayName === displayName);
-    //   const FOREIGN_AUTHOR_ID = followRemoteUser.id;
-    //   const current_author_ID = window.localStorage.getItem("UUID");
+        const FOREIGN_AUTHOR_ID = followRemoteUser.id;
     //   console.log(FOREIGN_AUTHOR_ID);
     //   const currentUser = JSON.parse(window.localStorage.getItem("Author"))
     //   console.log('user to follow:', followRemoteUser);
     //   console.log('CURRENT USER:', currentUser);
 
-    //   setSelectedUser(followRemoteUser);
-    //   let followBody = {
-    //     'type': 'followers',
-    //     'summary': `${currentUser.displayName} wants to follow ${followRemoteUser.displayName}`,
-    //     'actor': currentUser,
-    //     'object': followRemoteUser,
-    //   }
-    //   await fetch(GROUP1URL + `authors/${FOREIGN_AUTHOR_ID}/inbox/`, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       'Accept': 'application/json',
-    //       'Authorization': 'Basic ' + GROUP1CREDS,
-    //       'Access-Control-Request-Method': 'POST' 
-    //     },
-    //     body: JSON.stringify(followBody)
-    //   });
+     setSelectedUser(followRemoteUser);
+      let followBody = {
+        'type': 'followers',
+        'summary': `${currentUser.displayName} wants to follow ${followRemoteUser.displayName}`,
+        'actor': currentUser,
+        'object': followRemoteUser,
+      }
+      await fetch(GROUP1URL + `authors/${FOREIGN_AUTHOR_ID}/inbox/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Basic ' + GROUP1CREDS,
+          'Access-Control-Request-Method': 'POST' 
+        },
+        body: JSON.stringify(followBody)
+      });
 
-    //   // const updatedFollowersResponse = await axios.get(`/service/authors/${AUTHOR_ID}/followers/`);
-    //   //setFollowers(updatedFollowersResponse.data.items);
-    // }
-    else {
+
+    } else {
       console.log(`User with display name ${displayName} not found`);
     }
   };
@@ -149,7 +146,7 @@ function FollowersPage() {
     <div>
       <input 
       type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} 
-      style={{ border: '2px solid #ccc', padding: '8px', backgroundColor: 'lightgray', color: 'white'}} />
+      style={{ border: '2px solid #ccc', padding: '8px', backgroundColor: 'lightgray', color: 'black'}} />
       <button onClick={handleAddFriend}>Add Friend</button>
     </div>
     <h2>Followers</h2>
