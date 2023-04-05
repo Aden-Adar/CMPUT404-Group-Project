@@ -71,14 +71,14 @@ export const Main = () => {
                     <Button onClick={() => handleTabClick('myPosts')}>My Posts</Button>
                 </ButtonGroup>
             </Grid>
-            {inboxFlag && <Grid item xs={12} style={{textAlign:'center'}}>
+            {/* {inboxFlag && <Grid item xs={12} style={{textAlign:'center'}}>
                 <ButtonGroup variant="contained" aria-label="tabButtonGroup">
                     <Button>All</Button>
                     <Button>Posts</Button>
                     <Button>Comments</Button>
                     <Button>Likes</Button>
                 </ButtonGroup>
-            </Grid>}
+            </Grid>} */}
             {myPosts.length>0 && myPostsFlag && myPosts.map(post => (
                 <Grid item xs={8} justifyContent="center">
                 <PostCard
