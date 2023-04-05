@@ -125,13 +125,13 @@ function CreatePost()  {
         for (let i = 0; i < followers.length; i++) {
           if (followers[i].id.includes(GROUP1URL)) {
             let postBody = response.data
-            delete postBody.count;
-            delete postBody.post_id;
-            postBody.contentType = postBody.content_type;
-            delete postBody.content_type;
-            delete postBody.comments;
-            delete postBody.comments_set;
-            delete postBody.title;
+            // delete postBody.count;
+            // delete postBody.post_id;
+            // postBody.contentType = postBody.content_type;
+            // delete postBody.content_type;
+            // delete postBody.comments;
+            // delete postBody.comments_set;
+            // delete postBody.title;
             try {
               let post_res = await axios.post(GROUP1URL + `authors/${followers[i].id}inbox/`,JSON.stringify(postBody),{
                 headers: {
