@@ -90,47 +90,70 @@ function FollowersPage() {
 
   const handleAddFriend = async () => {
     const response = await axios.get('/service/authors/');
-    const group1Authors = await axios.get(GROUP1URL+'authors/', {
+    const group1Authors = await axios.get(GROUP1URL+'authors/?page=1&size=150', {
       headers: {
           'Authorization': 'Basic ' + GROUP1CREDS,
           'Access-Control-Request-Method': 'GET' 
       }
     })
-    //const group1Authors = await group1Res.json()
-    //console.log('Remote users:',group1Authors.json());
-    const followRemoteUser = group1Authors.data.items.find((item) => item.displayName === displayName);
-    const followUser = response.data.items.find((item) => item.displayName === displayName);
-    //const FOREIGN_AUTHOR_ID = followUser.id;
+    const group2Authors = await axios.get(GROUP2URL+'authors/?page=1&size=150', {
+      headers: {
+          'Authorization': 'Basic ' + GROUP2CREDS,
+          'Access-Control-Request-Method': 'GET' 
+      }
+    })
+    const Group1RemoteUser = group1Authors.data.items.find((item) => item.displayName === displayName);
+    const Group2RemoteUser = group2Authors.data.items.find((item) => item.displayName === displayName);
+    const localUser = response.data.items.find((item) => item.displayName === displayName);
     const current_author = JSON.parse(window.localStorage.getItem("Author"));
     const current_author_id = current_author.id;
     const currentUser = response.data.items.find((item) => item.id === current_author_id);
-    console.log('user to follow:', followUser);
-    console.log('remote user to follow:', followRemoteUser);
+    console.log('user to follow:', localUser);
+    console.log('group 1 user to follow:', Group1RemoteUser);
+    console.log('group 2 user to follow:', Group2RemoteUser);
     console.log('CURRENT USER:', currentUser);
-    if (followUser || followRemoteUser) {
-      
-      // setSelectedUser(followUser);
-      // await axios.post(FOREIGN_AUTHOR_ID+'inbox/', {
-      //   type: 'Follow',
-      //   summary: `${currentUser.displayName} wants to follow ${followUser.displayName}`,
-      //   actor: currentUser,
-      //   object: followUser,
-      // });
+    if (localUser) {
 
-    //} else if (followRemoteUser) {
-      const REMOTE_AUTHOR_ID = followRemoteUser.id;
-      setSelectedUser(followRemoteUser);
+      const FOREIGN_AUTHOR_ID = localUser.id;
+      setSelectedUser(localUser);
+      await axios.post(FOREIGN_AUTHOR_ID+'inbox/', {
+        type: 'Follow',
+        summary: `${currentUser.displayName} wants to follow ${localUser.displayName}`,
+        actor: currentUser,
+        object: localUser,
+      });
+
+    } else if (Group1RemoteUser) {
+      const GROUP1_AUTHOR_ID = Group1RemoteUser.id;
+      setSelectedUser(Group1RemoteUser);
       let followBody = {
         'type': 'Follow',
-        'summary': `${currentUser.displayName} wants to follow ${followRemoteUser.displayName}`,
+        'summary': `${currentUser.displayName} wants to follow ${Group1RemoteUser.displayName}`,
         'actor': currentUser,
-        'object': followRemoteUser,
+        'object': Group1RemoteUser,
       }
-      await axios.post(GROUP1URL + `authors/${REMOTE_AUTHOR_ID}/inbox/`,JSON.stringify(followBody),{
+      await axios.post(GROUP1URL + `authors/${GROUP1_AUTHOR_ID}/inbox/`,JSON.stringify(followBody),{
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
           'Authorization': 'Basic ' + GROUP1CREDS,
+          'Access-Control-Request-Method': 'POST' 
+        },
+      });
+    } else if (Group2RemoteUser) {
+      const GROUP2_AUTHOR_ID = Group2RemoteUser.id;
+      setSelectedUser(Group2RemoteUser);
+      let followBody = {
+        'type': 'follow',
+        'summary': `${currentUser.displayName} wants to follow ${Group2RemoteUser.displayName}`,
+        'actor': currentUser,
+        'object': Group2RemoteUser,
+      }
+      await axios.post(GROUP2_AUTHOR_ID+'/inbox',JSON.stringify(followBody),{
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Basic ' + GROUP2CREDS,
           'Access-Control-Request-Method': 'POST' 
         },
       });
