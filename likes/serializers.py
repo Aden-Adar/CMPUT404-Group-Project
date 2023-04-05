@@ -24,8 +24,6 @@ class LikesSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        # print(validated_data)
-        # print("Condition is: ", Likes.objects.all().filter(post_id=validated_data.get("post_id"), author_id=validated_data.get("author_id")).values("comment_id"))
         if Likes.objects.all().filter(comment_id=validated_data.get("comment_id"), author_id=validated_data.get("author_id"), post_id=validated_data.get("post_id")).exists():
             raise NotAcceptable(detail="Cannot like more than once")
 
@@ -40,23 +38,10 @@ class LikesSerializer(serializers.ModelSerializer):
 
     def get_summary(self, obj):
         return obj.summary
-    #     author_username = obj.author_id.username
-    #     if obj.post_id is not None:
-    #         return f"{author_username} Likes your post"
-    #     else:
-    #         return f"{author_username} Likes your comment"
-    
-    # def get_type(self, obj):
-    #     return "Like"
 
     def get_object(self, obj):
         return obj.object
-        # request = self.context.get('request')
-        # if obj.post_id:
-        #     return reverse("post-detail", kwargs = {"author_id": obj.post_id.user_id.id, "post_id": obj.post_id.post_id}, request=request)
-        # else:
-        #     return reverse("comment-detail", kwargs = {"author_id": obj.comment_id.user.id, "post_id": obj.comment_id.post.post_id,
-        #                                                 "comment_id": obj.comment_id.comment_id }, request=request)
+
 
 class LikesInboxSerializer(serializers.ModelSerializer):
     class Meta:
@@ -65,7 +50,6 @@ class LikesInboxSerializer(serializers.ModelSerializer):
                 'context',
                 'summary',
                 'type',
-                # 'author',
                 'object'
             ]
 

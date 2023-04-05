@@ -26,7 +26,6 @@ class StringArrayField(CharField):
         return super().to_internal_value(data)
 
 class PostSerializer(serializers.ModelSerializer):
-    # private_post_viewers = ListAllAuthorSerializer(write_only=True, required=False)
     type = serializers.SerializerMethodField(read_only=True)
     source = serializers.SerializerMethodField(read_only=True)
     origin = serializers.SerializerMethodField(read_only=True)
@@ -42,20 +41,19 @@ class PostSerializer(serializers.ModelSerializer):
         fields = [
             'type',
             "title",
-            'id', # come back to this once author is finished
+            'id', 
             'source',
             'origin',
             'description',
             'content_type',
             "content",
-            'author', # need a serializer for author
+            'author',
             'categories',
             'count',
             'comments',
-            "comments_set", # needs to be inside comment_src eventually
+            "comments_set", 
             'published',
             'visibility',
-            # 'private_post_viewers',
             "unlisted",
             "post_id"
         ]
@@ -74,30 +72,19 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_type(self, obj):
         return obj.type
-        # return "post"
 
     def get_id(self, obj):
         return obj.id
-        # request = self.context.get('request')
-        # return reverse("post-detail", kwargs = {"author_id": obj.user_id.id, "post_id": obj.post_id}, request=request)
     
     def get_source(self, obj):
         return obj.source
-        # return self.context.get('request').META.get('HTTP_REFERER')
     
     def get_origin(self, obj): # Not sure what origin means
-        # request = self.context.get('request')
-        # return reverse("post-detail", kwargs = {"author_id": obj.user_id.id, "post_id": obj.post_id}, request=request)
         return obj.origin
-        # return "NEED TO FIGURE OUT WHAT THIS IS"
-
-    # def get_author(self, obj):
-    #     return obj.user_id.id
+  
 
     def get_comments(self, obj):
         return obj.comments_id
-        # request = self.context.get('request')
-        # return reverse("comments-list", kwargs = {"author_id": obj.user_id.id, "post_id": obj.post_id}, request=request)
 
     def get_comments_list(self, obj, **kwargs):
         return CommentSerializer(many=True, read_only=True).data # https://docs.djangoproject.com/en/dev/topics/db/queries/#following-relationships-backward

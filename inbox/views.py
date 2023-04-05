@@ -15,6 +15,14 @@ from .serializers import *
 @api_view(['GET', 'POST', 'DELETE'])
 @permission_classes([IsAuthenticated, IsRemoteNode])
 def InboxView(request, pk=None, *args, **kwargs):
+    '''
+    Inbox Enpoint
+
+    Shows an author's inbox
+
+    Methods Allowed: GET, POST, DELETE
+    URL: /service/authors/{author_id}/inbox/
+    '''
     name = "InboxView"
     method = request.method
 
@@ -38,25 +46,5 @@ def InboxView(request, pk=None, *args, **kwargs):
         return Response({"invalid": "not good data"}, status=400)
 
     if method == "DELETE":
-        # inbox_data = JSONParser().parse(request)
         Inbox.objects.filter(author = request.user.id).delete()
         return Response("Inbox Cleared", status=200)
-
-# class InboxView(ViewSet):
-#     queryset = Inbox.objects.all()
-#     serializer_class = InboxSerializer
-
-#     def get(self, request, *args, **kwargs):
-#         inbox = Inbox.objects.all().filter(author_id=request.user.id).first()
-#         if not inbox:
-#             return Response({})
-#         return Response(InboxSerializer(instance=inbox, context={"request":request}).data)
-
-#     def post(self, request, *args, **kwargs):
-#         return self.create(request, *args, **kwargs)
-
-#     def destroy(self, request, author_id = None):
-#         inbox = Inbox.objects.filter(author = self.request.user.id).delete()
-#         for instance in inbox:
-#             super().perform_destroy(instance)
-#         return Response(status=status.HTTP_204_NO_CONTENT)

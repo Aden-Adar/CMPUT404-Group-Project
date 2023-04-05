@@ -19,6 +19,9 @@ class StringUuidField(UUIDField):
         return super().to_internal_value(id)
 
 class SingleAuthorSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for a Single Author endpoint
+    '''
     type = serializers.SerializerMethodField(read_only=True)
     id = serializers.SerializerMethodField(read_only=True)
     host = serializers.SerializerMethodField(read_only=True)
@@ -30,7 +33,7 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
             'type',
             'id',
             'url',
-            'host', # Need to look at this again
+            'host', 
             'displayName',
             'github',
             'profileImage' 
@@ -38,25 +41,24 @@ class SingleAuthorSerializer(serializers.ModelSerializer):
 
     def get_type(self, obj):
         return obj.type
-        # return "author"
 
     def get_id(self, obj):
+        if obj.url[-1] != '/':
+            return obj.url+'/'
         return obj.url
 
     def get_url(self, obj):
+        if obj.url[-1] != '/':
+            return obj.url+'/'
         return obj.url
-        # request = self.context.get('request')
-        # return reverse("author-detail", kwargs = {"id": obj.id}, request=request)
 
     def get_host(self, obj):
         return obj.host
-        # request = self.context.get('request')
-        # origin = request.META.get("HTTP_HOST")
-        # return origin
-
-
 
 class AuthorInboxSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for a Author inbox endpoint
+    '''
     displayName = serializers.CharField(source="username")
     id = serializers.SerializerMethodField(read_only=True)
     id = StringUuidField(write_only=True)
@@ -67,13 +69,15 @@ class AuthorInboxSerializer(serializers.ModelSerializer):
             'type',
             'id',
             'url',
-            'host', # Need to look at this again
+            'host',
             'displayName',
             'github',
             'profileImage' 
         ]
 
     def get_id(self, obj):
+        if obj.url[-1] != '/':
+            return obj.url+'/'
         return obj.url
 
     def create(self, validated_data):
@@ -82,8 +86,10 @@ class AuthorInboxSerializer(serializers.ModelSerializer):
         return obj
 
 class ListAllAuthorSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for Author list endpoint
+    '''
     type = serializers.SerializerMethodField(read_only=True)
-    #items = serializers.SerializerMethodField(read_only=True)
     items = SingleAuthorSerializer(many=True, read_only=True)
     class Meta:
         model = CustomUser
@@ -93,6 +99,9 @@ class ListAllAuthorSerializer(serializers.ModelSerializer):
         ]
 
 class FollowingSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for following endpoint
+    '''
     class Meta:
         model = Following
         fields = [
@@ -101,6 +110,9 @@ class FollowingSerializer(serializers.ModelSerializer):
         ]
 
 class FollowingRequestInboxSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for inbox follow request endpoint
+    '''
     actor = SingleAuthorSerializer(read_only=True)
     object = SingleAuthorSerializer(read_only=True)
     class Meta:
@@ -113,6 +125,9 @@ class FollowingRequestInboxSerializer(serializers.ModelSerializer):
         ]
 
 class FollowingRequestSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for follow request endpoint
+    '''   
     actor = SingleAuthorSerializer(read_only=True)
     object = SingleAuthorSerializer(read_only=True)
     class Meta:

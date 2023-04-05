@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {v4 as uuid} from 'uuid';
 import { Buffer } from "buffer"
 
 import { Card, CardContent, CardHeader, CardActions, IconButton, Typography, Collapse, List, Divider, ListItem, ListItemText, TextField, ListItemIcon } from '@material-ui/core';
@@ -8,21 +9,30 @@ import CommentItem from './Comment';
 
 function PostCard({
     postAuthor,
-    comments,
     contentType,
     content,
     title,
     visibility,
     published,
-    id
+    id,
+    commentsURL,
+    postType
 }) {
     const AUTHOR = window.localStorage.getItem("Author")
+
     const GROUP1URL = "https://social-distribution-w23-t17.herokuapp.com/"
     const GROUP1CREDS = Buffer.from("remote-user-t22:pZHAe3PWukpd3Nv").toString('base64')
+
+    const GROUP2URL = "https://floating-fjord-51978.herokuapp.com/"
+    const GROUP2CREDS = Buffer.from("admin:admin").toString('base64')
+
     const group1Post = id.includes(GROUP1URL) ? true : false;
     const internalPost = group1Post ? false : true;
+
     const [liked, setLiked] = React.useState(false);
+    const [likes, setLikes] = React.useState(0);
     const [comment, setComment] = React.useState('');
+    const [comments, setComments] = React.useState([]);
     const [commentExpanded, setCommentExpanded] = React.useState(false);
 
     // API CALL TO CHECK IF USER HAS ALREADY LIKED POST
@@ -32,19 +42,37 @@ function PostCard({
         async function getLikes() {
           let likesResponse = await fetch(id + 'likes/')
           let likesRes_data = await likesResponse.json()
+          console.log(likesRes_data)
           for (let i = 0; i < likesRes_data.results.length; i++) {
-              if (likesRes_data.results[i].author.id === AUTHOR.id) {
+              console.log(likesRes_data.results[i].author.id)
+              if (likesRes_data.results[i].author.id === JSON.parse(AUTHOR).id) {
                   setLiked(true)
               }
           }
+          setLikes(likesRes_data.results.length)
           }
           getLikes();
       } else if (group1Post) {
+        async function getLikes() {
+          let likesResponse = await fetch(GROUP1URL+ 'authors/' + postAuthor.id + '/posts/' + id + '/likes/', {
+            method: 'GET',
+            headers: {
+              'Authorization': 'Basic ' + GROUP1CREDS,
+              'Access-Control-Request-Method': 'GET' 
+            }
+          })
+          let likesRes_data = await likesResponse.json()
+          console.log(likesRes_data)
+          for (let i = 0; i < likesRes_data.items.length; i++) {
+              if (likesRes_data.items[i].author.id === JSON.parse(AUTHOR).id) {
+                  setLiked(true)
+              }
+          }
+          setLikes(likesRes_data.items.length)
+          }
+          getLikes();
       }
     }, []);
-
-    React.useEffect(() => {
-    }, [comments]);
 
     // POST LIKE TO INBOX
     function handleLikeClick() {
@@ -89,6 +117,28 @@ function PostCard({
         }
     }
 
+    function handleExpandComment() {
+      setCommentExpanded(!commentExpanded)
+      async function getComments() {
+        if (group1Post) {
+          let response = await fetch(commentsURL, {
+            method: 'GET',
+            headers: {
+              'Authorization': 'Basic ' + GROUP1CREDS,
+              'Access-Control-Request-Method': 'GET' 
+            },
+          })
+          let res_data = await response.json()
+          setComments(res_data)
+        } else if (internalPost) {
+          let response = await fetch(commentsURL)
+          let res_data = await response.json()
+          setComments(res_data)
+        }
+      }
+      getComments()
+    }
+
     // POST COMMENT TO POST & INBOX
     function handleSendCommentClick() {
         if (internalPost) {
@@ -99,7 +149,7 @@ function PostCard({
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
               },
-              body: JSON.stringify({ "comment" : comment, "content_type" : "text/plain"})
+              body: JSON.stringify({ "comment" : comment, "content_type" : "text/plain", "author": JSON.parse(AUTHOR)})
             })
             let res_data = await response.json()
   
@@ -113,44 +163,38 @@ function PostCard({
               body: JSON.stringify(res_data)
             })
             let inboxRes_data = await inboxRes.json()
-            window.location.reload(false);
+            setComments(comments.push(res_data))
+            // window.location.reload(false);
           }
           postComment();
         } else if (group1Post) {
-          // async function postCommentGroup1() {
-            // let today = new Date()
-            // let commentBody = { 
-            //   "comment" : comment, 
-            //   "content_type" : "text/plain",
-            //   "published": today.toISOString(),
-            //   "type": "comment",
-            //   "author": JSON.parse(AUTHOR)
-            // }
-            // let response = await fetch(GROUP1URL+ 'authors/' + author.id + '/posts/' + url + '/comments/', {
-            //   method: 'POST',
-            //   headers: {
-            //     'Content-Type': 'application/json',
-            //     'Accept': 'application/json',
-            //     'Authorization': 'Basic ' + GROUP1CREDS,
-            //     'Access-Control-Request-Method': 'POST',
-            //   },
-            //   body: JSON.stringify(commentBody)
-            // })
-            // let res_data = await response.json()
-            // console.log(res_data)
-            // POST TO INBOX NOW
-            // let inboxRes = await fetch('/service/authors/' + author.id + '/inbox/', {
-            //   method: 'POST',
-            //   headers: {
-            //     'Content-Type': 'application/json',
-            //     'Accept': 'application/json'
-            //   },
-            //   body: JSON.stringify(res_data)
-            // })
-            // let inboxRes_data = await inboxRes.json()
-            // console.log(inboxRes_data)
+          async function postCommentGroup1() {
+            let uid = uuid()
+            let today = new Date()
+            let commentBody = { 
+              "comment" : comment, 
+              "content_type" : "text/plain",
+              "published": today.toISOString(),
+              "type": "comment",
+              "author": JSON.parse(AUTHOR),
+              "id": GROUP1URL+ 'authors/' + postAuthor.id + '/posts/' + id + '/comments/' + uid
+            }
+            let inboxRes = await fetch(GROUP1URL + 'authors/' + postAuthor.id + '/inbox/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'Basic ' + GROUP1CREDS,
+                'Access-Control-Request-Method': 'POST' 
+              },
+              body: JSON.stringify(commentBody)
+            })
+            let inboxRes_data = await inboxRes.json()
+            setComments(commentBody)
+            console.log(inboxRes_data)
             // window.location.reload(false);
-          // }
+          }
+          postCommentGroup1()
         }
     }
 
@@ -165,21 +209,63 @@ function PostCard({
             subheader={published.substring(0, 10)}
           />
           <CardContent>
-            <Typography variant="body1">
-              {content}
-            </Typography>
+              {contentType === 'image/jpeg' &&
+                <Typography variant="body1">
+                {
+                  <img src={`data:image/jpeg;base64,${content}`}/>
+                }
+                </Typography>
+              }
+              {contentType === 'image/png' &&
+                <Typography variant="body1">
+                {
+                  <img src={`data:image/jpeg;base64,${content}`}/>
+                }
+                </Typography>
+              }
+              {contentType === 'application/base64' &&
+                <Typography variant="body1">
+                {
+                  <img src={`data:image/jpeg;base64,${content}`}/>
+                }
+                </Typography>
+              }
+              {contentType === 'image/png;base64' &&
+                <Typography variant="body1">
+                {
+                  <img src={`data:image/jpeg;base64,${content}`}/>
+                }
+                </Typography>
+              }
+              {contentType === 'image/jpeg;base64' &&
+                <Typography variant="body1">
+                {
+                  <img src={`data:image/jpeg;base64,${content}`}/>
+                }
+                </Typography>
+              }
+              {contentType === 'text/plain' &&//|| contentType === 'text/markdown'&&
+                <Typography variant="body1">
+                {
+                  content
+                }
+                </Typography>
+              }
           </CardContent>
-          <CardActions disableSpacing>
-            <IconButton aria-label="like" onClick={handleLikeClick}>
-              <Favorite style={{ color: liked? 'red' : '#a3a3a3' }}/>
-            </IconButton>
-            <IconButton aria-label="comment" onClick={() => setCommentExpanded(!commentExpanded)}>
-              <Comment style={{ color: '#a3a3a3' }}/>
-            </IconButton>
-          </CardActions>
+          {postType !== "myposts" &&
+            <CardActions disableSpacing>
+              <IconButton aria-label="like" onClick={handleLikeClick}>
+                <Favorite style={{ color: liked? 'red' : '#a3a3a3' }}/>
+              </IconButton>
+              <Typography>{likes} </Typography>
+              <IconButton aria-label="comment" onClick={handleExpandComment}>
+                <Comment style={{ color: '#a3a3a3' }}/>
+              </IconButton>
+            </CardActions>
+          }
           <Collapse in={commentExpanded}>
             <List>
-              {comments.length>0 && comments.map(comment => (
+              {visibility === "PUBLIC" && comments.length>0 && comments.map(comment => (
                   <><Divider variant='middle'></Divider><CommentItem
                   author={comment.author}
                   comment={comment.comment}

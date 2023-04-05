@@ -76,7 +76,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:8000',
     'https://cmput404-group-project.herokuapp.com',
     'http://localhost:3000',
-    'https://social-distribution-w23-t17.herokuapp.com'
+    'https://social-distribution-w23-t17.herokuapp.com',
+    'https://floating-fjord-51978.herokuapp.com'
 ]
 
 CORS_ALLOW_METHODS = [

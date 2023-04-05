@@ -93,8 +93,6 @@ class PostsTest(TestCase):
             "author": {
                 "type": "author",
                 "id": str(userData["user_id"]),
-                #"url": str(userData["url"]),
-                #"host": str(userData["host"]),
                 "username": "User1",
                 "github": ""
             },
