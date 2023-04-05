@@ -96,28 +96,26 @@ function FollowersPage() {
           'Access-Control-Request-Method': 'GET' 
       }
     })
-    //const group1Authors = await group1Res.json()
-    //console.log('Remote users:',group1Authors.json());
     const followRemoteUser = group1Authors.data.items.find((item) => item.displayName === displayName);
     const followUser = response.data.items.find((item) => item.displayName === displayName);
-    //const FOREIGN_AUTHOR_ID = followUser.id;
     const current_author = JSON.parse(window.localStorage.getItem("Author"));
     const current_author_id = current_author.id;
     const currentUser = response.data.items.find((item) => item.id === current_author_id);
     console.log('user to follow:', followUser);
     console.log('remote user to follow:', followRemoteUser);
     console.log('CURRENT USER:', currentUser);
-    if (followUser || followRemoteUser) {
-      
-      // setSelectedUser(followUser);
-      // await axios.post(FOREIGN_AUTHOR_ID+'inbox/', {
-      //   type: 'Follow',
-      //   summary: `${currentUser.displayName} wants to follow ${followUser.displayName}`,
-      //   actor: currentUser,
-      //   object: followUser,
-      // });
+    if (followUser) {
 
-    //} else if (followRemoteUser) {
+      const FOREIGN_AUTHOR_ID = followUser.id;
+      setSelectedUser(followUser);
+      await axios.post(FOREIGN_AUTHOR_ID+'inbox/', {
+        type: 'Follow',
+        summary: `${currentUser.displayName} wants to follow ${followUser.displayName}`,
+        actor: currentUser,
+        object: followUser,
+      });
+
+    } else if (followRemoteUser) {
       const REMOTE_AUTHOR_ID = followRemoteUser.id;
       setSelectedUser(followRemoteUser);
       let followBody = {
