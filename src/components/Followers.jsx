@@ -97,7 +97,7 @@ function FollowersPage() {
     const currentUser = response.data.items.find((item) => item.id === current_author_id);
     console.log('user to follow:', followUser);
     console.log('CURRENT USER:', currentUser);
-    if (followUser) {
+    if (followUser ||followRemoteUser) {
       
       setSelectedUser(followUser);
       await axios.post(FOREIGN_AUTHOR_ID+'inbox/', {
@@ -107,23 +107,16 @@ function FollowersPage() {
         object: followUser,
       });
 
-    }
-    else if (followRemoteUser) {
-    //   const followRemoteUser = group1Authors.items.find((item) => item.displayName === displayName);
-        const FOREIGN_AUTHOR_ID = followRemoteUser.id;
-    //   console.log(FOREIGN_AUTHOR_ID);
-    //   const currentUser = JSON.parse(window.localStorage.getItem("Author"))
-    //   console.log('user to follow:', followRemoteUser);
-    //   console.log('CURRENT USER:', currentUser);
-
-     setSelectedUser(followRemoteUser);
+    //} else if (followRemoteUser) {
+      const REMOTE_AUTHOR_ID = followRemoteUser.id;
+      setSelectedUser(followRemoteUser);
       let followBody = {
         'type': 'followers',
         'summary': `${currentUser.displayName} wants to follow ${followRemoteUser.displayName}`,
         'actor': currentUser,
         'object': followRemoteUser,
       }
-      await fetch(GROUP1URL + `authors/${FOREIGN_AUTHOR_ID}/inbox/`, {
+      await fetch(GROUP1URL + `authors/${REMOTE_AUTHOR_ID}/inbox/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,8 +126,6 @@ function FollowersPage() {
         },
         body: JSON.stringify(followBody)
       });
-
-
     } else {
       console.log(`User with display name ${displayName} not found`);
     }
