@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { Buffer } from "buffer"
+import { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
@@ -62,10 +63,24 @@ function CreatePost()  {
   const [unlisted, setUnlisted] = useState(false);
   const [categories, setCategories] = useState([]);
   const [file, setFile] = useState(null);
+  const [followers, setFollowers] = useState([]);
   const author = JSON.parse(window.localStorage.getItem("Author"));
   const AUTHOR_ID = author.id;
 
-  
+  const GROUP1URL = "https://social-distribution-w23-t17.herokuapp.com/"
+  const GROUP1CREDS = Buffer.from("remote-user-t22:pZHAe3PWukpd3Nv").toString('base64')
+
+  const GROUP2URL = "https://floating-fjord-51978.herokuapp.com/"
+  const GROUP2CREDS = Buffer.from("admin:admin").toString('base64')
+
+  useEffect(() => {
+    const fetchFollowers = async () => {
+      const response = await axios.get(AUTHOR_ID+'followers/');
+      setFollowers(response.data.items);
+    };
+    
+    fetchFollowers();
+  }, [AUTHOR_ID]);  
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -107,6 +122,27 @@ function CreatePost()  {
           headers:{'Content-Type': 'application/json'}
         });
         console.log(response.data);
+        for (let i = 0; i < followers.length; i++) {
+          if (followers[i].id.includes(GROUP1URL)) {
+            let postBody = response.data
+            delete postBody.count;
+            delete postBody.post_id;
+            postBody.contentType = postBody.content_type;
+            delete postBody.content_type;
+            try {
+              let post_res = await axios.post(GROUP1URL + `authors/${followers[i].id}inbox/`,JSON.stringify(postBody),{
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                  'Authorization': 'Basic ' + GROUP1CREDS,
+                  'Access-Control-Request-Method': 'POST' 
+                },
+              });
+            } catch (error) {
+              console.log(error)
+            }
+          }
+        }
       } catch (error) {
         console.error(error);
       }

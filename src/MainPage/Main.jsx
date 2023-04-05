@@ -49,7 +49,7 @@ export const Main = () => {
         getMyPosts(page).then(posts => {
             setMyPosts(posts);
         });
-    }, []);
+    }, [page]);
 
     // API CALL TO GET INBOX
     React.useEffect(() => {

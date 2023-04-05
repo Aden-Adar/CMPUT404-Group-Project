@@ -86,6 +86,7 @@ function PostCard({
             "object": id
           }
           setLiked(true)
+          setLikes(likes + 1)
           if (internalPost) {
             async function postLike() {
               let response = await fetch((postAuthor.id ? postAuthor.id : postAuthor.url) + 'inbox/', {
@@ -205,7 +206,7 @@ function PostCard({
             avatar={<AccountCircle fontSize='large'></AccountCircle>}
             title={
               <span>
-                <Typography component="span" variant="body1">{postAuthor.displayName}</Typography><Typography component="span" style={{ color: '#a3a3a3' }}>{"  -  " + title}</Typography>
+                <Typography component="span" variant="body1">{(!internalPost ? '(remote) ' : '') + postAuthor.displayName}</Typography><Typography component="span" style={{ color: '#a3a3a3' }}>{"  -  " + title}</Typography>
               </span>}
             subheader={published.substring(0, 10)}
           />
