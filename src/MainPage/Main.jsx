@@ -80,7 +80,7 @@ export const Main = () => {
                 <PostCard
                     postAuthor={post.author}
                     comments={post.comments_set}
-                    contentType={post.content_type}
+                    contentType={post.content_type?post.content_type:post.contentType}
                     content={post.content}
                     title={post.title}
                     visibility={post.visibility}
@@ -94,7 +94,7 @@ export const Main = () => {
                 <PostCard
                     postAuthor={post.author}
                     comments={post.comments_set}
-                    contentType={post.content_type}
+                    contentType={post.content_type?post.content_type:post.contentType}
                     content={post.content}
                     title={post.title}
                     visibility={post.visibility}
@@ -108,7 +108,7 @@ export const Main = () => {
                     {item.type === "post" && <PostCard
                         postAuthor={item.author}
                         comments={item.comments_set}
-                        contentType={item.content_type}
+                        contentType={item.content_type?item.content_type:item.contentType}
                         content={item.content}
                         title={item.title}
                         visibility={item.visibility}
