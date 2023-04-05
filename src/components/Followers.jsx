@@ -144,7 +144,7 @@ function FollowersPage() {
       const GROUP2_AUTHOR_ID = Group2RemoteUser.id;
       setSelectedUser(Group2RemoteUser);
       let followBody = {
-        'type': 'Follow',
+        'type': 'follow',
         'summary': `${currentUser.displayName} wants to follow ${Group2RemoteUser.displayName}`,
         'actor': currentUser,
         'object': Group2RemoteUser,
