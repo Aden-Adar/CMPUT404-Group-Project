@@ -68,7 +68,7 @@ function PostCard({
           })
           let likesRes_data = await likesResponse.json()
           for (let i = 0; i < likesRes_data.items.length; i++) {
-              if (likesRes_data.items[i].author.id.includes(UUID)) {
+              if (likesRes_data.items[i].author.url.includes(UUID)) {
                   setLiked(true)
               }
           }
@@ -107,9 +107,10 @@ function PostCard({
             "object": id
           }
           setLiked(true)
+          setLikes(likes + 1)
           if (internalPost) {
             async function postLike() {
-              let response = await fetch(postAuthor.id + 'inbox/', {
+              let response = await fetch((postAuthor.id ? postAuthor.id : postAuthor.url) + 'inbox/', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -181,7 +182,7 @@ function PostCard({
             let res_data = await response.json()
   
             // POST TO INBOX NOW
-            let inboxRes = await fetch(postAuthor.id + 'inbox/', {
+            let inboxRes = await fetch((postAuthor.id ? postAuthor.id : postAuthor.url) + 'inbox/', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -231,7 +232,7 @@ function PostCard({
             avatar={<AccountCircle fontSize='large'></AccountCircle>}
             title={
               <span>
-                <Typography component="span" variant="body1">{postAuthor.displayName}</Typography><Typography component="span" style={{ color: '#a3a3a3' }}>{"  -  " + title}</Typography>
+                <Typography component="span" variant="body1">{(!internalPost ? '(remote) ' : '') + postAuthor.displayName}</Typography><Typography component="span" style={{ color: '#a3a3a3' }}>{"  -  " + title}</Typography>
               </span>}
             subheader={published.substring(0, 10)}
           />

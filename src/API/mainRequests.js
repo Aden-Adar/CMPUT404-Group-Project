@@ -106,8 +106,8 @@ async function getExplorePosts(page) {
     return posts
 }
 
-async function getMyPosts() {
-    let response = await fetch(AUTHOR.url + 'posts/')
+async function getMyPosts(page) {
+    let response = await fetch(AUTHOR.url + `posts/?page=${page}&count=5`)
     let res_data = await response.json()
     return res_data
 }
