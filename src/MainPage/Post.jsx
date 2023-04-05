@@ -165,9 +165,66 @@ function PostCard({
             subheader={published.substring(0, 10)}
           />
           <CardContent>
-            <Typography variant="body1">
-              {content}
-            </Typography>
+              {contentType === 'image/jpeg' &&
+                <Typography variant="body1">
+                {
+                  <img src={`data:image/jpeg;base64,${content}`}/>
+                }
+                </Typography>
+              }
+              {contentType === 'image/png' &&
+                <Typography variant="body1">
+                {
+                  <img src={`data:image/jpeg;base64,${content}`}/>
+                }
+                </Typography>
+              }
+              {contentType === 'application/base64' &&
+                <Typography variant="body1">
+                {
+                  <img src={`data:image/jpeg;base64,${content}`}/>
+                }
+                </Typography>
+              }
+              {contentType === 'image/png;base64' &&
+                <Typography variant="body1">
+                {
+                  <img src={`data:image/jpeg;base64,${content}`}/>
+                }
+                </Typography>
+              }
+              {contentType === 'image/jpeg;base64' &&
+                <Typography variant="body1">
+                {
+                  <img src={`data:image/jpeg;base64,${content}`}/>
+                }
+                </Typography>
+              }
+              {contentType === 'text/plain' &&//|| contentType === 'text/markdown'&&
+                <Typography variant="body1">
+                {
+                  content
+                }
+                </Typography>
+              }
+
+            {/* <Typography variant="body1">
+              {
+                //<img src={`data:image/jpeg;base64,${content}`} />
+                (() => {
+                  
+                    if (contentType === 'application/base64' || contentType ==='image/png;base64' || contentType ==='image/jpeg;base64') {
+                      <img src={`data:image/jpeg;base64,${content}`} />
+                    }
+                    else {
+                      (content)
+                    }
+                    
+                  
+                })
+
+              }
+            </Typography> */}
           </CardContent>
           <CardActions disableSpacing>
             <IconButton aria-label="like" onClick={handleLikeClick}>
