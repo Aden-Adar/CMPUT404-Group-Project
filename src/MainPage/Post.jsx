@@ -21,6 +21,8 @@ function PostCard({
     commentsURL,
     postType
 }) {
+    const InternalURL = "http://localhost:8000"
+
     const AUTHOR = window.localStorage.getItem("Author")
     const UUID = window.localStorage.getItem("UUID")
 
@@ -155,6 +157,7 @@ function PostCard({
           let res_data = await response.json()
           setComments(res_data)
         } else if (group2Post) {
+          console.log("Comment url: ", commentsURL)
           let response = await fetch(commentsURL)
           let res_data = await response.json()
           setComments(res_data)
@@ -233,35 +236,49 @@ function PostCard({
             subheader={published.substring(0, 10)}
           />
           <CardContent>
-              {contentType === 'image/jpeg' &&
+              {contentType === 'image/png;base64' && id.includes(GROUP2URL) &&
+                <Typography variant="body1">
+                {
+                  <img src={content}/>
+                }
+                </Typography>
+              }
+              {contentType === 'image/jpeg;base64' && id.includes(GROUP2URL) &&
+                <Typography variant="body1">
+                {
+                  <img src={content}/>
+                }
+                </Typography>
+              }
+              {contentType === 'image/jpeg' && id.includes(GROUP1URL) &&
                 <Typography variant="body1">
                 {
                   <img src={`data:image/jpeg;base64,${content}`}/>
                 }
                 </Typography>
               }
-              {contentType === 'image/png' &&
+              {contentType === 'image/png' && id.includes(GROUP1URL) &&
                 <Typography variant="body1">
                 {
                   <img src={`data:image/jpeg;base64,${content}`}/>
                 }
                 </Typography>
               }
-              {contentType === 'application/base64' &&
+              {contentType === 'application/base64' && 
                 <Typography variant="body1">
                 {
                   <img src={`data:image/jpeg;base64,${content}`}/>
                 }
                 </Typography>
               }
-              {contentType === 'image/png;base64' &&
+              {contentType === 'image/png;base64' &&  internalPost &&
                 <Typography variant="body1">
                 {
                   <img src={`data:image/jpeg;base64,${content}`}/>
                 }
                 </Typography>
               }
-              {contentType === 'image/jpeg;base64' &&
+              {contentType === 'image/jpeg;base64' && internalPost &&
                 <Typography variant="body1">
                 {
                   <img src={`data:image/jpeg;base64,${content}`}/>
