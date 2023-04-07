@@ -34,7 +34,7 @@ class Posts(models.Model):
     categories = models.TextField(max_length=300,editable=True, null=True,blank=True, default='')
 
     type = models.CharField(max_length=4,editable=True)
-    source = models.CharField(max_length=250,editable=True)
+    source = models.CharField(max_length=250,editable=True, null=True)
     comments_id = models.CharField(max_length=250,editable=True)
     id = models.CharField(max_length=250,editable=True)
     origin = models.CharField(max_length=250,editable=True, blank=True)

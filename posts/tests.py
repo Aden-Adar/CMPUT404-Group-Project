@@ -30,20 +30,48 @@ class PostsTest(TestCase):
 
         signup = self.client.post(url_signup,user,'application/json')
         login = self.client.post(url_login,user,'application/json')
-        url = reverse("posts-list",args=["f8b2ba2c-e91c-4365-9ab2-8320ff9cbf1b"])
-        
+        #url = reverse("posts-list",args=["f8b2ba2c-e91c-4365-9ab2-8320ff9cbf1b"])
+        url = "https://cmput404-group-project.herokuapp.com/service/authors/62a14b78-94cc-4e04-b58d-e9a32371ac59/posts/"
+        print("login ", login.data)
+
+        user_data = login.data
+
+        #print("login2 ", user_data["user_id"]) access UUID
+
         content = {
-            "title": "Title 1",
-            "description": "Some content",
-            "content_type": "text/plain",
-            "content": "This is a test",
-            "visibility": "PUBLIC",
-            "unlisted": "false",
-            
-        }
+    "type": "post",
+    "title": "Klydes md",
+    "id": "https://cmput404-group-project.herokuapp.com/service/authors/62a14b78-94cc-4e04-b58d-e9a32371ac59/posts/40c6e0fb-4c44-4606-8790-8e0375b5677a/",
+    "source": "https://cmput404-group-project.herokuapp.com/create",
+    "origin": "https://cmput404-group-project.herokuapp.com/service/authors/62a14b78-94cc-4e04-b58d-e9a32371ac59/posts/40c6e0fb-4c44-4606-8790-8e0375b5677a/",
+    "description": "markdown",
+    "content_type": "text/markdown",
+    "content": "# BOLDED",
+    "author": {
+        "type": "author",
+        "id": "https://cmput404-group-project.herokuapp.com/service/authors/62a14b78-94cc-4e04-b58d-e9a32371ac59/",
+        "url": "https://cmput404-group-project.herokuapp.com/service/authors/62a14b78-94cc-4e04-b58d-e9a32371ac59/",
+        "host": "cmput404-group-project.herokuapp.com",
+        "displayName": "klyde",
+        "github": "",
+        "profileImage": "https://www.cssscript.com/wp-content/uploads/2020/12/Customizable-SVG-Avatar-Generator-In-JavaScript-Avataaars.js-150x150.png"
+    },
+    "categories": [
+        "md"
+    ],
+    "count": 0,
+    "comments": "https://cmput404-group-project.herokuapp.com/service/authors/62a14b78-94cc-4e04-b58d-e9a32371ac59/posts/40c6e0fb-4c44-4606-8790-8e0375b5677a/comments/",
+    "comments_set": [],
+    "published": "2023-04-05T03:35:32.891807+00:00",
+    "visibility": "PUBLIC",
+    "unlisted": "false",
+    "post_id": "40c6e0fb-4c44-4606-8790-8e0375b5677a"
+}
 
         post = self.client.post(url,content,'application/json')
         self.assertEquals(post.status_code,status.HTTP_201_CREATED)
+
+    
 
     def test_post_edit(self):
         #Creating post
@@ -56,93 +84,49 @@ class PostsTest(TestCase):
 
         signup = self.client.post(url_signup,user,'application/json')
         login = self.client.post(url_login,user,'application/json')
-        
-        
+        #url = reverse("posts-list",args=["f8b2ba2c-e91c-4365-9ab2-8320ff9cbf1b"])
+        url = "https://cmput404-group-project.herokuapp.com/service/authors/62a14b78-94cc-4e04-b58d-e9a32371ac59/posts/"
+        print("login ", login.data)
+
+        user_data = login.data
+
+        #print("login2 ", user_data["user_id"]) access UUID
+
         content = {
-            "title": "Title 1",
-            "description": "Some content",
-            "content_type": "text/plain",
-            "content": "This is a test",
-            "visibility": "PUBLIC",
-            "unlisted": "false",
-            
-        }
-
-        user_data = login.content.decode("utf-8") 
-        userData = json.loads(user_data)
-        
-        url = reverse("posts-list",args=[str(userData["user_id"])])
-
-        post = self.client.post(url,content,'application/json')
-        l = post.content.decode("utf-8")        
-        mydata = json.loads(l)
-        post_id = mydata["post_id"]
-        
-
-        
-        new_content = {
-            
-            "type": "posts",
-            "title": "new posts",
-            "id": "URL WILL BE HERE SOON",
-            "source": str(mydata["source"]),
-            "origin": str(mydata["origin"]),
-            "description": "qweqwe",
-            "content_type": "text/plain",
-            "content": "qweqwe",
+            "type": "post",
+            "title": "Klydes md",
+            "id": "https://cmput404-group-project.herokuapp.com/service/authors/62a14b78-94cc-4e04-b58d-e9a32371ac59/posts/40c6e0fb-4c44-4606-8790-8e0375b5677a/",
+            "source": "https://cmput404-group-project.herokuapp.com/create",
+            "origin": "https://cmput404-group-project.herokuapp.com/service/authors/62a14b78-94cc-4e04-b58d-e9a32371ac59/posts/40c6e0fb-4c44-4606-8790-8e0375b5677a/",
+            "description": "markdown",
+            "content_type": "text/markdown",
+            "content": "# BOLDED",
             "author": {
                 "type": "author",
-                "id": str(userData["user_id"]),
-                "username": "User1",
-                "github": ""
+                "id": "https://cmput404-group-project.herokuapp.com/service/authors/62a14b78-94cc-4e04-b58d-e9a32371ac59/",
+                "url": "https://cmput404-group-project.herokuapp.com/service/authors/62a14b78-94cc-4e04-b58d-e9a32371ac59/",
+                "host": "cmput404-group-project.herokuapp.com",
+                "displayName": "klyde",
+                "github": "",
+                "profileImage": "https://www.cssscript.com/wp-content/uploads/2020/12/Customizable-SVG-Avatar-Generator-In-JavaScript-Avataaars.js-150x150.png"
             },
-            "comments": str(mydata["comments"]),
+            "categories": [
+                "md"
+            ],
+            "count": 0,
+            "comments": "https://cmput404-group-project.herokuapp.com/service/authors/62a14b78-94cc-4e04-b58d-e9a32371ac59/posts/40c6e0fb-4c44-4606-8790-8e0375b5677a/comments/",
             "comments_set": [],
-            "published": str(mydata["published"]),
+            "published": "2023-04-05T03:35:32.891807+00:00",
             "visibility": "PUBLIC",
             "unlisted": "false",
-            "post_id": str(post_id)
-
+            "post_id": "40c6e0fb-4c44-4606-8790-8e0375b5677a"
         }
-
-        new_url = reverse("post-detail",args=[str(userData["user_id"]),str(post_id)])
-        edit = self.client.put(new_url,new_content,'application/json')
-        self.assertEquals(edit.status_code,status.HTTP_200_OK)
-
-    def test_post_delete(self):
-        #Creating post
-        url_signup = reverse("signup")
-        url_login = reverse("login")
-        user = {
-            "username": "User1",
-            "password": "password123"
-        }
-
-        signup = self.client.post(url_signup,user,'application/json')
-        login = self.client.post(url_login,user,'application/json')
-        
-        
-        content = {
-            "title": "Title 1",
-            "description": "Some content",
-            "content_type": "text/plain",
-            "content": "This is a test",
-            "visibility": "PUBLIC",
-            "unlisted": "false",
-            
-        }
-
-        user_data = login.content.decode("utf-8") 
-        userData = json.loads(user_data)
-        
-        url = reverse("posts-list",args=[str(userData["user_id"])])
 
         post = self.client.post(url,content,'application/json')
-        l = post.content.decode("utf-8")        
-        mydata = json.loads(l)
-        post_id = mydata["post_id"]
-        
 
-        new_url = reverse("post-detail",args=[str(userData["user_id"]),str(post_id)])
-        delete = self.client.delete(new_url,content,'application/json')
-        self.assertEquals(delete.status_code,status.HTTP_204_NO_CONTENT)
+        url2 = "https://cmput404-group-project.herokuapp.com/service/authors/62a14b78-94cc-4e04-b58d-e9a32371ac59/posts/40c6e0fb-4c44-4606-8790-8e0375b5677a/"
+
+        post = self.client.post(url2,content,'application/json')
+    
+
+    

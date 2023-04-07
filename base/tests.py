@@ -10,16 +10,23 @@ class SignupLoginTest(TestCase):
     
     def setUp(self):
         CustomUser.objects.create(
-            username = "user1",
-            password = "password123"
+            type= "author",
+            id= "b7208318-fa45-4952-a759-7eb8bb21ee4f",
+            url= "https://cmput404-group-project.herokuapp.com/service/authors/b7208318-fa45-4952-a759-7eb8bb21ee4f/",
+            host= "cmput404-group-project.herokuapp.com",
+            username= "practice2",
+            github= "",
+            profileImage= "https://www.cssscript.com/wp-content/uploads/2020/12/Customizable-SVG-Avatar-Generator-In-JavaScript-Avataaars.js-150x150.png"
         )
 
     #Signing up a user
     def test_signup(self):
         url = reverse("signup")
-        user2_json = {
-            "username": "User1",
-            "password": "password1234"
+        print(url)
+        user2_json = {           
+            "username":"user1",
+            "password":"user1"
+
         }
 
         signup = self.client.post(url,user2_json,'application/json')
@@ -28,7 +35,7 @@ class SignupLoginTest(TestCase):
         self.assertEquals(signup.status_code,status.HTTP_201_CREATED)
         self.assertEquals(resolve(url).func.view_class,CreateAccount)
 
-    #Signing up with the same username
+ #Signing up with the same username
     def test_same_username(self):
         url = reverse("signup")
         user1 = {
