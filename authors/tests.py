@@ -42,5 +42,5 @@ class AuthorsTest(TestCase):
     #URL test for all authors
     def test_url_all(self):
         url_all = reverse("author-list")
-
+        print("This is url: ",url_all)
         self.assertEquals(resolve(url_all).func.view_class,AllAuthorView)

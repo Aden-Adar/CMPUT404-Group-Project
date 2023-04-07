@@ -27,7 +27,7 @@ class CustomUser(AbstractUser, PermissionsMixin):
     objects = CustomUserManager()
 
     type = models.CharField(max_length=6,editable=True)
-    host = models.CharField(max_length=250,editable=True)
+    host = models.CharField(max_length=250,editable=True, null=True)
     url = models.CharField(max_length=250,editable=True)
 
     def __str__(self):
