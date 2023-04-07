@@ -21,17 +21,20 @@ function PostCard({
     commentsURL,
     postType
 }) {
+    const InternalURL = "http://localhost:8000"
+
     const AUTHOR = window.localStorage.getItem("Author")
     const UUID = window.localStorage.getItem("UUID")
 
     const GROUP1URL = "https://social-distribution-w23-t17.herokuapp.com/"
     const GROUP1CREDS = Buffer.from("remote-user-t22:pZHAe3PWukpd3Nv").toString('base64')
+    const group1Post = id.includes(GROUP1URL) ? true : false;
 
     const GROUP2URL = "https://floating-fjord-51978.herokuapp.com/"
     const GROUP2CREDS = Buffer.from("admin:admin").toString('base64')
-
-    const group1Post = id.includes(GROUP1URL) ? true : false;
-    const internalPost = group1Post ? false : true;
+    const group2Post = id.includes(GROUP2URL) ? true : false;
+    
+    const internalPost = (group1Post || group2Post) ? false : true;
 
     const [liked, setLiked] = React.useState(false);
     const [likes, setLikes] = React.useState(0);
@@ -44,7 +47,7 @@ function PostCard({
       // Call to our BE
       if (internalPost) {
         async function getLikes() {
-          let likesResponse = await fetch(id + 'likes/')
+          let likesResponse = await fetch(id + '/likes')
           let likesRes_data = await likesResponse.json()
           for (let i = 0; i < likesRes_data.results.length; i++) {
               if (likesRes_data.results[i].author.id === JSON.parse(AUTHOR).id) {
@@ -66,6 +69,24 @@ function PostCard({
           let likesRes_data = await likesResponse.json()
           for (let i = 0; i < likesRes_data.items.length; i++) {
               if (likesRes_data.items[i].author.url.includes(UUID)) {
+                  setLiked(true)
+              }
+          }
+          setLikes(likesRes_data.items.length)
+          }
+          getLikes();
+      } else if (group2Post) {
+        async function getLikes() {
+          let likesResponse = await fetch(id + '/likes', {
+            method: 'GET',
+            headers: {
+              'Authorization': 'Basic ' + GROUP2CREDS,
+              'Access-Control-Request-Method': 'GET' 
+            }
+          })
+          let likesRes_data = await likesResponse.json()
+          for (let i = 0; i < likesRes_data.items.length; i++) {
+              if (likesRes_data.items[i].author.id.includes(UUID)) {
                   setLiked(true)
               }
           }
@@ -136,6 +157,18 @@ function PostCard({
           let response = await fetch(commentsURL)
           let res_data = await response.json()
           setComments(res_data)
+        } else if (group2Post) {
+          console.log("Comment url: ", commentsURL)
+          let response = await fetch(commentsURL, {
+            method: 'GET',
+            headers: {
+              'Authorization': 'Basic ' + GROUP2CREDS,
+              'Access-Control-Request-Method': 'GET' 
+            },
+          })
+          let res_data = await response.json()
+          console.log("comment data: ", res_data)
+          setComments(res_data)
         }
       }
       getComments()
@@ -197,9 +230,35 @@ function PostCard({
             // window.location.reload(false);
           }
           postCommentGroup1()
+        } else if (group2Post) {
+          async function postCommentGroup2() {
+            let today = new Date()
+            let commentBody = { 
+              "comment" : comment, 
+              "contenType" : "text/plain",
+              "published": today.toISOString(),
+              "type": "comment",
+              "author": JSON.parse(AUTHOR),
+              "id": commentsURL
+            }
+            let inboxRes = await fetch(postAuthor.id + '/inbox', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'Basic ' + GROUP2CREDS,
+                'Access-Control-Request-Method': 'POST' 
+              },
+              body: JSON.stringify(commentBody)
+            })
+            let inboxRes_data = await inboxRes.json()
+            setComments(commentBody)
+            console.log(inboxRes_data)
+            // window.location.reload(false);
+          }
+          postCommentGroup2()
         }
-    }
-
+      }
     return (
         <Card variant='outlined'>
           <CardHeader
@@ -211,35 +270,49 @@ function PostCard({
             subheader={published.substring(0, 10)}
           />
           <CardContent>
-              {contentType === 'image/jpeg' &&
+              {contentType === 'image/png;base64' && id.includes(GROUP2URL) &&
+                <Typography variant="body1">
+                {
+                  <img src={content}/>
+                }
+                </Typography>
+              }
+              {contentType === 'image/jpeg;base64' && id.includes(GROUP2URL) &&
+                <Typography variant="body1">
+                {
+                  <img src={content}/>
+                }
+                </Typography>
+              }
+              {contentType === 'image/jpeg' && id.includes(GROUP1URL) &&
                 <Typography variant="body1">
                 {
                   <img src={`data:image/jpeg;base64,${content}`}/>
                 }
                 </Typography>
               }
-              {contentType === 'image/png' &&
+              {contentType === 'image/png' && id.includes(GROUP1URL) &&
                 <Typography variant="body1">
                 {
                   <img src={`data:image/jpeg;base64,${content}`}/>
                 }
                 </Typography>
               }
-              {contentType === 'application/base64' &&
+              {contentType === 'application/base64' && 
                 <Typography variant="body1">
                 {
                   <img src={`data:image/jpeg;base64,${content}`}/>
                 }
                 </Typography>
               }
-              {contentType === 'image/png;base64' &&
+              {contentType === 'image/png;base64' &&  internalPost &&
                 <Typography variant="body1">
                 {
                   <img src={`data:image/jpeg;base64,${content}`}/>
                 }
                 </Typography>
               }
-              {contentType === 'image/jpeg;base64' &&
+              {contentType === 'image/jpeg;base64' && internalPost &&
                 <Typography variant="body1">
                 {
                   <img src={`data:image/jpeg;base64,${content}`}/>

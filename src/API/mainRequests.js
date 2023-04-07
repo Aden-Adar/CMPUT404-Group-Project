@@ -10,7 +10,7 @@ const GROUP2CREDS = Buffer.from("admin:admin").toString('base64')
 async function getExplorePosts(page) {
     let posts = []
 
-    // POSTS FROM OUR BACKEND
+    // // POSTS FROM OUR BACKEND
     try {
         let authorsResponse = await fetch(`/service/authors/?page=${page}&count=3`)
         let authorsRes_data = await authorsResponse.json()
@@ -32,7 +32,7 @@ async function getExplorePosts(page) {
         console.log(error)
     }
     
-    // POSTS FROM GROUP 1's BE
+    // // POSTS FROM GROUP 1's BE
     try {
         let authorsResponse2 = await fetch(GROUP1URL+`authors/?page=${page}&size=3`, {
             method: 'GET',
@@ -66,6 +66,7 @@ async function getExplorePosts(page) {
         console.log(error)
     }
 
+    // POSTS FROM GROUP 2's BE
     try {
         let authorsResponse3 = await fetch(GROUP2URL+`authors/?page=${page}&size=5`, {
             method: 'GET',
@@ -75,10 +76,33 @@ async function getExplorePosts(page) {
             }
         })
         let authorsRes_data3 = await authorsResponse3.json()
-        console.log(authorsRes_data3)
+        for (let i = 0; i < authorsRes_data3.items.length; i++) {
+            console.log("original post: ", authorsRes_data3.items[i]);
+            if ((authorsRes_data3.items[i].id !== AUTHOR.id) && (authorsRes_data3.items[i].host === "https://floating-fjord-51978.herokuapp.com")) {
+                let authorPosts = []
+                let response = await fetch(authorsRes_data3.items[i].id + '/posts/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Basic ' + GROUP2CREDS,
+                        'Access-Control-Request-Method': 'GET' 
+                    }
+                })
+                let res_data = await response.json()
+                console.log(res_data)
+                for (let j = 0; j < res_data.items.length; j++) {
+                    res_data.items[j].comments = res_data.items[j].id + '/comments'
+                    
+                    authorPosts.push(res_data.items[j])
+                }
+                console.log("authorPosts: ", authorPosts)
+                posts = posts.concat(authorPosts)
+            }
+        }
     } catch (error) {
         console.log(error)
     }
+
+
     return posts
 }
 
