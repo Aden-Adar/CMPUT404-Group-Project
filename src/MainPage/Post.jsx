@@ -159,8 +159,15 @@ function PostCard({
           setComments(res_data)
         } else if (group2Post) {
           console.log("Comment url: ", commentsURL)
-          let response = await fetch(commentsURL)
+          let response = await fetch(commentsURL, {
+            method: 'GET',
+            headers: {
+              'Authorization': 'Basic ' + GROUP2CREDS,
+              'Access-Control-Request-Method': 'GET' 
+            },
+          })
           let res_data = await response.json()
+          console.log("comment data: ", res_data)
           setComments(res_data)
         }
       }
@@ -223,9 +230,35 @@ function PostCard({
             // window.location.reload(false);
           }
           postCommentGroup1()
+        } else if (group2Post) {
+          async function postCommentGroup2() {
+            let today = new Date()
+            let commentBody = { 
+              "comment" : comment, 
+              "contenType" : "text/plain",
+              "published": today.toISOString(),
+              "type": "comment",
+              "author": JSON.parse(AUTHOR),
+              "id": commentsURL
+            }
+            let inboxRes = await fetch(postAuthor.id + '/inbox', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'Basic ' + GROUP2CREDS,
+                'Access-Control-Request-Method': 'POST' 
+              },
+              body: JSON.stringify(commentBody)
+            })
+            let inboxRes_data = await inboxRes.json()
+            setComments(commentBody)
+            console.log(inboxRes_data)
+            // window.location.reload(false);
+          }
+          postCommentGroup2()
         }
-    }
-
+      }
     return (
         <Card variant='outlined'>
           <CardHeader
